@@ -28,7 +28,7 @@ def show_main_menu():
     xbmcplugin.setPluginCategory(_HANDLE, "Main Menu")
     xbmcplugin.setContent(_HANDLE, "videos")
 
-    list_item = xbmcgui.ListItem(label="Subsplease - All")
+    list_item = xbmcgui.ListItem(label="SubsPlease - All")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         _HANDLE, get_url(action="subsplease_all"), list_item, is_folder
@@ -45,7 +45,7 @@ def show_main_menu():
 
 
 def show_subsplease_all():
-    xbmcplugin.setPluginCategory(_HANDLE, "Subsplease - All")
+    xbmcplugin.setPluginCategory(_HANDLE, "SubsPlease - All")
 
     page = requests.get("https://subsplease.org/shows/")
     soup = BeautifulSoup(page.text, "html.parser")

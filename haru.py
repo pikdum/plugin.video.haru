@@ -87,7 +87,7 @@ def show_subsplease_show(url):
             url = get_url(action="play_magnet", magnet=magnet)
             xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
-    # TODO: get a working batch poc
+    # TODO: clean up batch implementation
     if episodes["batch"]:
         for batch, batch_info in episodes["batch"].items():
             list_item = xbmcgui.ListItem(label=batch)
@@ -106,9 +106,36 @@ def show_subsplease_show(url):
 
 def show_subsplease_batch(batch, batch_torrent):
     xbmcplugin.setPluginCategory(_HANDLE, batch)
-    magnet = get_nyaa_magnet(batch_torrent)
-    url = resolveurl.HostedMediaFile(url=magnet).resolve()
-    log(f"{url=}")
+
+    page = requests.get(batch_torrent.replace("/torrent", ""))
+    soup = BeautifulSoup(page.text, "html.parser")
+    magnet = soup.find("a", class_="card-footer-item").get("href")
+
+    while soup.i:
+        soup.i.decompose()
+    while soup.span:
+        soup.span.decompose()
+    file_list_div = soup.find("div", class_="torrent-file-list")
+    log(f"{file_list_div=}")
+    file_list_split = file_list_div.text.split("\n")
+    log(f"{file_list_split=}")
+    # TODO: use same video formats as resolveurl
+    file_list_filtered = filter(
+        lambda x: x.lower().endswith(".mkv"),
+        map(lambda x: x.strip(), filter(None, file_list_split)),
+    )
+    log(f"{file_list_filtered=}")
+
+    for f in file_list_filtered:
+        list_item = xbmcgui.ListItem(label=f)
+        list_item.setInfo(
+            "video",
+            {"title": f, "genre": "Anime", "mediatype": "video"},
+        )
+        list_item.setProperty("IsPlayable", "true")
+        is_folder = False
+        url = get_url(action="play_batch", magnet=magnet, selected_file=f)
+        xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
     xbmcplugin.addSortMethod(_HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(_HANDLE)
@@ -127,12 +154,22 @@ def play_magnet(magnet):
     xbmcplugin.setResolvedUrl(_HANDLE, True, listitem=play_item)
 
 
+def play_batch(magnet, selected_file):
+    resolved_url = resolveurl.HostedMediaFile(
+        url=magnet, selected_file=f"/{selected_file}"
+    ).resolve()
+    play_item = xbmcgui.ListItem(path=resolved_url)
+    xbmcplugin.setResolvedUrl(_HANDLE, True, listitem=play_item)
+
+
 def router(paramstring):
     params = dict(parse_qsl(paramstring))
 
     if params:
         if params["action"] == "play_magnet":
             play_magnet(params["magnet"])
+        elif params["action"] == "play_batch":
+            play_batch(params["magnet"], params["selected_file"])
         elif params["action"] == "subsplease_all":
             show_subsplease_all()
         elif params["action"] == "subsplease_show":

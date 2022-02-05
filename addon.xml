@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon id="plugin.video.haru" name="Haru" version="0.1.0" provider-name="pikdum">
+  <requires>
+    <import addon="xbmc.python" version="3.00.0"/>
+    <import addon="script.module.resolveurl" version="5.1.0"/>
+    <import addon="script.module.requests" version="2.25.0"/>
+    <import addon="script.module.beautifulsoup4" version="4.9.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="haru.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">Haru</summary>
+    <description lang="en">Simple Anime Addon</description>
+    <assets>
+      <icon>icon.png</icon>
+    </assets>
+    <news>Hello World!</news>
+  </extension>
+</addon>

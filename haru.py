@@ -6,6 +6,7 @@ import xbmcgui
 import xbmcplugin
 import requests
 import resolveurl
+import re
 from bs4 import BeautifulSoup
 from resolveurl.lib import kodi
 
@@ -125,15 +126,21 @@ def show_subsplease_batch(batch, batch_torrent):
         ),
     )
 
-    for f in file_list:
-        list_item = xbmcgui.ListItem(label=f)
+    for file_name in file_list:
+        display_name = file_name.replace("[SubsPlease] ", "")
+        display_name = re.sub(r"(v\d)? \(.*p\) \[.*\]\..*", "", display_name)
+        list_item = xbmcgui.ListItem(label=display_name)
         list_item.setInfo(
             "video",
-            {"title": f, "genre": "Anime", "mediatype": "video"},
+            {
+                "title": display_name,
+                "genre": "Anime",
+                "mediatype": "video",
+            },
         )
         list_item.setProperty("IsPlayable", "true")
         is_folder = False
-        url = get_url(action="play_batch", magnet=magnet, selected_file=f)
+        url = get_url(action="play_batch", magnet=magnet, selected_file=file_name)
         xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
     xbmcplugin.addSortMethod(_HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)

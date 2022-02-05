@@ -34,13 +34,18 @@ def show_main_menu():
         _HANDLE, get_url(action="subsplease_all"), list_item, is_folder
     )
 
+    list_item = xbmcgui.ListItem(label="SubsPlease - Airing")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        _HANDLE, get_url(action="subsplease_airing"), list_item, is_folder
+    )
+
     list_item = xbmcgui.ListItem(label="ResolveURL Settings")
     is_folder = False
     xbmcplugin.addDirectoryItem(
         _HANDLE, get_url(action="resolveurl_settings"), list_item, is_folder
     )
 
-    xbmcplugin.addSortMethod(_HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
@@ -77,6 +82,7 @@ def show_subsplease_show(url):
         f"https://subsplease.org/api/?f=show&tz=America/Chicago&sid={sid}"
     ).json()
 
+    # TODO: investigate showing air date, watched status, etc.
     if episodes["episode"]:
         for episode, episode_info in episodes["episode"].items():
             list_item = xbmcgui.ListItem(label=episode)
@@ -147,6 +153,53 @@ def show_subsplease_batch(batch, batch_torrent):
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
+def show_subsplease_airing():
+    xbmcplugin.setPluginCategory(_HANDLE, "SubsPlease - Airing")
+
+    for day in [
+        "Today",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+        "TBD",
+    ]:
+        list_item = xbmcgui.ListItem(label=day)
+        url = get_url(action="subsplease_day", day=day)
+        is_folder = True
+        xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
+
+    xbmcplugin.endOfDirectory(_HANDLE)
+
+
+def show_subsplease_day(day):
+    xbmcplugin.setPluginCategory(_HANDLE, f"SubsPlease - {day}")
+
+    if day == "Today":
+        schedule = requests.get(
+            "https://subsplease.org/api/?f=schedule&h=true&tz=America/Chicago"
+        ).json()["schedule"]
+    else:
+        schedule = requests.get(
+            "https://subsplease.org/api/?f=schedule&tz=America/Chicago"
+        ).json()["schedule"][day]
+
+    # TODO: investigate showing air time, etc.
+    for show in schedule:
+        list_item = xbmcgui.ListItem(label=show["title"])
+        url = get_url(
+            action="subsplease_show", url="https://subsplease.org/shows/" + show["page"]
+        )
+        is_folder = True
+        xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
+
+    xbmcplugin.addSortMethod(_HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(_HANDLE)
+
+
 def get_nyaa_magnet(url):
     page = requests.get(url.replace("/torrent", ""))
     soup = BeautifulSoup(page.text, "html.parser")
@@ -178,6 +231,10 @@ def router(paramstring):
             play_batch(params["magnet"], params["selected_file"])
         elif params["action"] == "subsplease_all":
             show_subsplease_all()
+        elif params["action"] == "subsplease_airing":
+            show_subsplease_airing()
+        elif params["action"] == "subsplease_day":
+            show_subsplease_day(params["day"])
         elif params["action"] == "subsplease_show":
             show_subsplease_show(params["url"])
         elif params["action"] == "subsplease_batch":

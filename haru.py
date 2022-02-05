@@ -7,9 +7,12 @@ import xbmcplugin
 import requests
 import resolveurl
 from bs4 import BeautifulSoup
+from resolveurl.lib import kodi
 
 _URL = sys.argv[0]
 _HANDLE = int(sys.argv[1])
+
+VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
 
 
 def log(x):
@@ -87,7 +90,6 @@ def show_subsplease_show(url):
             url = get_url(action="play_magnet", magnet=magnet)
             xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
-    # TODO: clean up batch implementation
     if episodes["batch"]:
         for batch, batch_info in episodes["batch"].items():
             list_item = xbmcgui.ListItem(label=batch)
@@ -115,18 +117,15 @@ def show_subsplease_batch(batch, batch_torrent):
         soup.i.decompose()
     while soup.span:
         soup.span.decompose()
-    file_list_div = soup.find("div", class_="torrent-file-list")
-    log(f"{file_list_div=}")
-    file_list_split = file_list_div.text.split("\n")
-    log(f"{file_list_split=}")
-    # TODO: use same video formats as resolveurl
-    file_list_filtered = filter(
-        lambda x: x.lower().endswith(".mkv"),
-        map(lambda x: x.strip(), filter(None, file_list_split)),
+    file_list = filter(
+        lambda x: any(x.lower().endswith(ext) for ext in VIDEO_FORMATS),
+        map(
+            lambda x: x.strip(),
+            soup.find("div", class_="torrent-file-list").text.split("\n"),
+        ),
     )
-    log(f"{file_list_filtered=}")
 
-    for f in file_list_filtered:
+    for f in file_list:
         list_item = xbmcgui.ListItem(label=f)
         list_item.setInfo(
             "video",

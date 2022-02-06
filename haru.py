@@ -7,6 +7,8 @@ import xbmcplugin
 import requests
 import resolveurl
 import re
+import time
+from datetime import datetime
 from bs4 import BeautifulSoup
 from resolveurl.lib import kodi
 
@@ -187,16 +189,20 @@ def show_subsplease_day(day):
             "https://subsplease.org/api/?f=schedule&tz=America/Chicago"
         ).json()["schedule"][day]
 
-    # TODO: investigate showing air time, etc.
     for show in schedule:
-        list_item = xbmcgui.ListItem(label=show["title"])
+        # workaround: https://forum.kodi.tv/showthread.php?pid=1214507#pid1214507
+        formatted_time = datetime(
+            *(time.strptime(show["time"], "%H:%M")[0:6])
+        ).strftime("%I:%M %p")
+        artwork_url = "https://subsplease.org" + show["image_url"]
+        list_item = xbmcgui.ListItem(f"""[B]{formatted_time}[/B] - {show["title"]}""")
+        list_item.setArt({"poster": artwork_url})
         url = get_url(
             action="subsplease_show", url="https://subsplease.org/shows/" + show["page"]
         )
         is_folder = True
         xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
-    xbmcplugin.addSortMethod(_HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(_HANDLE)
 
 

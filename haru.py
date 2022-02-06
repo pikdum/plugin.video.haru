@@ -161,15 +161,16 @@ def show_subsplease_show(url):
             list_item.setArt({"poster": artwork_url})
             xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
-    # TODO: investigate showing air date, watched status, etc.
     if episodes["episode"]:
         for episode, episode_info in reversed(episodes["episode"].items()):
+            release_date = re.sub(r" \d{2}:.*$", "", episode_info["release_date"])
+
             display_name = re.sub(r"v\d$", "", episode)
-            title = display_name
+            title = f"{display_name} [I][LIGHT]— {release_date}[/LIGHT][/I]"
 
             watched = is_episode_watched(display_name)
             if watched:
-                title += " [LIGHT][watched][/LIGHT]"
+                title = f"[COLOR palevioletred]{title}[/COLOR]"
 
             list_item = xbmcgui.ListItem(label=title)
             list_item.setInfo(
@@ -226,7 +227,7 @@ def show_subsplease_batch(batch, batch_torrent, artwork_url):
 
         watched = is_episode_watched(display_name)
         if watched:
-            title += " [LIGHT][watched][/LIGHT]"
+            title = f"[COLOR palevioletred]{title}[/COLOR]"
 
         list_item = xbmcgui.ListItem(label=display_name)
         list_item.setInfo(

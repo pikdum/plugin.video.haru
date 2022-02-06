@@ -2,20 +2,19 @@
 import sys
 from urllib.parse import urlencode, parse_qsl
 import xbmc
+import xbmcaddon
 import xbmcgui
 import xbmcplugin
 import requests
 import resolveurl
 import re
 import time
+import pickle
+import os
+import xbmcvfs
 from datetime import datetime
 from bs4 import BeautifulSoup
 from resolveurl.lib import kodi
-
-_URL = sys.argv[0]
-_HANDLE = int(sys.argv[1])
-
-VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
 
 
 def log(x):
@@ -24,6 +23,71 @@ def log(x):
 
 def get_url(**kwargs):
     return "{}?{}".format(_URL, urlencode(kwargs))
+
+
+_URL = sys.argv[0]
+_HANDLE = int(sys.argv[1])
+
+VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
+BASE_DATABASE = {"sp:watch": {}}
+
+addon = xbmcaddon.Addon()
+data_dir = xbmcvfs.translatePath(
+    os.path.join("special://profile/addon_data/", addon.getAddonInfo("id"))
+)
+database_path = os.path.join(data_dir, "database.pickle")
+xbmcvfs.mkdirs(data_dir)
+
+
+def commit():
+    with open(database_path, "wb") as f:
+        pickle.dump(database, f)
+
+
+if os.path.exists(database_path):
+    with open(database_path, "rb") as f:
+        database = pickle.load(f)
+else:
+    database = {}
+
+
+# TODO: clean this up
+def set_watched(name, watched=True):
+    split = name.split(" - ")
+    episode = split[-1]
+    show = " - ".join(split[:-1])
+
+    if watched == "False":
+        del database["sp:watch"][show][episode]
+        if not database["sp:watch"][show]:
+            del database["sp:watch"][show]
+        commit()
+        return
+
+    if "sp:watch" not in database:
+        database["sp:watch"] = {}
+
+    if show not in database["sp:watch"]:
+        database["sp:watch"][show] = {}
+
+    database["sp:watch"][show][episode] = True
+    commit()
+
+
+def is_show_watched(name):
+    return name in database["sp:watch"]
+
+
+def is_episode_watched(name):
+    split = name.split(" - ")
+    episode = split[-1]
+    show = " - ".join(split[:-1])
+
+    if show not in database["sp:watch"]:
+        return False
+    if episode in database["sp:watch"][show]:
+        return True
+    return False
 
 
 def show_main_menu():
@@ -74,9 +138,7 @@ def show_subsplease_show(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
     sid = soup.find(id="show-release-table")["sid"]
-    log(f"{sid=}")
     show_title = soup.find("h1", class_="entry-title").text
-    log(f"{show_title=}")
     artwork_url = "https://subsplease.org" + soup.find("img")["src"]
 
     xbmcplugin.setPluginCategory(_HANDLE, show_title)
@@ -102,17 +164,37 @@ def show_subsplease_show(url):
     # TODO: investigate showing air date, watched status, etc.
     if episodes["episode"]:
         for episode, episode_info in reversed(episodes["episode"].items()):
-            list_item = xbmcgui.ListItem(label=episode)
+            display_name = re.sub(r"v\d$", "", episode)
+            title = display_name
+
+            watched = is_episode_watched(display_name)
+            if watched:
+                title += " [LIGHT][watched][/LIGHT]"
+
+            list_item = xbmcgui.ListItem(label=title)
             list_item.setInfo(
                 "video",
-                {"title": episode, "genre": "Anime", "mediatype": "video"},
+                {"title": title, "genre": "Anime", "mediatype": "video"},
             )
             list_item.setProperty("IsPlayable", "true")
             list_item.setArt({"poster": artwork_url})
+            list_item.addContextMenuItems(
+                [
+                    (
+                        "Toggle Watched",
+                        "RunPlugin(%s)"
+                        % get_url(
+                            action="toggle_watched",
+                            name=display_name,
+                            watched=not watched,
+                        ),
+                    )
+                ]
+            )
             hq_download = episode_info["downloads"][-1]
             is_folder = False
             magnet = get_nyaa_magnet(hq_download["torrent"])
-            url = get_url(action="play_magnet", magnet=magnet)
+            url = get_url(action="play_magnet", magnet=magnet, name=display_name)
             xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
     xbmcplugin.endOfDirectory(_HANDLE)
@@ -139,20 +221,44 @@ def show_subsplease_batch(batch, batch_torrent, artwork_url):
 
     for file_name in file_list:
         display_name = file_name.replace("[SubsPlease] ", "")
-        display_name = re.sub(r" \(.*p\) \[.*\]\..*", "", display_name)
+        display_name = re.sub(r"(v\d)? \(.*p\) \[.*\]\..*", "", display_name)
+        title = display_name
+
+        watched = is_episode_watched(display_name)
+        if watched:
+            title += " [LIGHT][watched][/LIGHT]"
+
         list_item = xbmcgui.ListItem(label=display_name)
         list_item.setInfo(
             "video",
             {
-                "title": display_name,
+                "title": title,
                 "genre": "Anime",
                 "mediatype": "video",
             },
         )
         list_item.setProperty("IsPlayable", "true")
         list_item.setArt({"poster": artwork_url})
+        list_item.addContextMenuItems(
+            [
+                (
+                    "Toggle Watched",
+                    "RunPlugin(%s)"
+                    % get_url(
+                        action="toggle_watched",
+                        name=display_name,
+                        watched=not watched,
+                    ),
+                )
+            ]
+        )
         is_folder = False
-        url = get_url(action="play_batch", magnet=magnet, selected_file=file_name)
+        url = get_url(
+            action="play_batch",
+            magnet=magnet,
+            selected_file=file_name,
+            name=display_name,
+        )
         xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
     xbmcplugin.addSortMethod(_HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
@@ -217,13 +323,15 @@ def get_nyaa_magnet(url):
     return magnet
 
 
-def play_magnet(magnet):
+def play_magnet(magnet, name):
+    set_watched(name)
     resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
     play_item = xbmcgui.ListItem(path=resolved_url)
     xbmcplugin.setResolvedUrl(_HANDLE, True, listitem=play_item)
 
 
-def play_batch(magnet, selected_file):
+def play_batch(magnet, selected_file, name):
+    set_watched(name)
     resolved_url = resolveurl.HostedMediaFile(
         url=magnet, selected_file=f"/{selected_file}"
     ).resolve()
@@ -236,9 +344,9 @@ def router(paramstring):
 
     if params:
         if params["action"] == "play_magnet":
-            play_magnet(params["magnet"])
+            play_magnet(params["magnet"], params["name"])
         elif params["action"] == "play_batch":
-            play_batch(params["magnet"], params["selected_file"])
+            play_batch(params["magnet"], params["selected_file"], params["name"])
         elif params["action"] == "subsplease_all":
             show_subsplease_all()
         elif params["action"] == "subsplease_airing":
@@ -251,6 +359,9 @@ def router(paramstring):
             show_subsplease_batch(
                 params["batch"], params["batch_torrent"], params["artwork_url"]
             )
+        elif params["action"] == "toggle_watched":
+            set_watched(params["name"], watched=params["watched"])
+            xbmc.executebuiltin("Container.Refresh")
         elif params["action"] == "resolveurl_settings":
             resolveurl.display_settings()
         else:

@@ -77,6 +77,7 @@ def show_subsplease_show(url):
     log(f"{sid=}")
     show_title = soup.find("h1", class_="entry-title").text
     log(f"{show_title=}")
+    artwork_url = "https://subsplease.org" + soup.find("img")["src"]
 
     xbmcplugin.setPluginCategory(_HANDLE, show_title)
 
@@ -84,38 +85,40 @@ def show_subsplease_show(url):
         f"https://subsplease.org/api/?f=show&tz=America/Chicago&sid={sid}"
     ).json()
 
-    # TODO: investigate showing air date, watched status, etc.
-    if episodes["episode"]:
-        for episode, episode_info in episodes["episode"].items():
-            list_item = xbmcgui.ListItem(label=episode)
-            list_item.setInfo(
-                "video",
-                {"title": episode, "genre": "Anime", "mediatype": "video"},
-            )
-            list_item.setProperty("IsPlayable", "true")
-            hq_download = episode_info["downloads"][-1]
-            is_folder = False
-            magnet = get_nyaa_magnet(hq_download["torrent"])
-            url = get_url(action="play_magnet", magnet=magnet)
-            xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
-
     if episodes["batch"]:
         for batch, batch_info in episodes["batch"].items():
-            list_item = xbmcgui.ListItem(label=batch)
+            list_item = xbmcgui.ListItem(label=f"[B][Batch][/B] {batch}")
             hq_download = batch_info["downloads"][-1]
             is_folder = True
             url = get_url(
                 action="subsplease_batch",
                 batch=batch,
                 batch_torrent=hq_download["torrent"],
+                artwork_url=artwork_url,
             )
+            list_item.setArt({"poster": artwork_url})
             xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
-    xbmcplugin.addSortMethod(_HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    # TODO: investigate showing air date, watched status, etc.
+    if episodes["episode"]:
+        for episode, episode_info in reversed(episodes["episode"].items()):
+            list_item = xbmcgui.ListItem(label=episode)
+            list_item.setInfo(
+                "video",
+                {"title": episode, "genre": "Anime", "mediatype": "video"},
+            )
+            list_item.setProperty("IsPlayable", "true")
+            list_item.setArt({"poster": artwork_url})
+            hq_download = episode_info["downloads"][-1]
+            is_folder = False
+            magnet = get_nyaa_magnet(hq_download["torrent"])
+            url = get_url(action="play_magnet", magnet=magnet)
+            xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
+
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
-def show_subsplease_batch(batch, batch_torrent):
+def show_subsplease_batch(batch, batch_torrent, artwork_url):
     xbmcplugin.setPluginCategory(_HANDLE, batch)
 
     page = requests.get(batch_torrent.replace("/torrent", ""))
@@ -136,7 +139,7 @@ def show_subsplease_batch(batch, batch_torrent):
 
     for file_name in file_list:
         display_name = file_name.replace("[SubsPlease] ", "")
-        display_name = re.sub(r"(v\d)? \(.*p\) \[.*\]\..*", "", display_name)
+        display_name = re.sub(r" \(.*p\) \[.*\]\..*", "", display_name)
         list_item = xbmcgui.ListItem(label=display_name)
         list_item.setInfo(
             "video",
@@ -147,6 +150,7 @@ def show_subsplease_batch(batch, batch_torrent):
             },
         )
         list_item.setProperty("IsPlayable", "true")
+        list_item.setArt({"poster": artwork_url})
         is_folder = False
         url = get_url(action="play_batch", magnet=magnet, selected_file=file_name)
         xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
@@ -244,7 +248,9 @@ def router(paramstring):
         elif params["action"] == "subsplease_show":
             show_subsplease_show(params["url"])
         elif params["action"] == "subsplease_batch":
-            show_subsplease_batch(params["batch"], params["batch_torrent"])
+            show_subsplease_batch(
+                params["batch"], params["batch_torrent"], params["artwork_url"]
+            )
         elif params["action"] == "resolveurl_settings":
             resolveurl.display_settings()
         else:

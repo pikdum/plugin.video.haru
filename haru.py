@@ -50,6 +50,7 @@ if os.path.exists(database_path):
 else:
     database = {}
 
+database = {**BASE_DATABASE, **database}
 
 # TODO: clean this up
 def set_watched(name, watched=True):

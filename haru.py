@@ -124,14 +124,19 @@ def show_subsplease_all():
     links = filter(lambda x: x["href"].startswith("/shows/"), soup.find_all("a"))
 
     for link in links:
-        list_item = xbmcgui.ListItem(label=link["title"])
+        title = link["title"]
+
+        watched = is_show_watched(title)
+        if watched:
+            title = f"[COLOR palevioletred]{title}[/COLOR]"
+
+        list_item = xbmcgui.ListItem(label=title)
         is_folder = True
         url = get_url(
             action="subsplease_show", url="https://subsplease.org" + link["href"]
         )
         xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
-    xbmcplugin.addSortMethod(_HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
@@ -307,7 +312,14 @@ def show_subsplease_day(day):
             *(time.strptime(show["time"], "%H:%M")[0:6])
         ).strftime("%I:%M %p")
         artwork_url = "https://subsplease.org" + show["image_url"]
-        list_item = xbmcgui.ListItem(f"""[B]{formatted_time}[/B] - {show["title"]}""")
+
+        title = f"""[B]{formatted_time}[/B] - {show["title"]}"""
+
+        watched = is_show_watched(show["title"])
+        if watched:
+            title = f"[COLOR palevioletred]{title}[/COLOR]"
+
+        list_item = xbmcgui.ListItem(label=title)
         list_item.setArt({"poster": artwork_url})
         url = get_url(
             action="subsplease_show", url="https://subsplease.org/shows/" + show["page"]

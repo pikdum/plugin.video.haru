@@ -275,6 +275,11 @@ def show_subsplease_batch(batch, batch_torrent, artwork_url):
 def show_subsplease_airing():
     xbmcplugin.setPluginCategory(_HANDLE, "SubsPlease - Airing")
 
+    list_item = xbmcgui.ListItem(label="All")
+    url = get_url(action="subsplease_all_airing")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
+
     for day in [
         "Today",
         "Monday",
@@ -288,6 +293,46 @@ def show_subsplease_airing():
     ]:
         list_item = xbmcgui.ListItem(label=day)
         url = get_url(action="subsplease_day", day=day)
+        is_folder = True
+        xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
+
+    xbmcplugin.endOfDirectory(_HANDLE)
+
+
+def show_subsplease_all_airing():
+    xbmcplugin.setPluginCategory(_HANDLE, f"SubsPlease - All Airing")
+
+    schedule = requests.get(
+        "https://subsplease.org/api/?f=schedule&tz=America/Chicago"
+    ).json()["schedule"]
+
+    flattened_schedule = []
+
+    for day, shows in schedule.items():
+        for show in shows:
+            show["day"] = day
+            flattened_schedule.append(show)
+
+    flattened_schedule = sorted(flattened_schedule, key=lambda x: x["title"])
+
+    for show in flattened_schedule:
+        # workaround: https://forum.kodi.tv/showthread.php?pid=1214507#pid1214507
+        formatted_time = datetime(
+            *(time.strptime(show["time"], "%H:%M")[0:6])
+        ).strftime("%I:%M %p")
+        artwork_url = "https://subsplease.org" + show["image_url"]
+
+        title = f"""{show["title"]} [I][LIGHT]— {show["day"]} @ {formatted_time}[/LIGHT][/I]"""
+
+        watched = is_show_watched(show["title"])
+        if watched:
+            title = f"[COLOR palevioletred]{title}[/COLOR]"
+
+        list_item = xbmcgui.ListItem(label=title)
+        list_item.setArt({"poster": artwork_url})
+        url = get_url(
+            action="subsplease_show", url="https://subsplease.org/shows/" + show["page"]
+        )
         is_folder = True
         xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
@@ -365,6 +410,8 @@ def router(paramstring):
             show_subsplease_all()
         elif params["action"] == "subsplease_airing":
             show_subsplease_airing()
+        elif params["action"] == "subsplease_all_airing":
+            show_subsplease_all_airing()
         elif params["action"] == "subsplease_day":
             show_subsplease_day(params["day"])
         elif params["action"] == "subsplease_show":

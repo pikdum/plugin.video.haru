@@ -268,7 +268,6 @@ def show_subsplease_batch(batch, batch_torrent, artwork_url):
         )
         xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
-    xbmcplugin.addSortMethod(_HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(_HANDLE)
 
 

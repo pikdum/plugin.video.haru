@@ -227,15 +227,14 @@ def show_subsplease_batch(batch, batch_torrent, artwork_url):
     )
 
     for file_name in file_list:
-        display_name = file_name.replace("[SubsPlease] ", "")
-        display_name = re.sub(r"(v\d)? \(.*p\) \[.*\]\..*", "", display_name)
-        title = display_name
+        title = file_name.replace("[SubsPlease] ", "")
+        title = re.sub(r"(v\d)? \(.*p\) \[.*\]\..*", "", title)
 
-        watched = is_episode_watched(display_name)
+        watched = is_episode_watched(title)
         if watched:
             title = f"[COLOR palevioletred]{title}[/COLOR]"
 
-        list_item = xbmcgui.ListItem(label=display_name)
+        list_item = xbmcgui.ListItem(label=title)
         list_item.setInfo(
             "video",
             {
@@ -253,7 +252,7 @@ def show_subsplease_batch(batch, batch_torrent, artwork_url):
                     "RunPlugin(%s)"
                     % get_url(
                         action="toggle_watched",
-                        name=display_name,
+                        name=title,
                         watched=not watched,
                     ),
                 )
@@ -264,7 +263,7 @@ def show_subsplease_batch(batch, batch_torrent, artwork_url):
             action="play_batch",
             magnet=magnet,
             selected_file=file_name,
-            name=display_name,
+            name=title,
         )
         xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 

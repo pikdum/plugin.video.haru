@@ -389,12 +389,12 @@ def play_magnet(magnet, name):
 
 def play_batch(magnet, selected_file, name):
     set_watched(name)
-    resolved_urls = resolveurl.resolve(magnet, resolve_all=True)
-    resolved_url = next(filter(lambda x: x["name"] == selected_file, resolved_urls))[
-        "link"
-    ]
-    if resolveurl.HostedMediaFile(resolved_url):
-        resolved_url = resolveurl.resolve(resolved_url)
+    all_urls = resolveurl.resolve(magnet, return_all=True)
+    log(f"{all_urls=}")
+    selected_url = next(filter(lambda x: x["name"] == selected_file, all_urls))["link"]
+    log(f"{selected_url=}")
+    resolved_url = resolveurl.resolve(selected_url)
+    log(f"{resolved_url=}")
     play_item = xbmcgui.ListItem(path=resolved_url)
     xbmcplugin.setResolvedUrl(_HANDLE, True, listitem=play_item)
 

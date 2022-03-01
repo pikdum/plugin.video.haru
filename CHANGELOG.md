@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.1](https://github.com/pikdum/plugin.video.haru/compare/v1.0.0...v1.0.1) (2022-03-01)
+
+
+### Bug Fixes
+
+* pin resolveurl version ([7ead65f](https://github.com/pikdum/plugin.video.haru/commit/7ead65f82eefdb5776dfa3e4210d8fd7b9667b0a))
+
 ## 1.0.0 (2022-03-01)
 
 

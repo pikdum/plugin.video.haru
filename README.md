@@ -2,6 +2,8 @@
 
 a basic kodi anime addon
 
+[https://pikdum.github.io/repository.pikdum/](https://pikdum.github.io/repository.pikdum/)
+
 ## design goals
 
 * correct
@@ -19,7 +21,6 @@ a basic kodi anime addon
 * airing anime list
 * watched indicators
 * batch support
-  - experimental, not upstreamed yet
 
 ## roadmap
 
@@ -27,4 +28,3 @@ a basic kodi anime addon
 * better anime art
 * mal/kitsu/etc support
 * nyaa search
-* release automation

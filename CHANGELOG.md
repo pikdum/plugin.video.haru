@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.2](https://github.com/pikdum/plugin.video.haru/compare/v1.0.1...v1.0.2) (2022-03-06)
+
+
+### Bug Fixes
+
+* allow logging non strings ([29a98bb](https://github.com/pikdum/plugin.video.haru/commit/29a98bb243ab38c72c8927f6eb6949b7d6f35827))
+
 ### [1.0.1](https://github.com/pikdum/plugin.video.haru/compare/v1.0.0...v1.0.1) (2022-03-01)
 
 

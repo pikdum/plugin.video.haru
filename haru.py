@@ -211,8 +211,9 @@ def subsplease_show(url):
             )
             hq_download = episode_info["downloads"][-1]
             is_folder = False
-            magnet = get_nyaa_magnet(hq_download["torrent"])
-            url = get_url(action="play_magnet", magnet=magnet, name=display_name)
+            url = get_url(
+                action="play_nyaa", url=hq_download["torrent"], name=display_name
+            )
             xbmcplugin.addDirectoryItem(_HANDLE, url, list_item, is_folder)
 
     xbmcplugin.endOfDirectory(_HANDLE)
@@ -272,7 +273,7 @@ def subsplease_batch(batch, batch_torrent, artwork_url):
         )
         is_folder = False
         url = get_url(
-            action="play_batch",
+            action="play_nyaa",
             magnet=magnet,
             selected_file=file_name,
             name=title,
@@ -396,22 +397,21 @@ def get_nyaa_magnet(url):
 
 
 @register
-def play_magnet(magnet, name):
+def play_nyaa(name, selected_file=None, url=None, magnet=None):
     set_watched(name)
-    resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
-    play_item = xbmcgui.ListItem(path=resolved_url)
-    xbmcplugin.setResolvedUrl(_HANDLE, True, listitem=play_item)
-
-
-@register
-def play_batch(magnet, selected_file, name):
-    set_watched(name)
-    all_urls = resolveurl.resolve(magnet, return_all=True)
-    log(f"{all_urls=}")
-    selected_url = next(filter(lambda x: x["name"] == selected_file, all_urls))["link"]
-    log(f"{selected_url=}")
-    resolved_url = resolveurl.resolve(selected_url)
-    log(f"{resolved_url=}")
+    # allow passing magnet instead of url if already handy
+    if url:
+        magnet = get_nyaa_magnet(url)
+    # single video
+    if not selected_file:
+        resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
+    # batch
+    else:
+        all_urls = resolveurl.resolve(magnet, return_all=True)
+        selected_url = next(filter(lambda x: x["name"] == selected_file, all_urls))[
+            "link"
+        ]
+        resolved_url = resolveurl.resolve(selected_url)
     play_item = xbmcgui.ListItem(path=resolved_url)
     xbmcplugin.setResolvedUrl(_HANDLE, True, listitem=play_item)
 

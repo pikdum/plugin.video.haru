@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.2](https://github.com/pikdum/plugin.video.haru/compare/v1.0.1...v1.0.2) (2022-03-06)
+
+
+### Performance Improvements
+
+* only call get_nyaa_magnet before playing ([2b6e007](https://github.com/pikdum/plugin.video.haru/commit/2b6e00733bc27c895b0ae445abe92f2af8606bf3))
+
 ### [1.0.1](https://github.com/pikdum/plugin.video.haru/compare/v1.0.0...v1.0.1) (2022-03-01)
 
 

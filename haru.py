@@ -19,6 +19,7 @@ from resolveurl.lib import kodi
 
 def log(x):
     xbmc.log("[HARU] " + x, xbmc.LOGINFO)
+    xbmc.log("[HARU] " + str(x), xbmc.LOGINFO)
 
 
 def get_url(**kwargs):

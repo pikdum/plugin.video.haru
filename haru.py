@@ -12,17 +12,26 @@ import time
 import pickle
 import os
 import xbmcvfs
+import inspect
 from datetime import datetime
 from bs4 import BeautifulSoup
 from resolveurl.lib import kodi
 
+routes = {}
+
 
 def log(x):
-    xbmc.log("[HARU] " + x, xbmc.LOGINFO)
+    xbmc.log("[HARU] " + str(x), xbmc.LOGINFO)
 
 
 def get_url(**kwargs):
     return "{}?{}".format(_URL, urlencode(kwargs))
+
+
+def register(f):
+    argspec = inspect.getfullargspec(f)
+    routes[f.__name__] = {"args": argspec.args, "function": f}
+    return f
 
 
 _URL = sys.argv[0]
@@ -116,6 +125,7 @@ def main_menu():
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
+@register
 def subsplease_all():
     xbmcplugin.setPluginCategory(_HANDLE, "SubsPlease - All")
 
@@ -140,6 +150,7 @@ def subsplease_all():
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
+@register
 def subsplease_show(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
@@ -207,6 +218,7 @@ def subsplease_show(url):
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
+@register
 def subsplease_batch(batch, batch_torrent, artwork_url):
     xbmcplugin.setPluginCategory(_HANDLE, batch)
 
@@ -270,6 +282,7 @@ def subsplease_batch(batch, batch_torrent, artwork_url):
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
+@register
 def subsplease_airing():
     xbmcplugin.setPluginCategory(_HANDLE, "SubsPlease - Airing")
 
@@ -297,6 +310,7 @@ def subsplease_airing():
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
+@register
 def subsplease_all_airing():
     xbmcplugin.setPluginCategory(_HANDLE, f"SubsPlease - All Airing")
 
@@ -337,6 +351,7 @@ def subsplease_all_airing():
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
+@register
 def subsplease_day(day):
     xbmcplugin.setPluginCategory(_HANDLE, f"SubsPlease - {day}")
 
@@ -380,6 +395,7 @@ def get_nyaa_magnet(url):
     return magnet
 
 
+@register
 def play_magnet(magnet, name):
     set_watched(name)
     resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
@@ -387,6 +403,7 @@ def play_magnet(magnet, name):
     xbmcplugin.setResolvedUrl(_HANDLE, True, listitem=play_item)
 
 
+@register
 def play_batch(magnet, selected_file, name):
     set_watched(name)
     all_urls = resolveurl.resolve(magnet, return_all=True)
@@ -399,33 +416,25 @@ def play_batch(magnet, selected_file, name):
     xbmcplugin.setResolvedUrl(_HANDLE, True, listitem=play_item)
 
 
+@register
+def resolveurl_settings():
+    resolveurl.display_settings()
+
+
+@register
+def toggle_watched(name, watched):
+    set_watched(name, watched)
+    xbmc.executebuiltin("Container.Refresh")
+
+
 def router(paramstring):
     params = dict(parse_qsl(paramstring))
 
     if params:
-        if params["action"] == "play_magnet":
-            play_magnet(params["magnet"], params["name"])
-        elif params["action"] == "play_batch":
-            play_batch(params["magnet"], params["selected_file"], params["name"])
-        elif params["action"] == "subsplease_all":
-            subsplease_all()
-        elif params["action"] == "subsplease_airing":
-            subsplease_airing()
-        elif params["action"] == "subsplease_all_airing":
-            subsplease_all_airing()
-        elif params["action"] == "subsplease_day":
-            subsplease_day(params["day"])
-        elif params["action"] == "subsplease_show":
-            subsplease_show(params["url"])
-        elif params["action"] == "subsplease_batch":
-            subsplease_batch(
-                params["batch"], params["batch_torrent"], params["artwork_url"]
-            )
-        elif params["action"] == "toggle_watched":
-            set_watched(params["name"], watched=params["watched"])
-            xbmc.executebuiltin("Container.Refresh")
-        elif params["action"] == "resolveurl_settings":
-            resolveurl.display_settings()
+        if routes[params["action"]]:
+            route = routes[params["action"]]
+            filtered_args = {k: v for (k, v) in params.items() if k in route["args"]}
+            route["function"](**filtered_args)
         else:
             raise ValueError("Invalid paramstring: {}!".format(paramstring))
     else:

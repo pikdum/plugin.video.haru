@@ -91,7 +91,7 @@ def is_episode_watched(name):
     return False
 
 
-def show_main_menu():
+def main_menu():
     xbmcplugin.setPluginCategory(_HANDLE, "Main Menu")
     xbmcplugin.setContent(_HANDLE, "videos")
 
@@ -116,7 +116,7 @@ def show_main_menu():
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
-def show_subsplease_all():
+def subsplease_all():
     xbmcplugin.setPluginCategory(_HANDLE, "SubsPlease - All")
 
     page = requests.get("https://subsplease.org/shows/")
@@ -140,7 +140,7 @@ def show_subsplease_all():
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
-def show_subsplease_show(url):
+def subsplease_show(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
     sid = soup.find(id="show-release-table")["sid"]
@@ -207,7 +207,7 @@ def show_subsplease_show(url):
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
-def show_subsplease_batch(batch, batch_torrent, artwork_url):
+def subsplease_batch(batch, batch_torrent, artwork_url):
     xbmcplugin.setPluginCategory(_HANDLE, batch)
 
     page = requests.get(batch_torrent.replace("/torrent", ""))
@@ -270,7 +270,7 @@ def show_subsplease_batch(batch, batch_torrent, artwork_url):
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
-def show_subsplease_airing():
+def subsplease_airing():
     xbmcplugin.setPluginCategory(_HANDLE, "SubsPlease - Airing")
 
     list_item = xbmcgui.ListItem(label="All")
@@ -297,7 +297,7 @@ def show_subsplease_airing():
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
-def show_subsplease_all_airing():
+def subsplease_all_airing():
     xbmcplugin.setPluginCategory(_HANDLE, f"SubsPlease - All Airing")
 
     schedule = requests.get(
@@ -337,7 +337,7 @@ def show_subsplease_all_airing():
     xbmcplugin.endOfDirectory(_HANDLE)
 
 
-def show_subsplease_day(day):
+def subsplease_day(day):
     xbmcplugin.setPluginCategory(_HANDLE, f"SubsPlease - {day}")
 
     if day == "Today":
@@ -408,17 +408,17 @@ def router(paramstring):
         elif params["action"] == "play_batch":
             play_batch(params["magnet"], params["selected_file"], params["name"])
         elif params["action"] == "subsplease_all":
-            show_subsplease_all()
+            subsplease_all()
         elif params["action"] == "subsplease_airing":
-            show_subsplease_airing()
+            subsplease_airing()
         elif params["action"] == "subsplease_all_airing":
-            show_subsplease_all_airing()
+            subsplease_all_airing()
         elif params["action"] == "subsplease_day":
-            show_subsplease_day(params["day"])
+            subsplease_day(params["day"])
         elif params["action"] == "subsplease_show":
-            show_subsplease_show(params["url"])
+            subsplease_show(params["url"])
         elif params["action"] == "subsplease_batch":
-            show_subsplease_batch(
+            subsplease_batch(
                 params["batch"], params["batch_torrent"], params["artwork_url"]
             )
         elif params["action"] == "toggle_watched":
@@ -429,7 +429,7 @@ def router(paramstring):
         else:
             raise ValueError("Invalid paramstring: {}!".format(paramstring))
     else:
-        show_main_menu()
+        main_menu()
 
 
 if __name__ == "__main__":

@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.1.1](https://github.com/pikdum/plugin.video.haru/compare/v1.1.0...v1.1.1) (2022-03-24)
+
+
+### Bug Fixes
+
+* change name to lowercase haru ([7dfe3e8](https://github.com/pikdum/plugin.video.haru/commit/7dfe3e834a7885bf32e68e65210144fa95160df1))
+
 ## [1.1.0](https://github.com/pikdum/plugin.video.haru/compare/v1.0.2...v1.1.0) (2022-03-24)
 
 

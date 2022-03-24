@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.1.2](https://github.com/pikdum/plugin.video.haru/compare/v1.1.1...v1.1.2) (2022-03-24)
+
+
+### Bug Fixes
+
+* new fancy logo ([4c645d3](https://github.com/pikdum/plugin.video.haru/commit/4c645d359448db35ec612756c40b51d316d8e132))
+
 ### [1.1.1](https://github.com/pikdum/plugin.video.haru/compare/v1.1.0...v1.1.1) (2022-03-24)
 
 

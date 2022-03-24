@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/pikdum/plugin.video.haru/compare/v1.0.2...v1.1.0) (2022-03-24)
+
+
+### Features
+
+* better icon + fanart ([d58d078](https://github.com/pikdum/plugin.video.haru/commit/d58d0789703bdef8e6761811100faf9e70f0f873))
+
 ### [1.0.2](https://github.com/pikdum/plugin.video.haru/compare/v1.0.1...v1.0.2) (2022-03-06)
 
 

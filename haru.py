@@ -49,6 +49,12 @@ def main_menu():
         HANDLE, get_url(action="subsplease_airing"), list_item, is_folder
     )
 
+    list_item = xbmcgui.ListItem(label="SubsPlease - History")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="subsplease_history"), list_item, is_folder
+    )
+
     list_item = xbmcgui.ListItem(label="ResolveURL Settings")
     is_folder = False
     xbmcplugin.addDirectoryItem(
@@ -86,6 +92,11 @@ def subsplease_all_airing():
 @register
 def subsplease_day(day):
     return subsplease.day(**locals())
+
+
+@register
+def subsplease_history():
+    return subsplease.history()
 
 
 def get_nyaa_magnet(url):
@@ -127,6 +138,13 @@ def resolveurl_settings():
 @register
 def toggle_watched_subsplease(name, watched):
     subsplease.set_watched(name, watched)
+    xbmc.executebuiltin("Container.Refresh")
+
+
+@register
+def clear_history_subsplease():
+    db.database["sp:history"] = {}
+    db.commit()
     xbmc.executebuiltin("Container.Refresh")
 
 

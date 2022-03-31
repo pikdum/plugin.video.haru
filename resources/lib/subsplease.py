@@ -22,6 +22,7 @@ class SubsPlease:
 
         if watched == "False":
             del self.db.database["sp:watch"][show][episode]
+            del self.db.database["sp:history"][name]
             if not self.db.database["sp:watch"][show]:
                 del self.db.database["sp:watch"][show]
             self.db.commit()
@@ -32,6 +33,8 @@ class SubsPlease:
 
         if show not in self.db.database["sp:watch"]:
             self.db.database["sp:watch"][show] = {}
+
+        self.db.database["sp:history"][name] = {"timestamp": datetime.now()}
 
         self.db.database["sp:watch"][show][episode] = True
         self.db.commit()
@@ -304,5 +307,22 @@ class SubsPlease:
             )
             is_folder = True
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+
+        xbmcplugin.endOfDirectory(HANDLE)
+
+    def history(self):
+        xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - History")
+
+        list_item = xbmcgui.ListItem(label="Clear History")
+        xbmcplugin.addDirectoryItem(
+            HANDLE, get_url(action="clear_history_subsplease"), list_item
+        )
+
+        for show, data in reversed(self.db.database["sp:history"].items()):
+            formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
+            label = f"[COLOR palevioletred]{show} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
+            list_item = xbmcgui.ListItem(label=label)
+            is_folder = False
+            xbmcplugin.addDirectoryItem(HANDLE, None, list_item, is_folder)
 
         xbmcplugin.endOfDirectory(HANDLE)

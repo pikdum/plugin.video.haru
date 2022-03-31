@@ -37,6 +37,7 @@ def register(f):
 _URL = sys.argv[0]
 _HANDLE = int(sys.argv[1])
 
+TZ = time.localtime().tm_gmtoff / 60 / 60
 VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
 BASE_DATABASE = {"sp:watch": {}}
 
@@ -161,7 +162,7 @@ def subsplease_show(url):
     xbmcplugin.setPluginCategory(_HANDLE, show_title)
 
     episodes = requests.get(
-        f"https://subsplease.org/api/?f=show&tz=America/Chicago&sid={sid}"
+        f"https://subsplease.org/api/?f=show&tz={TZ}&sid={sid}"
     ).json()
 
     if episodes["batch"]:
@@ -315,9 +316,9 @@ def subsplease_airing():
 def subsplease_all_airing():
     xbmcplugin.setPluginCategory(_HANDLE, f"SubsPlease - All Airing")
 
-    schedule = requests.get(
-        "https://subsplease.org/api/?f=schedule&tz=America/Chicago"
-    ).json()["schedule"]
+    schedule = requests.get(f"https://subsplease.org/api/?f=schedule&tz={TZ}").json()[
+        "schedule"
+    ]
 
     flattened_schedule = []
 
@@ -358,11 +359,11 @@ def subsplease_day(day):
 
     if day == "Today":
         schedule = requests.get(
-            "https://subsplease.org/api/?f=schedule&h=true&tz=America/Chicago"
+            f"https://subsplease.org/api/?f=schedule&h=true&tz={TZ}"
         ).json()["schedule"]
     else:
         schedule = requests.get(
-            "https://subsplease.org/api/?f=schedule&tz=America/Chicago"
+            f"https://subsplease.org/api/?f=schedule&tz={TZ}"
         ).json()["schedule"][day]
 
     for show in schedule:

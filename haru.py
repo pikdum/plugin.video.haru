@@ -95,9 +95,7 @@ def get_nyaa_magnet(url):
     return magnet
 
 
-@register
-def play_nyaa(name, selected_file=None, url=None, magnet=None):
-    subsplease.set_watched(name)
+def play_nyaa(selected_file=None, url=None, magnet=None):
     # allow passing magnet instead of url if already handy
     if url:
         magnet = get_nyaa_magnet(url)
@@ -116,12 +114,18 @@ def play_nyaa(name, selected_file=None, url=None, magnet=None):
 
 
 @register
+def play_subsplease(name, selected_file=None, url=None, magnet=None):
+    subsplease.set_watched(name)
+    return play_nyaa(selected_file, url, magnet)
+
+
+@register
 def resolveurl_settings():
     resolveurl.display_settings()
 
 
 @register
-def toggle_watched(name, watched):
+def toggle_watched_subsplease(name, watched):
     subsplease.set_watched(name, watched)
     xbmc.executebuiltin("Container.Refresh")
 

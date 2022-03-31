@@ -124,7 +124,7 @@ class SubsPlease:
                             "Toggle Watched",
                             "RunPlugin(%s)"
                             % get_url(
-                                action="toggle_watched",
+                                action="toggle_watched_subsplease",
                                 name=display_name,
                                 watched=not watched,
                             ),
@@ -134,7 +134,9 @@ class SubsPlease:
                 hq_download = episode_info["downloads"][-1]
                 is_folder = False
                 url = get_url(
-                    action="play_nyaa", url=hq_download["torrent"], name=display_name
+                    action="play_subsplease",
+                    url=hq_download["torrent"],
+                    name=display_name,
                 )
                 xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
 
@@ -185,7 +187,7 @@ class SubsPlease:
                         "Toggle Watched",
                         "RunPlugin(%s)"
                         % get_url(
-                            action="toggle_watched",
+                            action="toggle_watched_subsplease",
                             name=display_name,
                             watched=not watched,
                         ),
@@ -194,7 +196,7 @@ class SubsPlease:
             )
             is_folder = False
             url = get_url(
-                action="play_nyaa",
+                action="play_subsplease",
                 magnet=magnet,
                 selected_file=file_name,
                 name=display_name,

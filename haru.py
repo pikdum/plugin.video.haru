@@ -75,7 +75,7 @@ def subsplease_show(url):
 
 
 @register
-def subsplease_batch(batch, batch_torrent, artwork_url):
+def subsplease_batch(batch, batch_torrent):
     return subsplease.batch(**locals())
 
 

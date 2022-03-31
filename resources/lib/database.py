@@ -7,7 +7,7 @@ import xbmcvfs
 
 class Database:
     def __init__(self):
-        BASE_DATABASE = {"sp:watch": {}, "sp:history": {}}
+        BASE_DATABASE = {"sp:watch": {}, "sp:history": {}, "sp:art_cache": {}}
 
         addon = xbmcaddon.Addon()
         data_dir = xbmcvfs.translatePath(

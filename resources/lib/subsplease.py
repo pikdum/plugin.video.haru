@@ -39,6 +39,14 @@ class SubsPlease:
         self.db.database["sp:watch"][show][episode] = True
         self.db.commit()
 
+    def get_cached_art(self, show):
+        return self.db.database["sp:art_cache"].get(show, None)
+
+    def set_cached_art(self, show, art):
+        if not self.db.database["sp:art_cache"].get(show, None):
+            self.db.database["sp:art_cache"][show] = art
+            self.db.commit()
+
     def is_show_watched(self, name):
         return name in self.db.database["sp:watch"]
 
@@ -68,6 +76,10 @@ class SubsPlease:
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
 
             list_item = xbmcgui.ListItem(label=title)
+            artwork_url = self.get_cached_art(title)
+            if artwork_url:
+                list_item.setArt({"poster": artwork_url})
+
             is_folder = True
             url = get_url(
                 action="subsplease_show", url="https://subsplease.org" + link["href"]
@@ -82,6 +94,7 @@ class SubsPlease:
         sid = soup.find(id="show-release-table")["sid"]
         show_title = soup.find("h1", class_="entry-title").text
         artwork_url = "https://subsplease.org" + soup.find("img")["src"]
+        self.set_cached_art(show_title, artwork_url)
 
         xbmcplugin.setPluginCategory(HANDLE, show_title)
 
@@ -98,7 +111,6 @@ class SubsPlease:
                     action="subsplease_batch",
                     batch=batch,
                     batch_torrent=hq_download["torrent"],
-                    artwork_url=artwork_url,
                 )
                 list_item.setArt({"poster": artwork_url})
                 xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
@@ -145,12 +157,16 @@ class SubsPlease:
 
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def batch(self, batch, batch_torrent, artwork_url):
+    def batch(self, batch, batch_torrent):
         xbmcplugin.setPluginCategory(HANDLE, batch)
 
         page = requests.get(batch_torrent.replace("/torrent", ""))
         soup = BeautifulSoup(page.text, "html.parser")
         magnet = soup.find("a", class_="card-footer-item").get("href")
+
+        split = batch.split(" - ")
+        show = " - ".join(split[:-1])
+        artwork_url = self.get_cached_art(show)
 
         while soup.i:
             soup.i.decompose()
@@ -183,7 +199,8 @@ class SubsPlease:
                 },
             )
             list_item.setProperty("IsPlayable", "true")
-            list_item.setArt({"poster": artwork_url})
+            if artwork_url:
+                list_item.setArt({"poster": artwork_url})
             list_item.addContextMenuItems(
                 [
                     (
@@ -256,6 +273,7 @@ class SubsPlease:
                 *(time.strptime(show["time"], "%H:%M")[0:6])
             ).strftime("%I:%M %p")
             artwork_url = "https://subsplease.org" + show["image_url"]
+            self.set_cached_art(show["title"], artwork_url)
 
             title = f"""{show["title"]} [I][LIGHT]— {show["day"]} @ {formatted_time}[/LIGHT][/I]"""
 
@@ -292,6 +310,7 @@ class SubsPlease:
                 *(time.strptime(show["time"], "%H:%M")[0:6])
             ).strftime("%I:%M %p")
             artwork_url = "https://subsplease.org" + show["image_url"]
+            self.set_cached_art(show["title"], artwork_url)
 
             title = f"""[B]{formatted_time}[/B] - {show["title"]}"""
 
@@ -318,11 +337,16 @@ class SubsPlease:
             HANDLE, get_url(action="clear_history_subsplease"), list_item
         )
 
-        for show, data in reversed(self.db.database["sp:history"].items()):
+        for title, data in reversed(self.db.database["sp:history"].items()):
+            split = title.split(" - ")
+            show = " - ".join(split[:-1])
+
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
-            label = f"[COLOR palevioletred]{show} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
+            label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
+            artwork_url = self.get_cached_art(show)
             list_item = xbmcgui.ListItem(label=label)
-            is_folder = False
-            xbmcplugin.addDirectoryItem(HANDLE, None, list_item, is_folder)
+            if artwork_url:
+                list_item.setArt({"poster": artwork_url})
+            xbmcplugin.addDirectoryItem(HANDLE, None, list_item)
 
         xbmcplugin.endOfDirectory(HANDLE)

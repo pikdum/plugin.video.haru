@@ -16,6 +16,7 @@ import inspect
 from datetime import datetime
 from bs4 import BeautifulSoup
 from resolveurl.lib import kodi
+from resources.lib.database import Database
 
 routes = {}
 
@@ -39,54 +40,34 @@ _HANDLE = int(sys.argv[1])
 
 TZ = time.localtime().tm_gmtoff / 60 / 60
 VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
-BASE_DATABASE = {"sp:watch": {}}
 
-addon = xbmcaddon.Addon()
-data_dir = xbmcvfs.translatePath(
-    os.path.join("special://profile/addon_data/", addon.getAddonInfo("id"))
-)
-database_path = os.path.join(data_dir, "database.pickle")
-xbmcvfs.mkdirs(data_dir)
+db = Database()
 
 
-def commit():
-    with open(database_path, "wb") as f:
-        pickle.dump(database, f)
-
-
-if os.path.exists(database_path):
-    with open(database_path, "rb") as f:
-        database = pickle.load(f)
-else:
-    database = {}
-
-database = {**BASE_DATABASE, **database}
-
-# TODO: clean this up
 def set_watched(name, watched=True):
     split = name.split(" - ")
     episode = split[-1]
     show = " - ".join(split[:-1])
 
     if watched == "False":
-        del database["sp:watch"][show][episode]
-        if not database["sp:watch"][show]:
-            del database["sp:watch"][show]
-        commit()
+        del db.database["sp:watch"][show][episode]
+        if not db.database["sp:watch"][show]:
+            del db.database["sp:watch"][show]
+        db.commit()
         return
 
-    if "sp:watch" not in database:
-        database["sp:watch"] = {}
+    if "sp:watch" not in db.database:
+        db.database["sp:watch"] = {}
 
-    if show not in database["sp:watch"]:
-        database["sp:watch"][show] = {}
+    if show not in db.database["sp:watch"]:
+        db.database["sp:watch"][show] = {}
 
-    database["sp:watch"][show][episode] = True
-    commit()
+    db.database["sp:watch"][show][episode] = True
+    db.commit()
 
 
 def is_show_watched(name):
-    return name in database["sp:watch"]
+    return name in db.database["sp:watch"]
 
 
 def is_episode_watched(name):
@@ -94,9 +75,9 @@ def is_episode_watched(name):
     episode = split[-1]
     show = " - ".join(split[:-1])
 
-    if show not in database["sp:watch"]:
+    if show not in db.database["sp:watch"]:
         return False
-    if episode in database["sp:watch"][show]:
+    if episode in db.database["sp:watch"][show]:
         return True
     return False
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import time
+import xbmc
 from resolveurl.lib import kodi
 from urllib.parse import urlencode
 

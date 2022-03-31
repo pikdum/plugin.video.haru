@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.1.3](https://github.com/pikdum/plugin.video.haru/compare/v1.1.2...v1.1.3) (2022-03-31)
+
+
+### Bug Fixes
+
+* use system time zone instead of hardcoding it ([49259d2](https://github.com/pikdum/plugin.video.haru/commit/49259d25197420a91d1c7d623a1c73c57c535151))
+
 ### [1.1.2](https://github.com/pikdum/plugin.video.haru/compare/v1.1.1...v1.1.2) (2022-03-24)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/pikdum/plugin.video.haru/compare/v1.1.3...v1.2.0) (2022-03-31)
+
+
+### Features
+
+* add subsplease watch history ([dd6ab81](https://github.com/pikdum/plugin.video.haru/commit/dd6ab81953155d465d28379ac4dd55a8743ee1b1))
+
 ### [1.1.3](https://github.com/pikdum/plugin.video.haru/compare/v1.1.2...v1.1.3) (2022-03-31)
 
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/pikdum/plugin.video.haru/compare/v1.2.0...v1.3.0) (2022-03-31)
+
+
+### Features
+
+* cache art, show cached art in more views ([545887b](https://github.com/pikdum/plugin.video.haru/commit/545887b71a579a67bc38b08f24e139f67041dc37))
+
+
+### Bug Fixes
+
+* fix logging ([d2184d1](https://github.com/pikdum/plugin.video.haru/commit/d2184d15bcefc69ed7e386ae618f676e4745acf2))
+
 ## [1.2.0](https://github.com/pikdum/plugin.video.haru/compare/v1.1.3...v1.2.0) (2022-03-31)
 
 

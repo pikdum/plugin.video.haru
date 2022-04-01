@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.3.1](https://github.com/pikdum/plugin.video.haru/compare/v1.3.0...v1.3.1) (2022-04-01)
+
+
+### Bug Fixes
+
+* check if exists before deleting key ([9085e3c](https://github.com/pikdum/plugin.video.haru/commit/9085e3cc706d74e969a9b0bb8154c0a060b7992e))
+
 ## [1.3.0](https://github.com/pikdum/plugin.video.haru/compare/v1.2.0...v1.3.0) (2022-03-31)
 
 

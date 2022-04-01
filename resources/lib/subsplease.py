@@ -22,7 +22,8 @@ class SubsPlease:
 
         if watched == "False":
             del self.db.database["sp:watch"][show][episode]
-            del self.db.database["sp:history"][name]
+            if self.db.database["sp:history"].get(name, None):
+                del self.db.database["sp:history"][name]
             if not self.db.database["sp:watch"][show]:
                 del self.db.database["sp:watch"][show]
             self.db.commit()

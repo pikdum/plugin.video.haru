@@ -12,8 +12,8 @@ a basic kodi anime addon
 
 ## requirements
 
-* Kodi 19+
-* ResolveURL
+* kodi 19+
+* debrid account
 
 ## features
 
@@ -21,10 +21,10 @@ a basic kodi anime addon
 * airing anime list
 * watched indicators
 * batch support
+* watch history
 
 ## roadmap
 
-* better logo
+* nyaa search
 * better anime art
 * mal/kitsu/etc support
-* nyaa search

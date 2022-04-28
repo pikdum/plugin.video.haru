@@ -18,6 +18,7 @@ from bs4 import BeautifulSoup
 from resolveurl.lib import kodi
 from resources.lib.database import Database
 from resources.lib.subsplease import SubsPlease
+from resources.lib.nyaa import Nyaa
 from resources.lib.util import *
 
 routes = {}
@@ -31,6 +32,7 @@ def register(f):
 
 db = Database()
 subsplease = SubsPlease(db)
+nyaa = Nyaa(db)
 
 
 def main_menu():
@@ -53,6 +55,12 @@ def main_menu():
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="subsplease_history"), list_item, is_folder
+    )
+
+    list_item = xbmcgui.ListItem(label="Torrents - Search")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="nyaa_search"), list_item, is_folder
     )
 
     list_item = xbmcgui.ListItem(label="ResolveURL Settings")
@@ -106,7 +114,7 @@ def get_nyaa_magnet(url):
     return magnet
 
 
-def play_nyaa(selected_file=None, url=None, magnet=None):
+def _play_nyaa(selected_file=None, url=None, magnet=None):
     # allow passing magnet instead of url if already handy
     if url:
         magnet = get_nyaa_magnet(url)
@@ -127,7 +135,13 @@ def play_nyaa(selected_file=None, url=None, magnet=None):
 @register
 def play_subsplease(name, selected_file=None, url=None, magnet=None):
     subsplease.set_watched(name)
-    return play_nyaa(selected_file, url, magnet)
+    return _play_nyaa(selected_file, url, magnet)
+
+
+@register
+def play_nyaa(name, selected_file, magnet):
+    nyaa.set_watched(torrent_name=name, file_name=selected_file)
+    return _play_nyaa(selected_file=selected_file, magnet=magnet)
 
 
 @register
@@ -152,6 +166,22 @@ def clear_history_subsplease():
         db.database["sp:history"] = {}
         db.commit()
         xbmc.executebuiltin("Container.Refresh")
+
+
+@register
+def nyaa_search():
+    nyaa.search()
+
+
+@register
+def nyaa_page(url):
+    nyaa.page(url)
+
+
+@register
+def toggle_watched_nyaa(torrent_name, file_name, watched):
+    nyaa.set_watched(torrent_name, file_name, watched)
+    xbmc.executebuiltin("Container.Refresh")
 
 
 def router(paramstring):

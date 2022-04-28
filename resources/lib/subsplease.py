@@ -345,9 +345,13 @@ class SubsPlease:
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
             artwork_url = self.get_cached_art(show)
+            url = get_url(
+                action="subsplease_show",
+                url=f"https://subsplease.org/shows/{show}/",
+            )
             list_item = xbmcgui.ListItem(label=label)
             if artwork_url:
                 list_item.setArt({"poster": artwork_url})
-            xbmcplugin.addDirectoryItem(HANDLE, None, list_item)
+            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
 
         xbmcplugin.endOfDirectory(HANDLE)

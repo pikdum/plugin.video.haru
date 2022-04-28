@@ -143,9 +143,15 @@ def toggle_watched_subsplease(name, watched):
 
 @register
 def clear_history_subsplease():
-    db.database["sp:history"] = {}
-    db.commit()
-    xbmc.executebuiltin("Container.Refresh")
+    dialog = xbmcgui.Dialog()
+    confirmed = dialog.yesno(
+        "Clear History",
+        "Do you want to clear this history list?\n\nWatched statuses will be preserved.",
+    )
+    if confirmed:
+        db.database["sp:history"] = {}
+        db.commit()
+        xbmc.executebuiltin("Container.Refresh")
 
 
 def router(paramstring):

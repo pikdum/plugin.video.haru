@@ -17,4 +17,3 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "chore: update addon news"
-          token: ${{ secrets.PAT }}

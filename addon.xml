@@ -20,6 +20,6 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>Hello World!</news>
+    <news/>
   </extension>
 </addon>

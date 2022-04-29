@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.4.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.4.1" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -20,19 +20,75 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>## [1.4.0](https://github.com/pikdum/plugin.video.haru/compare/v1.3.1...v1.4.0) (2022-04-29)
+    <news>1.4.1 (2022-04-29)
 
+Bug Fixes
 
-### Features
+-   remove news formatting; simplify logic (c3a6569)
 
-* add confirmation dialog for clear history ([260912f](https://github.com/pikdum/plugin.video.haru/commit/260912f0b1d0eeec0d7811f85a98f5cac7685203))
-* add nyaa torrent history ([6ea02a3](https://github.com/pikdum/plugin.video.haru/commit/6ea02a3b7cef69b9d0e9891ac32212cff771c3df))
-* add nyaa torrent search ([d0e435f](https://github.com/pikdum/plugin.video.haru/commit/d0e435f8d4cbbeba695a5f6599605c9310cc7271))
-* link to shows from history page ([770cb57](https://github.com/pikdum/plugin.video.haru/commit/770cb5742a34a4a2edaf3207ca0b87e60fa9a660))
+1.4.0 (2022-04-29)
 
+Features
 
-### Bug Fixes
+-   add confirmation dialog for clear history (260912f)
+-   add nyaa torrent history (6ea02a3)
+-   add nyaa torrent search (d0e435f)
+-   link to shows from history page (770cb57)
 
-* better page name ([932b4ce](https://github.com/pikdum/plugin.video.haru/commit/932b4ce2d4d778938fa710ab6d7b82896d32510b))</news>
+Bug Fixes
+
+-   better page name (932b4ce)
+
+1.3.1 (2022-04-01)
+
+Bug Fixes
+
+-   check if exists before deleting key (9085e3c)
+
+1.3.0 (2022-03-31)
+
+Features
+
+-   cache art, show cached art in more views (545887b)
+
+Bug Fixes
+
+-   fix logging (d2184d1)
+
+1.2.0 (2022-03-31)
+
+Features
+
+-   add subsplease watch history (dd6ab81)
+
+1.1.3 (2022-03-31)
+
+Bug Fixes
+
+-   use system time zone instead of hardcoding it (49259d2)
+
+1.1.2 (2022-03-24)
+
+Bug Fixes
+
+-   new fancy logo (4c645d3)
+
+1.1.1 (2022-03-24)
+
+Bug Fixes
+
+-   change name to lowercase haru (7dfe3e8)
+
+1.1.0 (2022-03-24)
+
+Features
+
+-   better icon + fanart (d58d078)
+
+1.0.2 (2022-03-06)
+
+Performance Improvements
+
+-   only call get_nyaa_magnet before play...</news>
   </extension>
 </addon>

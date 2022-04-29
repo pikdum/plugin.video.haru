@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.4.2](https://github.com/pikdum/plugin.video.haru/compare/v1.4.1...v1.4.2) (2022-04-29)
+
+
+### Bug Fixes
+
+* file playback in torrent subfolder ([b3d1926](https://github.com/pikdum/plugin.video.haru/commit/b3d19265e3d4af227244b5a266a1766c9bc2ecf4))
+
 ### [1.4.1](https://github.com/pikdum/plugin.video.haru/compare/v1.4.0...v1.4.1) (2022-04-29)
 
 

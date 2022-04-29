@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.4.1](https://github.com/pikdum/plugin.video.haru/compare/v1.4.0...v1.4.1) (2022-04-29)
+
+
+### Bug Fixes
+
+* remove news formatting ([c0af475](https://github.com/pikdum/plugin.video.haru/commit/c0af475b24aaf702332d6dece6f939b73eecc203))
+
 ## [1.4.0](https://github.com/pikdum/plugin.video.haru/compare/v1.3.1...v1.4.0) (2022-04-29)
 
 

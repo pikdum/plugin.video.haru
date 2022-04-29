@@ -10,7 +10,9 @@ jobs:
     steps:
       - run: apt-get update && apt-get install -y git xmlstarlet
       - uses: actions/checkout@v3
+      - run: git config --global --add safe.directory /__w/plugin.video.haru/plugin.video.haru
       - run: ./update-news.sh
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "chore: update addon news"
+          token: ${{ secrets.PAT }}

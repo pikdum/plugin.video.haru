@@ -130,7 +130,7 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
     # batch
     else:
         all_urls = resolveurl.resolve(magnet, return_all=True)
-        selected_url = next(filter(lambda x: x["name"] == selected_file, all_urls))[
+        selected_url = next(filter(lambda x: selected_file in x["name"], all_urls))[
             "link"
         ]
         resolved_url = resolveurl.resolve(selected_url)

@@ -12,3 +12,4 @@ jobs:
           release-type: simple
           package-name: haru
           extra-files: addon.xml
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}

@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0](https://github.com/pikdum/plugin.video.haru/compare/v1.3.1...v1.4.0) (2022-04-29)
+
+
+### Features
+
+* add confirmation dialog for clear history ([260912f](https://github.com/pikdum/plugin.video.haru/commit/260912f0b1d0eeec0d7811f85a98f5cac7685203))
+* add nyaa torrent history ([6ea02a3](https://github.com/pikdum/plugin.video.haru/commit/6ea02a3b7cef69b9d0e9891ac32212cff771c3df))
+* add nyaa torrent search ([d0e435f](https://github.com/pikdum/plugin.video.haru/commit/d0e435f8d4cbbeba695a5f6599605c9310cc7271))
+* link to shows from history page ([770cb57](https://github.com/pikdum/plugin.video.haru/commit/770cb5742a34a4a2edaf3207ca0b87e60fa9a660))
+
+
+### Bug Fixes
+
+* better page name ([932b4ce](https://github.com/pikdum/plugin.video.haru/commit/932b4ce2d4d778938fa710ab6d7b82896d32510b))
+
 ### [1.3.1](https://github.com/pikdum/plugin.video.haru/compare/v1.3.0...v1.3.1) (2022-04-01)
 
 

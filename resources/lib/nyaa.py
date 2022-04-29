@@ -83,7 +83,7 @@ class Nyaa:
                 is_folder,
             )
 
-        xbmcplugin.setPluginCategory(HANDLE, f"Search Nyaa - {text}")
+        xbmcplugin.setPluginCategory(HANDLE, f"Torrents - {text}")
         xbmcplugin.endOfDirectory(HANDLE)
 
     def page(self, url):

@@ -63,6 +63,12 @@ def main_menu():
         HANDLE, get_url(action="nyaa_search"), list_item, is_folder
     )
 
+    list_item = xbmcgui.ListItem(label="Torrents - History")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="nyaa_history"), list_item, is_folder
+    )
+
     list_item = xbmcgui.ListItem(label="ResolveURL Settings")
     is_folder = False
     xbmcplugin.addDirectoryItem(
@@ -139,8 +145,8 @@ def play_subsplease(name, selected_file=None, url=None, magnet=None):
 
 
 @register
-def play_nyaa(name, selected_file, magnet):
-    nyaa.set_watched(torrent_name=name, file_name=selected_file)
+def play_nyaa(name, selected_file, nyaa_url, magnet):
+    nyaa.set_watched(torrent_name=name, file_name=selected_file, nyaa_url=nyaa_url)
     return _play_nyaa(selected_file=selected_file, magnet=magnet)
 
 
@@ -179,9 +185,27 @@ def nyaa_page(url):
 
 
 @register
-def toggle_watched_nyaa(torrent_name, file_name, watched):
-    nyaa.set_watched(torrent_name, file_name, watched)
+def nyaa_history():
+    nyaa.history()
+
+
+@register
+def toggle_watched_nyaa(torrent_name, file_name, nyaa_url, watched):
+    nyaa.set_watched(torrent_name, file_name, nyaa_url, watched)
     xbmc.executebuiltin("Container.Refresh")
+
+
+@register
+def clear_history_nyaa():
+    dialog = xbmcgui.Dialog()
+    confirmed = dialog.yesno(
+        "Clear History",
+        "Do you want to clear this history list?\n\nWatched statuses will be preserved.",
+    )
+    if confirmed:
+        db.database["nt:history"] = {}
+        db.commit()
+        xbmc.executebuiltin("Container.Refresh")
 
 
 def router(paramstring):

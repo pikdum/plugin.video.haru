@@ -13,7 +13,7 @@ class Nyaa:
     def __init__(self, db):
         self.db = db
 
-    def set_watched(self, torrent_name, file_name, watched=True):
+    def set_watched(self, torrent_name, file_name, nyaa_url, watched=True):
 
         if watched == "False":
             del self.db.database["nt:watch"][torrent_name][file_name]
@@ -33,6 +33,7 @@ class Nyaa:
         self.db.database["nt:history"][file_name] = {
             "timestamp": datetime.now(),
             "torrent_name": torrent_name,
+            "nyaa_url": nyaa_url,
         }
 
         self.db.database["nt:watch"][torrent_name][file_name] = True
@@ -86,9 +87,10 @@ class Nyaa:
         xbmcplugin.endOfDirectory(HANDLE)
 
     def page(self, url):
+        nyaa_url = url if url.startswith("https://") else f"https://nyaa.si{url}"
         xbmcplugin.setPluginCategory(HANDLE, "Search Results")
 
-        page = requests.get(f"https://nyaa.si{url}")
+        page = requests.get(nyaa_url)
         soup = BeautifulSoup(page.text, "html.parser")
         magnet = soup.find("a", class_="card-footer-item").get("href")
         torrent_name = soup.find("h3", class_="panel-title").text.strip()
@@ -130,6 +132,7 @@ class Nyaa:
                             action="toggle_watched_nyaa",
                             torrent_name=torrent_name,
                             file_name=file_name,
+                            nyaa_url=nyaa_url,
                             watched=not watched,
                         ),
                     )
@@ -141,7 +144,28 @@ class Nyaa:
                 magnet=magnet,
                 selected_file=file_name,
                 name=torrent_name,
+                nyaa_url=nyaa_url,
             )
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+
+        xbmcplugin.endOfDirectory(HANDLE)
+
+    def history(self):
+        xbmcplugin.setPluginCategory(HANDLE, f"Torrents - History")
+
+        list_item = xbmcgui.ListItem(label="Clear History")
+        xbmcplugin.addDirectoryItem(
+            HANDLE, get_url(action="clear_history_nyaa"), list_item
+        )
+
+        for title, data in reversed(self.db.database["nt:history"].items()):
+            formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
+            label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
+            url = get_url(
+                action="nyaa_page",
+                url=data.get("nyaa_url", False),
+            )
+            list_item = xbmcgui.ListItem(label=label)
+            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
 
         xbmcplugin.endOfDirectory(HANDLE)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.4.1" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.4.2" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -20,7 +20,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.4.1 (2022-04-29)
+    <news>1.4.2 (2022-04-29)
+
+Bug Fixes
+
+-   file playback in torrent subfolder (b3d1926)
+
+1.4.1 (2022-04-29)
 
 Bug Fixes
 
@@ -85,10 +91,6 @@ Features
 
 -   better icon + fanart (d58d078)
 
-1.0.2 (2022-03-06)
-
-Performance Improvements
-
--   only call get_nyaa_magnet before play...</news>
+1.0.2 ...</news>
   </extension>
 </addon>

@@ -6,25 +6,25 @@ a basic kodi anime addon
 
 ## design goals
 
-* correct
-* fast
-* simple
+- correct
+- fast
+- simple
 
 ## requirements
 
-* kodi 19+
-* debrid account
+- kodi 19+
+- debrid account
 
 ## features
 
-* anime list
-* airing anime list
-* watched indicators
-* batch support
-* watch history
+- anime list
+- airing anime list
+- watched indicators
+- batch support
+- watch history
+- nyaa search
 
 ## roadmap
 
-* nyaa search
-* better anime art
-* mal/kitsu/etc support
+- better anime art
+- mal/kitsu/etc support

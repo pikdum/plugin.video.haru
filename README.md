@@ -1,4 +1,8 @@
+![Version](https://img.shields.io/github/v/tag/pikdum/plugin.video.haru?label=version&logo=github)
+![License](https://img.shields.io/github/license/pikdum/plugin.video.haru)
+  
 # plugin.video.haru
+<img src="icon.png" width="270" align="right" alt="haru">
 
 a basic kodi anime addon
 

@@ -32,6 +32,11 @@ class Database:
 
         self.database = database
         self.database_path = database_path
+        self.addon_xml_path = xbmcvfs.translatePath(
+            os.path.join(
+                "special://home/addons/", addon.getAddonInfo("id"), "addon.xml"
+            )
+        )
 
     def commit(self):
         with open(self.database_path, "wb") as f:

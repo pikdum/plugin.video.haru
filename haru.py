@@ -75,6 +75,12 @@ def main_menu():
         HANDLE, get_url(action="resolveurl_settings"), list_item, is_folder
     )
 
+    list_item = xbmcgui.ListItem(label="Set Language Invoker")
+    is_folder = False
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="toggle_language_invoker"), list_item, is_folder
+    )
+
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -206,6 +212,36 @@ def clear_history_nyaa():
         db.database["nt:history"] = {}
         db.commit()
         xbmc.executebuiltin("Container.Refresh")
+
+
+@register
+def toggle_language_invoker():
+    import xml.etree.ElementTree as ET
+
+    addon_xml = db.addon_xml_path
+    tree = ET.parse(addon_xml)
+    root = tree.getroot()
+
+    current_value = ""
+    for item in root.iter("reuselanguageinvoker"):
+        current_value = item.text
+        break
+
+    new_value = "false" if current_value == "true" else "true"
+
+    dialog = xbmcgui.Dialog()
+    confirmed = dialog.yesno(
+        "Toggle Reuse Language Invoker",
+        f"This is currently '{current_value}', do you want to change to '{new_value}'?\n\nThis should be set to 'true' for performance, unless you run into issues.",
+    )
+    if confirmed:
+        for item in root.iter("reuselanguageinvoker"):
+            item.text = new_value
+            tree.write(addon_xml)
+            break
+
+        dialog.ok("Success!", "Your profile will now be reloaded.")
+        xbmc.executebuiltin("LoadProfile(%s)" % xbmc.getInfoLabel("system.profilename"))
 
 
 def router(paramstring):

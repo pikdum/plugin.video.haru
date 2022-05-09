@@ -12,6 +12,7 @@
     <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
+    <reuselanguageinvoker>true</reuselanguageinvoker>
     <summary lang="en">haru</summary>
     <description lang="en">a simple anime addon</description>
     <license>GPL-2.0-only</license>

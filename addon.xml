@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.4.2 (2022-04-29)
+    <news>1.5.0 (2022-05-09)
+
+Features
+
+-   allow toggling reuselanguageinvoker (0adecf0)
+
+1.4.2 (2022-04-29)
 
 Bug Fixes
 
@@ -84,14 +90,6 @@ Bug Fixes
 
 Bug Fixes
 
--   change name to lowercase haru (7dfe3e8)
-
-1.1.0 (2022-03-24)
-
-Features
-
--   better icon + fanart (d58d078)
-
-1.0.2 ...</news>
+-   change name to lowercase haru (7...</news>
   </extension>
 </addon>

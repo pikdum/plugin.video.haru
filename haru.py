@@ -19,6 +19,7 @@ from resolveurl.lib import kodi
 from resources.lib.database import Database
 from resources.lib.subsplease import SubsPlease
 from resources.lib.nyaa import Nyaa
+from resources.lib.animexin import AnimeXin
 from resources.lib.util import *
 
 routes = {}
@@ -33,6 +34,7 @@ def register(f):
 db = Database()
 subsplease = SubsPlease(db)
 nyaa = Nyaa(db)
+animexin = AnimeXin()
 
 
 def main_menu():
@@ -67,6 +69,12 @@ def main_menu():
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="nyaa_history"), list_item, is_folder
+    )
+
+    list_item = xbmcgui.ListItem(label="AnimeXin - All")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="animexin_all"), list_item, is_folder
     )
 
     list_item = xbmcgui.ListItem(label="ResolveURL Settings")
@@ -154,6 +162,24 @@ def play_subsplease(name, selected_file=None, url=None, magnet=None):
 def play_nyaa(name, selected_file, nyaa_url, magnet):
     nyaa.set_watched(torrent_name=name, file_name=selected_file, nyaa_url=nyaa_url)
     return _play_nyaa(selected_file=selected_file, magnet=magnet)
+
+
+@register
+def animexin_all():
+    return animexin.all()
+
+
+@register
+def animexin_show(url):
+    return animexin.show(**locals())
+
+
+@register
+def play_animexin(url):
+    video_url = animexin.get_video_url(url)
+    resolved_url = resolveurl.resolve(video_url)
+    play_item = xbmcgui.ListItem(path=resolved_url)
+    xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 
 
 @register

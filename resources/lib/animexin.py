@@ -52,7 +52,16 @@ class AnimeXin:
 
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def get_video_url(self, url):
-        page = requests.get(url)
+    def get_video_url(self, episode_url):
+        page = requests.get(episode_url)
         soup = BeautifulSoup(page.text, "html.parser")
         return soup.find("iframe")["src"]
+
+    def get_subtitle_url(self, video_url):
+        video_id = video_url.split("?")[0].split("/")[-1]
+        log(video_id)
+        metadata = requests.get(
+            f"https://www.dailymotion.com/player/metadata/video/{video_id}"
+        ).json()
+        subtitle_url = metadata["subtitles"]["data"]["en"]["urls"][0]
+        return subtitle_url

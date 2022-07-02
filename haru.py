@@ -177,8 +177,10 @@ def animexin_show(url):
 @register
 def play_animexin(url):
     video_url = animexin.get_video_url(url)
+    subtitle_url = animexin.get_subtitle_url(video_url)
     resolved_url = resolveurl.resolve(video_url)
     play_item = xbmcgui.ListItem(path=resolved_url)
+    play_item.setSubtitles([subtitle_url])
     xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 
 

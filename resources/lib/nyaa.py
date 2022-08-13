@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import time
 from datetime import datetime
 from urllib.parse import quote
 
@@ -69,10 +70,19 @@ class Nyaa:
             )
             torrent_name = link.string
 
+            size = columns[3].text
+            date = columns[4].text
+            formatted_date = datetime(
+                *(time.strptime(date, "%Y-%m-%d %H:%M")[0:6])
+            ).strftime("%Y-%m-%d")
+
+            seeds = columns[5].text
+
             title = torrent_name
             watched = self.is_torrent_watched(torrent_name)
             if watched:
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
+            title = f"{title}[CR][I][LIGHT][COLOR lightgray]{formatted_date}, {size}, {seeds} seeds[/COLOR][/LIGHT][/I]"
 
             list_item = xbmcgui.ListItem(label=title)
             is_folder = True

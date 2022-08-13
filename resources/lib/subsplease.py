@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-import xbmcplugin
+import re
+import sys
+import time
+from datetime import datetime
+
 import requests
 import xbmcgui
-import time
-import sys
-import re
+import xbmcplugin
 from bs4 import BeautifulSoup
-from datetime import datetime
 from resources.lib.util import *
 
 

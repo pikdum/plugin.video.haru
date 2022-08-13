@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+from datetime import datetime
+from urllib.parse import quote
+
+import requests
 import xbmc
 import xbmcgui
 import xbmcplugin
-import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
-from urllib.parse import quote
 from resources.lib.util import *
 
 

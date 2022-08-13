@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
+import inspect
+import os
+import pickle
+import re
 import sys
+import time
+from datetime import datetime
 from urllib.parse import parse_qsl
+
+import requests
+import resolveurl
 import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
-import requests
-import resolveurl
-import re
-import time
-import pickle
-import os
 import xbmcvfs
-import inspect
-from datetime import datetime
 from bs4 import BeautifulSoup
 from resolveurl.lib import kodi
+
 from resources.lib.database import Database
-from resources.lib.subsplease import SubsPlease
 from resources.lib.nyaa import Nyaa
+from resources.lib.subsplease import SubsPlease
 from resources.lib.util import *
 
 routes = {}

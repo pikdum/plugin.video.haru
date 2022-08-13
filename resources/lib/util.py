@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import sys
 import time
+from urllib.parse import urlencode
+
 import xbmc
 from resolveurl.lib import kodi
-from urllib.parse import urlencode
 
 _URL = sys.argv[0]
 HANDLE = int(sys.argv[1])

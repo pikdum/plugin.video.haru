@@ -21,7 +21,15 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.5.0 (2022-05-09)
+    <news>1.6.0 (2022-08-13)
+
+Features
+
+-   nyaa: show torrent description (44d3037)
+-   show more torrent details (928ab7f)
+-   subsplease: show anime description (ccd50a5)
+
+1.5.0 (2022-05-09)
 
 Features
 
@@ -78,18 +86,6 @@ Features
 
 Bug Fixes
 
--   use system time zone instead of hardcoding it (49259d2)
-
-1.1.2 (2022-03-24)
-
-Bug Fixes
-
--   new fancy logo (4c645d3)
-
-1.1.1 (2022-03-24)
-
-Bug Fixes
-
--   change name to lowercase haru (7...</news>
+-   use system time zone...</news>
   </extension>
 </addon>

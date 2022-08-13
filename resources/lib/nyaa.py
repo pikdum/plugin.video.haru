@@ -98,12 +98,14 @@ class Nyaa:
 
     def page(self, url):
         nyaa_url = url if url.startswith("https://") else f"https://nyaa.si{url}"
-        xbmcplugin.setPluginCategory(HANDLE, "Search Results")
 
         page = requests.get(nyaa_url)
         soup = BeautifulSoup(page.text, "html.parser")
         magnet = soup.find("a", class_="card-footer-item").get("href")
         torrent_name = soup.find("h3", class_="panel-title").text.strip()
+        description = soup.find(id="torrent-description").text.strip()
+
+        xbmcplugin.setPluginCategory(HANDLE, torrent_name)
 
         while soup.i:
             soup.i.decompose()
@@ -127,10 +129,7 @@ class Nyaa:
             list_item = xbmcgui.ListItem(label=title)
             list_item.setInfo(
                 "video",
-                {
-                    "title": title,
-                    "mediatype": "video",
-                },
+                {"title": title, "mediatype": "video", "plot": description},
             )
             list_item.setProperty("IsPlayable", "true")
             list_item.addContextMenuItems(

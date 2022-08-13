@@ -1,22 +1,14 @@
 #!/usr/bin/env python3
 import inspect
-import os
-import pickle
-import re
 import sys
-import time
-from datetime import datetime
 from urllib.parse import parse_qsl
 
 import requests
 import resolveurl
 import xbmc
-import xbmcaddon
 import xbmcgui
 import xbmcplugin
-import xbmcvfs
 from bs4 import BeautifulSoup
-from resolveurl.lib import kodi
 
 from resources.lib.database import Database
 from resources.lib.nyaa import Nyaa

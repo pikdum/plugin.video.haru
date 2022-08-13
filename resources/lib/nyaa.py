@@ -15,7 +15,6 @@ class Nyaa:
         self.db = db
 
     def set_watched(self, torrent_name, file_name, nyaa_url, watched=True):
-
         if watched == "False":
             del self.db.database["nt:watch"][torrent_name][file_name]
             if self.db.database["nt:history"].get(file_name, None):

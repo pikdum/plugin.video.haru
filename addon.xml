@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.5.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.6.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,15 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.5.0 (2022-05-09)
+    <news>1.6.0 (2022-08-13)
+
+Features
+
+-   nyaa: show more torrent details (4c287ea)
+-   nyaa: show torrent description (d294839)
+-   subsplease: show anime description (3309587)
+
+1.5.0 (2022-05-09)
 
 Features
 
@@ -78,18 +86,6 @@ Features
 
 Bug Fixes
 
--   use system time zone instead of hardcoding it (49259d2)
-
-1.1.2 (2022-03-24)
-
-Bug Fixes
-
--   new fancy logo (4c645d3)
-
-1.1.1 (2022-03-24)
-
-Bug Fixes
-
--   change name to lowercase haru (7...</news>
+-   use system tim...</news>
   </extension>
 </addon>

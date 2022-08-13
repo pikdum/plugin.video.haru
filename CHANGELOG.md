@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.0](https://github.com/pikdum/plugin.video.haru/compare/v1.5.0...v1.6.0) (2022-08-13)
+
+
+### Features
+
+* **nyaa:** show more torrent details ([4c287ea](https://github.com/pikdum/plugin.video.haru/commit/4c287eaaf41eac5b62995b53f0a0810b7e1247be))
+* **nyaa:** show torrent description ([d294839](https://github.com/pikdum/plugin.video.haru/commit/d294839c82ca567cf84df717f8d78a6688c058e1))
+* **subsplease:** show anime description ([3309587](https://github.com/pikdum/plugin.video.haru/commit/33095879401eb0c6b8175ab0a08742e5c5d8a2c5))
+
 ## [1.5.0](https://github.com/pikdum/plugin.video.haru/compare/v1.4.2...v1.5.0) (2022-05-09)
 
 

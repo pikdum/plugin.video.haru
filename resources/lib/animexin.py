@@ -55,13 +55,15 @@ class AnimeXin:
     def get_video_url(self, episode_url):
         page = requests.get(episode_url)
         soup = BeautifulSoup(page.text, "html.parser")
-        return soup.find("iframe")["src"]
+        url = soup.find("iframe")["src"]
+        if url.startswith("//"):
+            url = "https:" + url
+        return url
 
     def get_subtitle_urls(self, video_url):
         subtitle_urls = []
         if "dailymotion" in video_url:
             video_id = video_url.split("?")[0].split("/")[-1]
-            log(video_id)
             metadata = requests.get(
                 f"https://www.dailymotion.com/player/metadata/video/{video_id}"
             ).json()

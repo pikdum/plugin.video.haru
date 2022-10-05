@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-import xbmcplugin
+import re
+import time
+from datetime import datetime
+
 import requests
 import xbmcgui
-import time
-import sys
-import re
+import xbmcplugin
 from bs4 import BeautifulSoup
-from datetime import datetime
 from resources.lib.util import *
 
 
@@ -95,6 +95,7 @@ class SubsPlease:
         sid = soup.find(id="show-release-table")["sid"]
         show_title = soup.find("h1", class_="entry-title").text
         artwork_url = "https://subsplease.org" + soup.find("img")["src"]
+        description = soup.find("div", class_="series-syn").find("p").text.strip()
         self.set_cached_art(show_title, artwork_url)
 
         xbmcplugin.setPluginCategory(HANDLE, show_title)
@@ -130,7 +131,11 @@ class SubsPlease:
                 list_item = xbmcgui.ListItem(label=title)
                 list_item.setInfo(
                     "video",
-                    {"title": title, "genre": "Anime", "mediatype": "video"},
+                    {
+                        "title": title,
+                        "mediatype": "video",
+                        "plot": description,
+                    },
                 )
                 list_item.setProperty("IsPlayable", "true")
                 list_item.setArt({"poster": artwork_url})

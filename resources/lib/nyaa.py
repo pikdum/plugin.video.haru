@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+import time
+from datetime import datetime
+from urllib.parse import quote
+
+import requests
 import xbmc
 import xbmcgui
 import xbmcplugin
-import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
-from urllib.parse import quote
 from resources.lib.util import *
 
 
@@ -14,7 +16,6 @@ class Nyaa:
         self.db = db
 
     def set_watched(self, torrent_name, file_name, nyaa_url, watched=True):
-
         if watched == "False":
             del self.db.database["nt:watch"][torrent_name][file_name]
             if self.db.database["nt:history"].get(file_name, None):
@@ -69,10 +70,19 @@ class Nyaa:
             )
             torrent_name = link.string
 
+            size = columns[3].text
+            date = columns[4].text
+            formatted_date = datetime(
+                *(time.strptime(date, "%Y-%m-%d %H:%M")[0:6])
+            ).strftime("%Y-%m-%d")
+
+            seeds = columns[5].text
+
             title = torrent_name
             watched = self.is_torrent_watched(torrent_name)
             if watched:
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
+            title = f"{title}[CR][I][LIGHT][COLOR lightgray]{formatted_date}, {size}, {seeds} seeds[/COLOR][/LIGHT][/I]"
 
             list_item = xbmcgui.ListItem(label=title)
             is_folder = True
@@ -88,12 +98,14 @@ class Nyaa:
 
     def page(self, url):
         nyaa_url = url if url.startswith("https://") else f"https://nyaa.si{url}"
-        xbmcplugin.setPluginCategory(HANDLE, "Search Results")
 
         page = requests.get(nyaa_url)
         soup = BeautifulSoup(page.text, "html.parser")
         magnet = soup.find("a", class_="card-footer-item").get("href")
         torrent_name = soup.find("h3", class_="panel-title").text.strip()
+        description = soup.find(id="torrent-description").text.strip()
+
+        xbmcplugin.setPluginCategory(HANDLE, torrent_name)
 
         while soup.i:
             soup.i.decompose()
@@ -117,10 +129,7 @@ class Nyaa:
             list_item = xbmcgui.ListItem(label=title)
             list_item.setInfo(
                 "video",
-                {
-                    "title": title,
-                    "mediatype": "video",
-                },
+                {"title": title, "mediatype": "video", "plot": description},
             )
             list_item.setProperty("IsPlayable", "true")
             list_item.addContextMenuItems(

@@ -65,11 +65,39 @@ def main_menu():
         HANDLE, get_url(action="nyaa_history"), list_item, is_folder
     )
 
+    list_item = xbmcgui.ListItem(label="Experimental")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="experimental"), list_item, is_folder
+    )
+
+    list_item = xbmcgui.ListItem(label="Settings")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="settings"), list_item, is_folder
+    )
+
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+@register
+def experimental():
+    xbmcplugin.setPluginCategory(HANDLE, "Experimental")
+    xbmcplugin.setContent(HANDLE, "videos")
+
     list_item = xbmcgui.ListItem(label="AnimeXin - All")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="animexin_all"), list_item, is_folder
     )
+
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+@register
+def settings():
+    xbmcplugin.setPluginCategory(HANDLE, "Settings")
+    xbmcplugin.setContent(HANDLE, "videos")
 
     list_item = xbmcgui.ListItem(label="ResolveURL Settings")
     is_folder = False

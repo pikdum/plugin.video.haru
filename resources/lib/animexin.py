@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import xbmcplugin
 import requests
 import xbmcgui
+import xbmcplugin
 from bs4 import BeautifulSoup
 from resources.lib.util import *
 

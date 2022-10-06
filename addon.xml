@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.6.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.7.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.6.0 (2022-08-13)
+    <news>1.7.0 (2022-10-06)
+
+Features
+
+-   add somewhat working AnimeXin support (#29) (11ca456)
+
+1.6.0 (2022-08-13)
 
 Features
 
@@ -80,12 +86,6 @@ Bug Fixes
 
 Features
 
--   add subsplease watch history (dd6ab81)
-
-1.1.3 (2022-03-31)
-
-Bug Fixes
-
--   use system tim...</news>
+-   ...</news>
   </extension>
 </addon>

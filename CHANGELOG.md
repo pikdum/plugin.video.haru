@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/pikdum/plugin.video.haru/compare/v1.6.0...v1.7.0) (2022-10-06)
+
+
+### Features
+
+* add somewhat working AnimeXin support ([#29](https://github.com/pikdum/plugin.video.haru/issues/29)) ([11ca456](https://github.com/pikdum/plugin.video.haru/commit/11ca45608059dd23c82abcc80b7ef3a53b85f532))
+
 ## [1.6.0](https://github.com/pikdum/plugin.video.haru/compare/v1.5.0...v1.6.0) (2022-08-13)
 
 

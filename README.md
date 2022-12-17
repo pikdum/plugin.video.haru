@@ -31,5 +31,5 @@ a basic kodi anime addon
 
 ## roadmap
 
-- better anime art
 - mal/kitsu/etc support
+- erai-raws support

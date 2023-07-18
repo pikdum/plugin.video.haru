@@ -21,3 +21,13 @@ def get_url(**kwargs):
 def set_art(list_item, artwork_url):
     if artwork_url:
         list_item.setArt({"poster": artwork_url, "thumb": artwork_url})
+
+
+def slugify(text):
+    return (
+        text.lower()
+        .replace(" ", "-")
+        .replace(",", "")
+        .replace("!", "")
+        .replace("+", "")
+    )

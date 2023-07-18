@@ -350,7 +350,7 @@ class SubsPlease:
             artwork_url = self.get_cached_art(show)
             url = get_url(
                 action="subsplease_show",
-                url=f"https://subsplease.org/shows/{show}/",
+                url=f"https://subsplease.org/shows/{slugify(show)}/",
             )
             list_item = xbmcgui.ListItem(label=label)
             set_art(list_item, artwork_url)

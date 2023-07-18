@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.8.0](https://github.com/pikdum/plugin.video.haru/compare/v1.7.0...v1.8.0) (2023-07-18)
+
+
+### Features
+
+* **subsplease:** thumbnail art ([e6f7e5f](https://github.com/pikdum/plugin.video.haru/commit/e6f7e5fa6f2127b1b7c82951b704534dd6a74f0f))
+
+
+### Bug Fixes
+
+* **subsplease:** broken history links ([55d46b3](https://github.com/pikdum/plugin.video.haru/commit/55d46b39441c9a7bd1ee0b686994b5d3376cee43))
+
 ## [1.7.0](https://github.com/pikdum/plugin.video.haru/compare/v1.6.0...v1.7.0) (2022-10-06)
 
 

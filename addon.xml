@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.7.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.8.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,17 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.7.0 (2022-10-06)
+    <news>1.8.0 (2023-07-18)
+
+Features
+
+-   subsplease: thumbnail art (e6f7e5f)
+
+Bug Fixes
+
+-   subsplease: broken history links (55d46b3)
+
+1.7.0 (2022-10-06)
 
 Features
 
@@ -74,18 +84,6 @@ Bug Fixes
 
 1.3.0 (2022-03-31)
 
-Features
-
--   cache art, show cached art in more views (545887b)
-
-Bug Fixes
-
--   fix logging (d2184d1)
-
-1.2.0 (2022-03-31)
-
-Features
-
--   ...</news>
+Features...</news>
   </extension>
 </addon>

@@ -78,8 +78,7 @@ class SubsPlease:
 
             list_item = xbmcgui.ListItem(label=title)
             artwork_url = self.get_cached_art(title)
-            if artwork_url:
-                list_item.setArt({"poster": artwork_url})
+            set_art(list_item, artwork_url)
 
             is_folder = True
             url = get_url(
@@ -114,7 +113,7 @@ class SubsPlease:
                     batch=batch,
                     batch_torrent=hq_download["torrent"],
                 )
-                list_item.setArt({"poster": artwork_url})
+                set_art(list_item, artwork_url)
                 xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
 
         if episodes["episode"]:
@@ -138,7 +137,7 @@ class SubsPlease:
                     },
                 )
                 list_item.setProperty("IsPlayable", "true")
-                list_item.setArt({"poster": artwork_url})
+                set_art(list_item, artwork_url)
                 list_item.addContextMenuItems(
                     [
                         (
@@ -205,8 +204,7 @@ class SubsPlease:
                 },
             )
             list_item.setProperty("IsPlayable", "true")
-            if artwork_url:
-                list_item.setArt({"poster": artwork_url})
+            set_art(list_item, artwork_url)
             list_item.addContextMenuItems(
                 [
                     (
@@ -288,7 +286,7 @@ class SubsPlease:
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
 
             list_item = xbmcgui.ListItem(label=title)
-            list_item.setArt({"poster": artwork_url})
+            set_art(list_item, artwork_url)
             url = get_url(
                 action="subsplease_show",
                 url="https://subsplease.org/shows/" + show["page"],
@@ -325,7 +323,7 @@ class SubsPlease:
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
 
             list_item = xbmcgui.ListItem(label=title)
-            list_item.setArt({"poster": artwork_url})
+            set_art(list_item, artwork_url)
             url = get_url(
                 action="subsplease_show",
                 url="https://subsplease.org/shows/" + show["page"],
@@ -355,8 +353,7 @@ class SubsPlease:
                 url=f"https://subsplease.org/shows/{show}/",
             )
             list_item = xbmcgui.ListItem(label=label)
-            if artwork_url:
-                list_item.setArt({"poster": artwork_url})
+            set_art(list_item, artwork_url)
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
 
         xbmcplugin.endOfDirectory(HANDLE)

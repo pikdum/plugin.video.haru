@@ -16,3 +16,8 @@ def log(x):
 
 def get_url(**kwargs):
     return "{}?{}".format(_URL, urlencode(kwargs))
+
+
+def set_art(list_item, artwork_url):
+    if artwork_url:
+        list_item.setArt({"poster": artwork_url, "thumb": artwork_url})

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+
+    <category label="Torrents">
+        <setting label="Torrent Service:" type="lsep"/>
+        <setting id="torrent_clients" type="labelenum" label="Engine/Client" values="Debrid|Torrest" default="Debrid"/>
+    </category>
+
+</settings>

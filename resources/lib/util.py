@@ -1,14 +1,31 @@
 #!/usr/bin/env python3
 import sys
 from urllib.parse import urlencode
-
 import xbmc
+import xbmcgui
+import xbmcaddon
 from resolveurl.lib import kodi
+
+
 
 _URL = sys.argv[0]
 HANDLE = int(sys.argv[1])
 VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
 
+__addon_id = _URL.replace('plugin://','').replace('/','')
+__settings__ = xbmcaddon.Addon(id=__addon_id)
+
+def get_setting(name, default=None):
+    value = __settings__.getSetting(name)
+    if not value:
+        return default
+
+    if value == "true":
+        return True
+    elif value == "false":
+        return False
+    else:
+        return value
 
 def log(x):
     xbmc.log("[HARU] " + str(x), xbmc.LOGINFO)
@@ -31,3 +48,14 @@ def slugify(text):
         .replace("!", "")
         .replace("+", "")
     )
+
+def compat(line1, line2, line3):
+    message = line1
+    if line2:
+        message += '\n' + line2
+    if line3:
+        message += '\n' + line3
+    return message
+
+def dialog_ok(heading, line1, line2="", line3=""):
+    return xbmcgui.Dialog().ok(heading, compat(line1=line1, line2=line2, line3=line3))

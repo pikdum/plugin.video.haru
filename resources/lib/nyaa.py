@@ -2,13 +2,13 @@
 import time
 from datetime import datetime
 from urllib.parse import quote
-
 import requests
 import xbmc
 import xbmcgui
 import xbmcplugin
 from bs4 import BeautifulSoup
 from resources.lib.util import *
+
 
 
 class Nyaa:
@@ -45,7 +45,49 @@ class Nyaa:
 
     def is_torrent_watched(self, torrent_name):
         return self.db.database["nt:watch"].get(torrent_name, False)
+    
+    def recent(self):
+        page = requests.get(f"https://nyaa.si/?s=id&o=desc")
+        soup = BeautifulSoup(page.text, "html.parser")
 
+        rows = soup.find_all("tr")[1:]
+
+        for row in rows:
+            columns = row.find_all("td")
+            link = next(
+                filter(
+                    lambda x: not x["href"].endswith("#comments"),
+                    columns[1].find_all("a"),
+                )
+            )
+            torrent_name = link.string
+
+            size = columns[3].text
+            date = columns[4].text
+            formatted_date = datetime(
+                *(time.strptime(date, "%Y-%m-%d %H:%M")[0:6])
+            ).strftime("%Y-%m-%d")
+
+            seeds = columns[5].text
+
+            title = torrent_name
+            watched = self.is_torrent_watched(torrent_name)
+            if watched:
+                title = f"[COLOR palevioletred]{title}[/COLOR]"
+            title = f"{title}[CR][I][LIGHT][COLOR lightgray]{formatted_date}, {size}, {seeds} seeds[/COLOR][/LIGHT][/I]"
+
+            list_item = xbmcgui.ListItem(label=title)
+            is_folder = True
+            xbmcplugin.addDirectoryItem(
+                HANDLE,
+                get_url(action="nyaa_page", url=link["href"]),
+                list_item,
+                is_folder,
+            )
+
+        xbmcplugin.setPluginCategory(HANDLE, f"Recent Torrents")
+        xbmcplugin.endOfDirectory(HANDLE)
+    
     def search(self):
         keyboard = xbmc.Keyboard("", "Search for torrents:", False)
         keyboard.doModal()
@@ -96,6 +138,7 @@ class Nyaa:
         xbmcplugin.setPluginCategory(HANDLE, f"Torrents - {text}")
         xbmcplugin.endOfDirectory(HANDLE)
 
+
     def page(self, url):
         nyaa_url = url if url.startswith("https://") else f"https://nyaa.si{url}"
 
@@ -111,6 +154,7 @@ class Nyaa:
             soup.i.decompose()
         while soup.span:
             soup.span.decompose()
+            
         file_list = filter(
             lambda x: any(x.lower().endswith(ext) for ext in VIDEO_FORMATS),
             map(
@@ -153,12 +197,12 @@ class Nyaa:
                 magnet=magnet,
                 selected_file=file_name,
                 name=torrent_name,
-                nyaa_url=nyaa_url,
+                nyaa_url=nyaa_url
             )
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
 
         xbmcplugin.endOfDirectory(HANDLE)
-
+        
     def history(self):
         xbmcplugin.setPluginCategory(HANDLE, f"Torrents - History")
 

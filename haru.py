@@ -2,14 +2,13 @@
 import inspect
 import sys
 from urllib.parse import parse_qsl
-
 import requests
 import resolveurl
 import xbmc
 import xbmcgui
 import xbmcplugin
+from urllib.parse import quote_plus
 from bs4 import BeautifulSoup
-
 from resources.lib.animexin import AnimeXin
 from resources.lib.database import Database
 from resources.lib.nyaa import Nyaa
@@ -17,7 +16,6 @@ from resources.lib.subsplease import SubsPlease
 from resources.lib.util import *
 
 routes = {}
-
 
 def register(f):
     argspec = inspect.getfullargspec(f)
@@ -53,22 +51,22 @@ def main_menu():
         HANDLE, get_url(action="subsplease_history"), list_item, is_folder
     )
 
-    list_item = xbmcgui.ListItem(label="Torrents - Search")
+    list_item = xbmcgui.ListItem(label="Nyaa Torrents - Recent")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="nyaa_recent"), list_item, is_folder
+    )
+
+    list_item = xbmcgui.ListItem(label="Nyaa Torrents - Search")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="nyaa_search"), list_item, is_folder
     )
 
-    list_item = xbmcgui.ListItem(label="Torrents - History")
+    list_item = xbmcgui.ListItem(label="Nyaa Torrents - History")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="nyaa_history"), list_item, is_folder
-    )
-
-    list_item = xbmcgui.ListItem(label="Experimental")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="experimental"), list_item, is_folder
     )
 
     list_item = xbmcgui.ListItem(label="Settings")
@@ -155,30 +153,33 @@ def get_nyaa_magnet(url):
     magnet = soup.find("a", class_="card-footer-item").get("href")
     return magnet
 
-
 def _play_nyaa(selected_file=None, url=None, magnet=None):
-    # allow passing magnet instead of url if already handy
     if url:
         magnet = get_nyaa_magnet(url)
-    # single video
-    if not selected_file:
-        resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
-    # batch
-    else:
-        all_urls = resolveurl.resolve(magnet, return_all=True)
-        selected_url = next(filter(lambda x: selected_file in x["name"], all_urls))[
-            "link"
-        ]
-        resolved_url = resolveurl.resolve(selected_url)
-    play_item = xbmcgui.ListItem(path=resolved_url)
-    xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 
+    torrent_client = get_setting('torrent_clients', default='Debrid')
+    if torrent_client == 'Torrest':
+        if xbmc.getCondVisibility('System.HasAddon("plugin.video.torrest")'):
+            plugin_url = "plugin://plugin.video.torrest/play_magnet?magnet="
+        else:
+            dialog_ok("Haru", 'You need to install the Torrent Engine/Client: Torrest (plugin.video.torrest)')
+            return 
+        play_item = xbmcgui.ListItem(path=plugin_url + quote_plus(magnet))
+        xbmcplugin.setResolvedUrl(HANDLE, True, play_item)
+    elif torrent_client == 'Debrid':
+        if not selected_file:
+            resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
+        else:
+            all_urls = resolveurl.resolve(magnet, return_all=True)
+            selected_url = next(filter(lambda x: selected_file in x["name"], all_urls))["link"]
+            resolved_url = resolveurl.resolve(selected_url)
+        play_item = xbmcgui.ListItem(path=resolved_url)
+        xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 
 @register
 def play_subsplease(name, selected_file=None, url=None, magnet=None):
     subsplease.set_watched(name)
     return _play_nyaa(selected_file, url, magnet)
-
 
 @register
 def play_nyaa(name, selected_file, nyaa_url, magnet):
@@ -213,7 +214,7 @@ def play_animexin(url):
 @register
 def resolveurl_settings():
     resolveurl.display_settings()
-
+    
 
 @register
 def toggle_watched_subsplease(name, watched):
@@ -237,6 +238,11 @@ def clear_history_subsplease():
 @register
 def nyaa_search():
     nyaa.search()
+
+
+@register
+def nyaa_recent():
+    nyaa.recent()
 
 
 @register
@@ -266,7 +272,6 @@ def clear_history_nyaa():
         db.database["nt:history"] = {}
         db.commit()
         xbmc.executebuiltin("Container.Refresh")
-
 
 @register
 def toggle_language_invoker():

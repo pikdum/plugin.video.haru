@@ -16,19 +16,25 @@ class Nyaa:
         self.db = db
         if mode == "fun":
             self.hostname = "nyaa.si"
-            self.category = get_setting("nyaa_category")
             self.db_prefix = "nt"
             self.page_action = "nyaa_page"
             self.toggle_watched_action = "toggle_watched_nyaa"
             self.play_action = "play_nyaa"
         if mode == "fap":
             self.hostname = "sukebei.nyaa.si"
-            self.category = get_setting("sukebei_category")
             self.db_prefix = "sb"
             self.page_action = "sukebei_page"
             self.toggle_watched_action = "toggle_watched_sukebei"
             self.play_action = "play_sukebei"
         self.mode = mode
+
+    def get_categories(self):
+        page = requests.get(f"https://{self.hostname}")
+        soup = BeautifulSoup(page.text, "html.parser")
+        select = soup.find("select", title="Category")
+        options = select.find_all("option")
+        categories = [(option.text.strip(), option["value"]) for option in options]
+        return categories
 
     def set_watched(self, torrent_name, file_name, nyaa_url, watched=True):
         if watched == "False":
@@ -66,6 +72,16 @@ class Nyaa:
         return self.db.database[f"{self.db_prefix}:watch"].get(torrent_name, False)
 
     def search(self):
+        categories = self.get_categories()
+        labels = [category[0] for category in categories]
+
+        dialog = xbmcgui.Dialog()
+        index = dialog.select("Select a category", labels)
+        if index != -1:
+            category = categories[index][1]
+        else:
+            return
+
         keyboard = xbmc.Keyboard("", "Search for torrents:", False)
         keyboard.doModal()
         if keyboard.isConfirmed():
@@ -75,7 +91,7 @@ class Nyaa:
 
         escaped = quote(text)
         page = requests.get(
-            f"https://{self.hostname}/?f=0&c={self.category}&q={escaped}&s=seeders&o=desc"
+            f"https://{self.hostname}/?f=0&c={category}&q={escaped}&s=seeders&o=desc"
         )
         soup = BeautifulSoup(page.text, "html.parser")
 

@@ -15,6 +15,9 @@
     label="Clear History" type="action" />
   </category>
   <category label="Torrents">
+    <setting label="Nyaa" type="lsep" />
+    <setting default="1_2" id="nyaa_category"
+    label="Search Category" type="text" />
     <setting label="Actions" type="lsep" />
     <setting action="RunPlugin(plugin://plugin.video.haru/?action=clear_history_nyaa)"
     label="Clear History" type="action" />

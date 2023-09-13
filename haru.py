@@ -254,7 +254,8 @@ def clear_history_subsplease():
 
 @register
 def nyaa_search():
-    nyaa.search()
+    category = get_setting("nyaa_category")
+    nyaa.search(category=category)
 
 
 @register

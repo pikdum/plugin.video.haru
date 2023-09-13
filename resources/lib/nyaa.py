@@ -46,7 +46,7 @@ class Nyaa:
     def is_torrent_watched(self, torrent_name):
         return self.db.database["nt:watch"].get(torrent_name, False)
 
-    def search(self):
+    def search(self, category):
         keyboard = xbmc.Keyboard("", "Search for torrents:", False)
         keyboard.doModal()
         if keyboard.isConfirmed():
@@ -55,7 +55,9 @@ class Nyaa:
             return
 
         escaped = quote(text)
-        page = requests.get(f"https://nyaa.si/?f=0&c=1_2&q={escaped}&s=seeders&o=desc")
+        page = requests.get(
+            f"https://nyaa.si/?f=0&c={category}&q={escaped}&s=seeders&o=desc"
+        )
         soup = BeautifulSoup(page.text, "html.parser")
 
         rows = soup.find_all("tr")[1:]

@@ -8,6 +8,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 from bs4 import BeautifulSoup
+
 from resources.lib.util import *
 
 
@@ -111,6 +112,7 @@ class Nyaa:
             soup.i.decompose()
         while soup.span:
             soup.span.decompose()
+
         file_list = filter(
             lambda x: any(x.lower().endswith(ext) for ext in VIDEO_FORMATS),
             map(

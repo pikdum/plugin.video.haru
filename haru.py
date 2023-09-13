@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import inspect
 import sys
-from urllib.parse import parse_qsl
+from urllib.parse import parse_qsl, quote_plus
 
 import requests
 import resolveurl
@@ -166,17 +166,28 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
     # allow passing magnet instead of url if already handy
     if url:
         magnet = get_nyaa_magnet(url)
-    # single video
-    if not selected_file:
-        resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
-    # batch
-    else:
-        all_urls = resolveurl.resolve(magnet, return_all=True)
-        selected_url = next(filter(lambda x: selected_file in x["name"], all_urls))[
-            "link"
-        ]
-        resolved_url = resolveurl.resolve(selected_url)
-    play_item = xbmcgui.ListItem(path=resolved_url)
+
+    torrent_client = get_setting("torrent_clients", default="Debrid")
+    if torrent_client == "Torrest":
+        if xbmc.getCondVisibility('System.HasAddon("plugin.video.torrest")'):
+            plugin_url = "plugin://plugin.video.torrest/play_magnet?magnet="
+        else:
+            dialog_ok(
+                "Haru",
+                "You need to install the Torrent Engine/Client: Torrest (plugin.video.torrest)",
+            )
+            return
+        play_item = xbmcgui.ListItem(path=plugin_url + quote_plus(magnet))
+    elif torrent_client == "Debrid":
+        if not selected_file:
+            resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
+        else:
+            all_urls = resolveurl.resolve(magnet, return_all=True)
+            selected_url = next(filter(lambda x: selected_file in x["name"], all_urls))[
+                "link"
+            ]
+            resolved_url = resolveurl.resolve(selected_url)
+        play_item = xbmcgui.ListItem(path=resolved_url)
     xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 
 

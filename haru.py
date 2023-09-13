@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import inspect
 import sys
-from urllib.parse import parse_qsl
+from urllib.parse import parse_qsl, quote_plus
 
 import requests
 import resolveurl
@@ -99,23 +99,25 @@ def settings():
     xbmcplugin.setPluginCategory(HANDLE, "Settings")
     xbmcplugin.setContent(HANDLE, "videos")
 
-    list_item = xbmcgui.ListItem(label="ResolveURL Settings")
+    list_item = xbmcgui.ListItem(label="haru")
+    xbmcplugin.addDirectoryItem(
+        HANDLE,
+        get_url(action="display_settings", plugin="plugin.video.haru"),
+        list_item,
+    )
+
+    list_item = xbmcgui.ListItem(label="ResolveURL")
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="resolveurl_settings"), list_item
     )
 
-    list_item = xbmcgui.ListItem(label="Set Language Invoker")
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="toggle_language_invoker"), list_item
-    )
-
-    list_item = xbmcgui.ListItem(label="SubsPlease - Clear History")
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="clear_history_subsplease"), list_item
-    )
-
-    list_item = xbmcgui.ListItem(label="Torrents - Clear History")
-    xbmcplugin.addDirectoryItem(HANDLE, get_url(action="clear_history_nyaa"), list_item)
+    if xbmc.getCondVisibility("System.HasAddon(plugin.video.torrest)"):
+        list_item = xbmcgui.ListItem(label="Torrest")
+        xbmcplugin.addDirectoryItem(
+            HANDLE,
+            get_url(action="display_settings", plugin="plugin.video.torrest"),
+            list_item,
+        )
 
     xbmcplugin.endOfDirectory(HANDLE)
 
@@ -166,17 +168,22 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
     # allow passing magnet instead of url if already handy
     if url:
         magnet = get_nyaa_magnet(url)
-    # single video
-    if not selected_file:
-        resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
-    # batch
-    else:
-        all_urls = resolveurl.resolve(magnet, return_all=True)
-        selected_url = next(filter(lambda x: selected_file in x["name"], all_urls))[
-            "link"
-        ]
-        resolved_url = resolveurl.resolve(selected_url)
-    play_item = xbmcgui.ListItem(path=resolved_url)
+
+    engine = get_setting("engine")
+    if engine == "Torrest":
+        play_item = xbmcgui.ListItem(
+            path=f"plugin://plugin.video.torrest/play_magnet?magnet={quote_plus(magnet)}"
+        )
+    elif engine == "ResolveURL":
+        if not selected_file:
+            resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
+        else:
+            all_urls = resolveurl.resolve(magnet, return_all=True)
+            selected_url = next(filter(lambda x: selected_file in x["name"], all_urls))[
+                "link"
+            ]
+            resolved_url = resolveurl.resolve(selected_url)
+        play_item = xbmcgui.ListItem(path=resolved_url)
     xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 
 
@@ -222,6 +229,11 @@ def resolveurl_settings():
 
 
 @register
+def display_settings(plugin):
+    open_settings(plugin)
+
+
+@register
 def toggle_watched_subsplease(name, watched):
     subsplease.set_watched(name, watched)
     xbmc.executebuiltin("Container.Refresh")
@@ -232,7 +244,7 @@ def clear_history_subsplease():
     dialog = xbmcgui.Dialog()
     confirmed = dialog.yesno(
         "Clear History",
-        "Do you want to clear this history list?\n\nWatched statuses will be preserved.",
+        "Do you want to clear SubsPlease history?\n\nWatched statuses will be preserved.",
     )
     if confirmed:
         db.database["sp:history"] = {}
@@ -266,7 +278,7 @@ def clear_history_nyaa():
     dialog = xbmcgui.Dialog()
     confirmed = dialog.yesno(
         "Clear History",
-        "Do you want to clear this history list?\n\nWatched statuses will be preserved.",
+        "Do you want to clear Torrents history?\n\nWatched statuses will be preserved.",
     )
     if confirmed:
         db.database["nt:history"] = {}

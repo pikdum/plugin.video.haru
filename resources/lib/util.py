@@ -3,11 +3,17 @@ import sys
 from urllib.parse import urlencode
 
 import xbmc
+import xbmcaddon
+import xbmcgui
 from resolveurl.lib import kodi
 
 _URL = sys.argv[0]
 HANDLE = int(sys.argv[1])
 VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
+
+
+def get_setting(setting, default=None):
+    return xbmcaddon.Addon(id="plugin.video.haru").getSetting(setting) or default
 
 
 def log(x):
@@ -31,3 +37,7 @@ def slugify(text):
         .replace("!", "")
         .replace("+", "")
     )
+
+
+def open_settings(addon_id):
+    xbmcaddon.Addon(id=addon_id).openSettings()

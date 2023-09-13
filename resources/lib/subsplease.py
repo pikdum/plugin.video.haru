@@ -152,13 +152,12 @@ class SubsPlease:
                     ]
                 )
                 hq_download = episode_info["downloads"][-1]
-                is_folder = False
                 url = get_url(
                     action="play_subsplease",
                     url=hq_download["torrent"],
                     name=display_name,
                 )
-                xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+                xbmcplugin.addDirectoryItem(HANDLE, url, list_item)
 
         xbmcplugin.endOfDirectory(HANDLE)
 
@@ -218,14 +217,13 @@ class SubsPlease:
                     )
                 ]
             )
-            is_folder = False
             url = get_url(
                 action="play_subsplease",
                 magnet=magnet,
                 selected_file=file_name,
                 name=display_name,
             )
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+            xbmcplugin.addDirectoryItem(HANDLE, url, list_item)
 
         xbmcplugin.endOfDirectory(HANDLE)
 

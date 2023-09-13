@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.9.0](https://github.com/pikdum/plugin.video.haru/compare/v1.8.0...v1.9.0) (2023-09-13)
+
+
+### Features
+
+* allow configuring torrent search category ([71cb07e](https://github.com/pikdum/plugin.video.haru/commit/71cb07e3e0ee2749fb816925ed32df77cef3329b))
+* move clear history under settings ([3f97401](https://github.com/pikdum/plugin.video.haru/commit/3f97401f36a8b8e6ab5ab360ad2eeeccee7936da))
+* **subsplease:** move all airing to bottom ([74a1847](https://github.com/pikdum/plugin.video.haru/commit/74a184743892ca695fa37028f87acd79e34b4005))
+* sukebei support ([7201047](https://github.com/pikdum/plugin.video.haru/commit/7201047796ece182eba9f94c3ad621b046a2d643))
+* **torrents:** allow choosing search category ([697fc8f](https://github.com/pikdum/plugin.video.haru/commit/697fc8faf719898a2a60e9d9d971a7ca475aed66))
+* torrest support + addon settings ([#33](https://github.com/pikdum/plugin.video.haru/issues/33)) ([#36](https://github.com/pikdum/plugin.video.haru/issues/36)) ([cff0285](https://github.com/pikdum/plugin.video.haru/commit/cff02852ac8fe80e7917b993f9c6b0d160e629b1))
+
+
+### Bug Fixes
+
+* **subsplease:** remove tbd ([3d58059](https://github.com/pikdum/plugin.video.haru/commit/3d58059fa7adb0f5a8a35acd96601ac097666199))
+
 ## [1.8.0](https://github.com/pikdum/plugin.video.haru/compare/v1.7.0...v1.8.0) (2023-07-18)
 
 

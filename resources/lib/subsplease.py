@@ -152,13 +152,12 @@ class SubsPlease:
                     ]
                 )
                 hq_download = episode_info["downloads"][-1]
-                is_folder = False
                 url = get_url(
                     action="play_subsplease",
                     url=hq_download["torrent"],
                     name=display_name,
                 )
-                xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+                xbmcplugin.addDirectoryItem(HANDLE, url, list_item)
 
         xbmcplugin.endOfDirectory(HANDLE)
 
@@ -218,24 +217,18 @@ class SubsPlease:
                     )
                 ]
             )
-            is_folder = False
             url = get_url(
                 action="play_subsplease",
                 magnet=magnet,
                 selected_file=file_name,
                 name=display_name,
             )
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+            xbmcplugin.addDirectoryItem(HANDLE, url, list_item)
 
         xbmcplugin.endOfDirectory(HANDLE)
 
     def airing(self):
         xbmcplugin.setPluginCategory(HANDLE, "SubsPlease - Airing")
-
-        list_item = xbmcgui.ListItem(label="All")
-        url = get_url(action="subsplease_all_airing")
-        is_folder = True
-        xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
 
         for day in [
             "Today",
@@ -246,12 +239,16 @@ class SubsPlease:
             "Friday",
             "Saturday",
             "Sunday",
-            "TBD",
         ]:
             list_item = xbmcgui.ListItem(label=day)
             url = get_url(action="subsplease_day", day=day)
             is_folder = True
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+
+        list_item = xbmcgui.ListItem(label="All")
+        url = get_url(action="subsplease_all_airing")
+        is_folder = True
+        xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
 
         xbmcplugin.endOfDirectory(HANDLE)
 
@@ -335,11 +332,6 @@ class SubsPlease:
 
     def history(self):
         xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - History")
-
-        list_item = xbmcgui.ListItem(label="Clear History")
-        xbmcplugin.addDirectoryItem(
-            HANDLE, get_url(action="clear_history_subsplease"), list_item
-        )
 
         for title, data in reversed(self.db.database["sp:history"].items()):
             split = title.split(" - ")

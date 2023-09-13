@@ -8,24 +8,13 @@ import xbmcgui
 from resolveurl.lib import kodi
 
 _URL = sys.argv[0]
+_ADDON_ID = "plugin.video.haru"
 HANDLE = int(sys.argv[1])
 VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
 
-__addon_id = _URL.replace("plugin://", "").replace("/", "")
-__settings__ = xbmcaddon.Addon(id=__addon_id)
 
-
-def get_setting(name, default=None):
-    value = __settings__.getSetting(name)
-    if not value:
-        return default
-
-    if value == "true":
-        return True
-    elif value == "false":
-        return False
-    else:
-        return value
+def get_setting(setting, default=None):
+    return xbmcaddon.Addon(id=_ADDON_ID).getSetting(setting) or default
 
 
 def log(x):

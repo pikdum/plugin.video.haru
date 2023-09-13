@@ -167,12 +167,12 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
     if url:
         magnet = get_nyaa_magnet(url)
 
-    torrent_client = get_setting("torrent_clients", default="Debrid")
-    if torrent_client == "Torrest":
+    engine = get_setting("engine", default="ResolveURL")
+    if engine == "Torrest":
         play_item = xbmcgui.ListItem(
             path=f"plugin://plugin.video.torrest/play_magnet?magnet={quote_plus(magnet)}"
         )
-    elif torrent_client == "Debrid":
+    elif engine == "ResolveURL":
         if not selected_file:
             resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
         else:

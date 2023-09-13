@@ -14,6 +14,8 @@ class Database:
             "sp:art_cache": {},
             "nt:watch": {},
             "nt:history": {},
+            "sb:watch": {},
+            "sb:history": {},
         }
 
         addon = xbmcaddon.Addon()

@@ -27,7 +27,8 @@ def register(f):
 
 db = Database()
 subsplease = SubsPlease(db)
-nyaa = Nyaa(db)
+nyaa = Nyaa(db, mode="fun")
+sukebei = Nyaa(db, mode="fap")
 animexin = AnimeXin()
 
 
@@ -64,6 +65,13 @@ def main_menu():
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="nyaa_history"), list_item, is_folder
     )
+
+    if get_setting("sukebei_enabled") == "true":
+        list_item = xbmcgui.ListItem(label="Sukebei - Search")
+        is_folder = True
+        xbmcplugin.addDirectoryItem(
+            HANDLE, get_url(action="sukebei_search"), list_item, is_folder
+        )
 
     list_item = xbmcgui.ListItem(label="Experimental")
     is_folder = True
@@ -200,6 +208,12 @@ def play_nyaa(name, selected_file, nyaa_url, magnet):
 
 
 @register
+def play_sukebei(name, selected_file, nyaa_url, magnet):
+    sukebei.set_watched(torrent_name=name, file_name=selected_file, nyaa_url=nyaa_url)
+    return _play_nyaa(selected_file=selected_file, magnet=magnet)
+
+
+@register
 def animexin_all():
     return animexin.all()
 
@@ -254,8 +268,7 @@ def clear_history_subsplease():
 
 @register
 def nyaa_search():
-    category = get_setting("nyaa_category")
-    nyaa.search(category=category)
+    nyaa.search()
 
 
 @register
@@ -266,6 +279,16 @@ def nyaa_page(url):
 @register
 def nyaa_history():
     nyaa.history()
+
+
+@register
+def sukebei_search():
+    sukebei.search()
+
+
+@register
+def sukebei_page(url):
+    sukebei.page(url)
 
 
 @register
@@ -285,6 +308,12 @@ def clear_history_nyaa():
         db.database["nt:history"] = {}
         db.commit()
         xbmc.executebuiltin("Container.Refresh")
+
+
+@register
+def toggle_watched_sukebei(torrent_name, file_name, nyaa_url, watched):
+    sukebei.set_watched(torrent_name, file_name, nyaa_url, watched)
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @register

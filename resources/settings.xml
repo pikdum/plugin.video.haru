@@ -18,6 +18,10 @@
     <setting label="Nyaa" type="lsep" />
     <setting default="1_2" id="nyaa_category"
     label="Search Category" type="text" />
+    <setting label="Sukebei (NSFW)" type="lsep" />
+    <setting id="sukebei_enabled" label="Enabled" type="bool" />
+    <setting default="1_1" id="sukebei_category"
+    label="Search Category" type="text" />
     <setting label="Actions" type="lsep" />
     <setting action="RunPlugin(plugin://plugin.video.haru/?action=clear_history_nyaa)"
     label="Clear History" type="action" />

@@ -12,41 +12,60 @@ from resources.lib.util import *
 
 
 class Nyaa:
-    def __init__(self, db):
+    def __init__(self, db, mode):
         self.db = db
+        if mode == "fun":
+            self.hostname = "nyaa.si"
+            self.category = get_setting("nyaa_category")
+            self.db_prefix = "nt"
+            self.page_action = "nyaa_page"
+            self.toggle_watched_action = "toggle_watched_nyaa"
+            self.play_action = "play_nyaa"
+        if mode == "fap":
+            self.hostname = "sukebei.nyaa.si"
+            self.category = get_setting("sukebei_category")
+            self.db_prefix = "sb"
+            self.page_action = "sukebei_page"
+            self.toggle_watched_action = "toggle_watched_sukebei"
+            self.play_action = "play_sukebei"
+        self.mode = mode
 
     def set_watched(self, torrent_name, file_name, nyaa_url, watched=True):
         if watched == "False":
-            del self.db.database["nt:watch"][torrent_name][file_name]
-            if self.db.database["nt:history"].get(file_name, None):
-                del self.db.database["nt:history"][file_name]
-            if not self.db.database["nt:watch"][torrent_name]:
-                del self.db.database["nt:watch"][torrent_name]
+            del self.db.database[f"{self.db_prefix}:watch"][torrent_name][file_name]
+            if self.db.database[f"{self.db_prefix}:history"].get(file_name, None):
+                del self.db.database[f"{self.db_prefix}:history"][file_name]
+            if not self.db.database[f"{self.db_prefix}:watch"][torrent_name]:
+                del self.db.database[f"{self.db_prefix}:watch"][torrent_name]
             self.db.commit()
             return
 
-        if "nt:watch" not in self.db.database:
-            self.db.database["nt:watch"] = {}
+        if f"{self.db_prefix}:watch" not in self.db.database:
+            self.db.database[f"{self.db_prefix}:watch"] = {}
 
-        if torrent_name not in self.db.database["nt:watch"]:
-            self.db.database["nt:watch"][torrent_name] = {}
+        if torrent_name not in self.db.database[f"{self.db_prefix}:watch"]:
+            self.db.database[f"{self.db_prefix}:watch"][torrent_name] = {}
 
-        self.db.database["nt:history"][file_name] = {
+        self.db.database[f"{self.db_prefix}:history"][file_name] = {
             "timestamp": datetime.now(),
             "torrent_name": torrent_name,
             "nyaa_url": nyaa_url,
         }
 
-        self.db.database["nt:watch"][torrent_name][file_name] = True
+        self.db.database[f"{self.db_prefix}:watch"][torrent_name][file_name] = True
         self.db.commit()
 
     def is_file_watched(self, torrent_name, file_name):
-        return self.db.database["nt:watch"].get(torrent_name, {}).get(file_name, False)
+        return (
+            self.db.database[f"{self.db_prefix}:watch"]
+            .get(torrent_name, {})
+            .get(file_name, False)
+        )
 
     def is_torrent_watched(self, torrent_name):
-        return self.db.database["nt:watch"].get(torrent_name, False)
+        return self.db.database[f"{self.db_prefix}:watch"].get(torrent_name, False)
 
-    def search(self, category):
+    def search(self):
         keyboard = xbmc.Keyboard("", "Search for torrents:", False)
         keyboard.doModal()
         if keyboard.isConfirmed():
@@ -56,7 +75,7 @@ class Nyaa:
 
         escaped = quote(text)
         page = requests.get(
-            f"https://nyaa.si/?f=0&c={category}&q={escaped}&s=seeders&o=desc"
+            f"https://{self.hostname}/?f=0&c={self.category}&q={escaped}&s=seeders&o=desc"
         )
         soup = BeautifulSoup(page.text, "html.parser")
 
@@ -90,7 +109,7 @@ class Nyaa:
             is_folder = True
             xbmcplugin.addDirectoryItem(
                 HANDLE,
-                get_url(action="nyaa_page", url=link["href"]),
+                get_url(action=self.page_action, url=link["href"]),
                 list_item,
                 is_folder,
             )
@@ -99,7 +118,9 @@ class Nyaa:
         xbmcplugin.endOfDirectory(HANDLE)
 
     def page(self, url):
-        nyaa_url = url if url.startswith("https://") else f"https://nyaa.si{url}"
+        nyaa_url = (
+            url if url.startswith("https://") else f"https://{self.hostname}{url}"
+        )
 
         page = requests.get(nyaa_url)
         soup = BeautifulSoup(page.text, "html.parser")
@@ -140,7 +161,7 @@ class Nyaa:
                         "Toggle Watched",
                         "RunPlugin(%s)"
                         % get_url(
-                            action="toggle_watched_nyaa",
+                            action=self.toggle_watched_action,
                             torrent_name=torrent_name,
                             file_name=file_name,
                             nyaa_url=nyaa_url,
@@ -151,7 +172,7 @@ class Nyaa:
             )
             is_folder = False
             url = get_url(
-                action="play_nyaa",
+                action=self.play_action,
                 magnet=magnet,
                 selected_file=file_name,
                 name=torrent_name,
@@ -164,11 +185,13 @@ class Nyaa:
     def history(self):
         xbmcplugin.setPluginCategory(HANDLE, f"Torrents - History")
 
-        for title, data in reversed(self.db.database["nt:history"].items()):
+        for title, data in reversed(
+            self.db.database[f"{self.db_prefix}:history"].items()
+        ):
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
             url = get_url(
-                action="nyaa_page",
+                action=self.page_action,
                 url=data.get("nyaa_url", False),
             )
             list_item = xbmcgui.ListItem(label=label)

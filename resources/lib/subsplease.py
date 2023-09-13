@@ -230,11 +230,6 @@ class SubsPlease:
     def airing(self):
         xbmcplugin.setPluginCategory(HANDLE, "SubsPlease - Airing")
 
-        list_item = xbmcgui.ListItem(label="All")
-        url = get_url(action="subsplease_all_airing")
-        is_folder = True
-        xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
-
         for day in [
             "Today",
             "Monday",
@@ -250,6 +245,11 @@ class SubsPlease:
             url = get_url(action="subsplease_day", day=day)
             is_folder = True
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+
+        list_item = xbmcgui.ListItem(label="All")
+        url = get_url(action="subsplease_all_airing")
+        is_folder = True
+        xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
 
         xbmcplugin.endOfDirectory(HANDLE)
 

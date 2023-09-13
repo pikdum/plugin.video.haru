@@ -122,6 +122,11 @@ class Nyaa:
             title = f"{title}[CR][I][LIGHT][COLOR lightgray]{formatted_date}, {size}, {seeds} seeds[/COLOR][/LIGHT][/I]"
 
             list_item = xbmcgui.ListItem(label=title)
+
+            lookup_name = slugify_torrent(torrent_name)
+            if lookup_name:
+                log(f"{lookup_name=}")
+                set_art(list_item, f"http://localhost:8000/art/{lookup_name}")
             is_folder = True
             xbmcplugin.addDirectoryItem(
                 HANDLE,

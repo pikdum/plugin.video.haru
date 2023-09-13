@@ -41,12 +41,10 @@ class SubsPlease:
         self.db.commit()
 
     def get_cached_art(self, show):
-        return self.db.database["sp:art_cache"].get(show, None)
+        return f"http://localhost:8000/art/{slugify(show)}"
 
     def set_cached_art(self, show, art):
-        if not self.db.database["sp:art_cache"].get(show, None):
-            self.db.database["sp:art_cache"][show] = art
-            self.db.commit()
+        return
 
     def is_show_watched(self, name):
         return name in self.db.database["sp:watch"]
@@ -95,6 +93,7 @@ class SubsPlease:
         show_title = soup.find("h1", class_="entry-title").text
         artwork_url = "https://subsplease.org" + soup.find("img")["src"]
         description = soup.find("div", class_="series-syn").find("p").text.strip()
+        # TODO: fix multi-line descriptions
         self.set_cached_art(show_title, artwork_url)
 
         xbmcplugin.setPluginCategory(HANDLE, show_title)

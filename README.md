@@ -18,7 +18,8 @@ a basic kodi anime addon
 ## requirements
 
 - kodi 19+
-- debrid account
+- ~~debrid account~~
+  - debrid is optional if using [torrest](https://github.com/i96751414/plugin.video.torrest)
 
 ## features
 
@@ -28,8 +29,10 @@ a basic kodi anime addon
 - batch support
 - watch history
 - nyaa search
+- sukebei search
+- resolveurl (debrid) support
+- torrest (no debrid) support
 
 ## roadmap
 
-- mal/kitsu/etc support
-- erai-raws support
+- better anime art

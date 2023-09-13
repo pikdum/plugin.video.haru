@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
   <category label="General">
-    <setting id="engine" type="labelenum" label="Torrent Engine"
-    values="ResolveURL|Torrest" default="ResolveURL" />
+    <setting label="Configuration" type="lsep" />
+    <setting default="ResolveURL" id="engine"
+    label="Torrent Engine" type="labelenum"
+    values="ResolveURL|Torrest" />
+    <setting label="Actions" type="lsep" />
+    <setting action="RunPlugin(plugin://plugin.video.haru/?action=toggle_language_invoker)"
+    label="Toggle Language Invoker" type="action" />
+  </category>
+  <category label="SubsPlease">
+    <setting label="Actions" type="lsep" />
+    <setting action="RunPlugin(plugin://plugin.video.haru/?action=clear_history_subsplease)"
+    label="Clear History" type="action" />
+  </category>
+  <category label="Torrents">
+    <setting label="Actions" type="lsep" />
+    <setting action="RunPlugin(plugin://plugin.video.haru/?action=clear_history_nyaa)"
+    label="Clear History" type="action" />
   </category>
 </settings>

@@ -239,7 +239,6 @@ class SubsPlease:
             "Friday",
             "Saturday",
             "Sunday",
-            "TBD",
         ]:
             list_item = xbmcgui.ListItem(label=day)
             url = get_url(action="subsplease_day", day=day)

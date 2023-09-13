@@ -162,11 +162,6 @@ class Nyaa:
     def history(self):
         xbmcplugin.setPluginCategory(HANDLE, f"Torrents - History")
 
-        list_item = xbmcgui.ListItem(label="Clear History")
-        xbmcplugin.addDirectoryItem(
-            HANDLE, get_url(action="clear_history_nyaa"), list_item
-        )
-
         for title, data in reversed(self.db.database["nt:history"].items()):
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"

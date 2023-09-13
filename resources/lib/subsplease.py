@@ -334,11 +334,6 @@ class SubsPlease:
     def history(self):
         xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - History")
 
-        list_item = xbmcgui.ListItem(label="Clear History")
-        xbmcplugin.addDirectoryItem(
-            HANDLE, get_url(action="clear_history_subsplease"), list_item
-        )
-
         for title, data in reversed(self.db.database["sp:history"].items()):
             split = title.split(" - ")
             show = " - ".join(split[:-1])

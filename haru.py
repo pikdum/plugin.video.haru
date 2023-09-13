@@ -109,6 +109,14 @@ def settings():
         HANDLE, get_url(action="toggle_language_invoker"), list_item
     )
 
+    list_item = xbmcgui.ListItem(label="SubsPlease - Clear History")
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="clear_history_subsplease"), list_item
+    )
+
+    list_item = xbmcgui.ListItem(label="Torrents - Clear History")
+    xbmcplugin.addDirectoryItem(HANDLE, get_url(action="clear_history_nyaa"), list_item)
+
     xbmcplugin.endOfDirectory(HANDLE)
 
 

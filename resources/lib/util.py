@@ -49,16 +49,3 @@ def slugify(text):
         .replace("!", "")
         .replace("+", "")
     )
-
-
-def compat(line1, line2, line3):
-    message = line1
-    if line2:
-        message += "\n" + line2
-    if line3:
-        message += "\n" + line3
-    return message
-
-
-def dialog_ok(heading, line1, line2="", line3=""):
-    return xbmcgui.Dialog().ok(heading, compat(line1=line1, line2=line2, line3=line3))

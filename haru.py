@@ -169,15 +169,9 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
 
     torrent_client = get_setting("torrent_clients", default="Debrid")
     if torrent_client == "Torrest":
-        if xbmc.getCondVisibility('System.HasAddon("plugin.video.torrest")'):
-            plugin_url = "plugin://plugin.video.torrest/play_magnet?magnet="
-        else:
-            dialog_ok(
-                "Haru",
-                "You need to install the Torrent Engine/Client: Torrest (plugin.video.torrest)",
-            )
-            return
-        play_item = xbmcgui.ListItem(path=plugin_url + quote_plus(magnet))
+        play_item = xbmcgui.ListItem(
+            path=f"plugin://plugin.video.torrest/play_magnet?magnet={quote_plus(magnet)}"
+        )
     elif torrent_client == "Debrid":
         if not selected_file:
             resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()

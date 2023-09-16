@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import re
 import sys
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
 
 import xbmc
 import xbmcaddon
@@ -11,6 +11,7 @@ from resolveurl.lib import kodi
 _URL = sys.argv[0]
 HANDLE = int(sys.argv[1])
 VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
+MONA_URL = "https://wild-fire-3987.fly.dev"
 
 
 def get_setting(setting, default=None):
@@ -25,10 +26,17 @@ def get_url(**kwargs):
     return "{}?{}".format(_URL, urlencode(kwargs))
 
 
-def set_art(list_item, artwork_url):
-    log(artwork_url)
-    if artwork_url:
-        list_item.setArt({"poster": artwork_url, "thumb": artwork_url})
+def set_show_art(list_item, title):
+    poster = f"{MONA_URL}/poster/show/{quote(title)}"
+    fanart = f"{MONA_URL}/fanart/show/{quote(title)}"
+    list_item.setArt({"poster": poster, "thumb": poster, "fanart": fanart})
+
+
+def set_torrent_art(list_item, name):
+    pattern = r"\[(.+)?\] (.+?) (S\d* )?- (\d+)"
+    match = re.match(pattern, name)
+    if match and match.group(2):
+        set_show_art(list_item, match.group(2))
 
 
 def slugify(text):
@@ -46,19 +54,7 @@ def slugify(text):
     text = re.sub(r"[^a-zA-Z0-9_]+", "-", text)
     # strip leading and trailing dashes
     text = text.strip("-")
-    log(text)
-
     return text
-
-
-def slugify_torrent(text):
-    pattern = r"\[(.+)?\] (.+?) (S\d* )?- (\d+)"
-    match = re.match(pattern, text)
-    if match:
-        print(match)
-        return slugify(match.group(2))
-    else:
-        return None
 
 
 def open_settings(addon_id):

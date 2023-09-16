@@ -122,11 +122,8 @@ class Nyaa:
             title = f"{title}[CR][I][LIGHT][COLOR lightgray]{formatted_date}, {size}, {seeds} seeds[/COLOR][/LIGHT][/I]"
 
             list_item = xbmcgui.ListItem(label=title)
+            set_torrent_art(list_item, torrent_name)
 
-            lookup_name = slugify_torrent(torrent_name)
-            if lookup_name:
-                log(f"{lookup_name=}")
-                set_art(list_item, f"http://localhost:8000/art/{lookup_name}")
             is_folder = True
             xbmcplugin.addDirectoryItem(
                 HANDLE,
@@ -171,6 +168,7 @@ class Nyaa:
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
 
             list_item = xbmcgui.ListItem(label=title)
+            set_torrent_art(list_item, file_name)
             list_item.setInfo(
                 "video",
                 {"title": title, "mediatype": "video", "plot": description},
@@ -216,6 +214,7 @@ class Nyaa:
                 url=data.get("nyaa_url", False),
             )
             list_item = xbmcgui.ListItem(label=label)
+            set_torrent_art(list_item, title)
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
 
         xbmcplugin.endOfDirectory(HANDLE)

@@ -40,12 +40,6 @@ class SubsPlease:
         self.db.database["sp:watch"][show][episode] = True
         self.db.commit()
 
-    def get_cached_art(self, show):
-        return f"http://localhost:8000/art/{slugify(show)}"
-
-    def set_cached_art(self, show, art):
-        return
-
     def is_show_watched(self, name):
         return name in self.db.database["sp:watch"]
 
@@ -69,14 +63,14 @@ class SubsPlease:
 
         for link in links:
             title = link["title"]
+            label = title
 
             watched = self.is_show_watched(title)
             if watched:
-                title = f"[COLOR palevioletred]{title}[/COLOR]"
+                label = f"[COLOR palevioletred]{title}[/COLOR]"
 
-            list_item = xbmcgui.ListItem(label=title)
-            artwork_url = self.get_cached_art(title)
-            set_art(list_item, artwork_url)
+            list_item = xbmcgui.ListItem(label=label)
+            set_show_art(list_item, title)
 
             is_folder = True
             url = get_url(
@@ -91,10 +85,8 @@ class SubsPlease:
         soup = BeautifulSoup(page.text, "html.parser")
         sid = soup.find(id="show-release-table")["sid"]
         show_title = soup.find("h1", class_="entry-title").text
-        artwork_url = "https://subsplease.org" + soup.find("img")["src"]
         description = soup.find("div", class_="series-syn").find("p").text.strip()
         # TODO: fix multi-line descriptions
-        self.set_cached_art(show_title, artwork_url)
 
         xbmcplugin.setPluginCategory(HANDLE, show_title)
 
@@ -112,7 +104,7 @@ class SubsPlease:
                     batch=batch,
                     batch_torrent=hq_download["torrent"],
                 )
-                set_art(list_item, artwork_url)
+                set_show_art(list_item, show_title)
                 xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
 
         if episodes["episode"]:
@@ -136,7 +128,7 @@ class SubsPlease:
                     },
                 )
                 list_item.setProperty("IsPlayable", "true")
-                set_art(list_item, artwork_url)
+                set_show_art(list_item, show_title)
                 list_item.addContextMenuItems(
                     [
                         (
@@ -169,7 +161,6 @@ class SubsPlease:
 
         split = batch.split(" - ")
         show = " - ".join(split[:-1])
-        artwork_url = self.get_cached_art(show)
 
         while soup.i:
             soup.i.decompose()
@@ -202,7 +193,7 @@ class SubsPlease:
                 },
             )
             list_item.setProperty("IsPlayable", "true")
-            set_art(list_item, artwork_url)
+            set_show_art(list_item, show)
             list_item.addContextMenuItems(
                 [
                     (
@@ -272,8 +263,6 @@ class SubsPlease:
             formatted_time = datetime(
                 *(time.strptime(show["time"], "%H:%M")[0:6])
             ).strftime("%I:%M %p")
-            artwork_url = "https://subsplease.org" + show["image_url"]
-            self.set_cached_art(show["title"], artwork_url)
 
             title = f"""{show["title"]} [I][LIGHT]— {show["day"]} @ {formatted_time}[/LIGHT][/I]"""
 
@@ -282,7 +271,7 @@ class SubsPlease:
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
 
             list_item = xbmcgui.ListItem(label=title)
-            set_art(list_item, artwork_url)
+            set_show_art(list_item, show["title"])
             url = get_url(
                 action="subsplease_show",
                 url="https://subsplease.org/shows/" + show["page"],
@@ -309,17 +298,16 @@ class SubsPlease:
             formatted_time = datetime(
                 *(time.strptime(show["time"], "%H:%M")[0:6])
             ).strftime("%I:%M %p")
-            artwork_url = "https://subsplease.org" + show["image_url"]
-            self.set_cached_art(show["title"], artwork_url)
+            title = show["title"]
 
-            title = f"""[B]{formatted_time}[/B] - {show["title"]}"""
+            label = f"""[B]{formatted_time}[/B] - {title}"""
 
-            watched = self.is_show_watched(show["title"])
+            watched = self.is_show_watched(title)
             if watched:
-                title = f"[COLOR palevioletred]{title}[/COLOR]"
+                label = f"[COLOR palevioletred]{label}[/COLOR]"
 
-            list_item = xbmcgui.ListItem(label=title)
-            set_art(list_item, artwork_url)
+            list_item = xbmcgui.ListItem(label=label)
+            set_show_art(list_item, title)
             url = get_url(
                 action="subsplease_show",
                 url="https://subsplease.org/shows/" + show["page"],
@@ -338,13 +326,12 @@ class SubsPlease:
 
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
-            artwork_url = self.get_cached_art(show)
             url = get_url(
                 action="subsplease_show",
                 url=f"https://subsplease.org/shows/{slugify(show)}/",
             )
             list_item = xbmcgui.ListItem(label=label)
-            set_art(list_item, artwork_url)
+            set_show_art(list_item, show)
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
 
         xbmcplugin.endOfDirectory(HANDLE)

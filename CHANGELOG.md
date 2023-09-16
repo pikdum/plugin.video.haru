@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/pikdum/plugin.video.haru/compare/v1.9.0...v1.10.0) (2023-09-16)
+
+
+### Features
+
+* better poster + fanart ([#37](https://github.com/pikdum/plugin.video.haru/issues/37)) ([6177371](https://github.com/pikdum/plugin.video.haru/commit/617737158ce9bd9d8695db31bc559c0bb76f27f4))
+
 ## [1.9.0](https://github.com/pikdum/plugin.video.haru/compare/v1.8.0...v1.9.0) (2023-09-13)
 
 

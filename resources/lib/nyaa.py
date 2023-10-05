@@ -18,12 +18,14 @@ class Nyaa:
             self.hostname = "nyaa.si"
             self.db_prefix = "nt"
             self.page_action = "nyaa_page"
+            self.search_results_action = "nyaa_search_results"
             self.toggle_watched_action = "toggle_watched_nyaa"
             self.play_action = "play_nyaa"
         if mode == "fap":
             self.hostname = "sukebei.nyaa.si"
             self.db_prefix = "sb"
             self.page_action = "sukebei_page"
+            self.search_results_action = "sukebei_search_results"
             self.toggle_watched_action = "toggle_watched_sukebei"
             self.play_action = "play_sukebei"
         self.mode = mode
@@ -90,8 +92,23 @@ class Nyaa:
             return
 
         escaped = quote(text)
+
+        search_results_url = get_url(
+            action=self.search_results_action, text=escaped, category=category
+        )
+
+        xbmcplugin.setPluginCategory(HANDLE, "Torrent Search")
+        xbmcplugin.addDirectoryItem(
+            HANDLE,
+            get_url(action=self.search_results_action, text=escaped, category=category),
+            xbmcgui.ListItem(label="View Results"),
+            isFolder=True,
+        )
+        xbmcplugin.endOfDirectory(HANDLE)
+
+    def search_results(self, category, text):
         page = requests.get(
-            f"https://{self.hostname}/?f=0&c={category}&q={escaped}&s=seeders&o=desc"
+            f"https://{self.hostname}/?f=0&c={category}&q={text}&s=seeders&o=desc"
         )
         soup = BeautifulSoup(page.text, "html.parser")
 

@@ -272,6 +272,11 @@ def nyaa_search():
 
 
 @register
+def nyaa_search_results(category, text=""):
+    nyaa.search_results(category, text)
+
+
+@register
 def nyaa_page(url):
     nyaa.page(url)
 
@@ -284,6 +289,11 @@ def nyaa_history():
 @register
 def sukebei_search():
     sukebei.search()
+
+
+@register
+def sukebei_search_results(category, text=""):
+    sukebei.search_results(category, text)
 
 
 @register

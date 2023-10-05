@@ -39,6 +39,17 @@ def set_torrent_art(list_item, name):
         set_show_art(list_item, match.group(2))
 
 
+def select_option(options, message):
+    labels = [option[0] for option in options]
+
+    dialog = xbmcgui.Dialog()
+    index = dialog.select(message, labels)
+    if index != -1:
+        return options[index][1]
+    else:
+        return None
+
+
 def slugify(text):
     # lowercase
     text = text.lower()

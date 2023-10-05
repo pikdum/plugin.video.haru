@@ -272,8 +272,8 @@ def nyaa_search():
 
 
 @register
-def nyaa_search_results(category, text=""):
-    nyaa.search_results(category, text)
+def nyaa_search_results(category, sort, order, text=""):
+    nyaa.search_results(category=category, text=text, sort=sort, order=order)
 
 
 @register
@@ -292,8 +292,8 @@ def sukebei_search():
 
 
 @register
-def sukebei_search_results(category, text=""):
-    sukebei.search_results(category, text)
+def sukebei_search_results(category, sort, order, text=""):
+    sukebei.search_results(category=category, text=text, sort=sort, order=order)
 
 
 @register

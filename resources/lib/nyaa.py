@@ -74,41 +74,58 @@ class Nyaa:
         return self.db.database[f"{self.db_prefix}:watch"].get(torrent_name, False)
 
     def search(self):
-        categories = self.get_categories()
-        labels = [category[0] for category in categories]
-
-        dialog = xbmcgui.Dialog()
-        index = dialog.select("Select a category", labels)
-        if index != -1:
-            category = categories[index][1]
-        else:
-            return
-
         keyboard = xbmc.Keyboard("", "Search for torrents:", False)
         keyboard.doModal()
         if keyboard.isConfirmed():
             text = keyboard.getText().strip()
         else:
             return
-
         escaped = quote(text)
 
-        search_results_url = get_url(
-            action=self.search_results_action, text=escaped, category=category
+        category = select_option(self.get_categories(), "Category")
+        if not category:
+            return
+
+        sort = select_option(
+            [
+                ("Seeders", "seeders"),
+                ("Date", "id"),
+                ("Size", "size"),
+                ("Leechers", "leechers"),
+                ("Downloads", "downloads"),
+                ("Comments", "comments"),
+            ],
+            "Sort by",
         )
+        if not sort:
+            return
+
+        sort_order = select_option(
+            [("Descending", "desc"), ("Ascending", "asc")], "Sort order"
+        )
+        if not sort_order:
+            return
 
         xbmcplugin.setPluginCategory(HANDLE, "Torrent Search")
         xbmcplugin.addDirectoryItem(
             HANDLE,
-            get_url(action=self.search_results_action, text=escaped, category=category),
-            xbmcgui.ListItem(label="View Results"),
+            get_url(
+                action=self.search_results_action,
+                text=escaped,
+                category=category,
+                sort=sort,
+                order=sort_order,
+            ),
+            xbmcgui.ListItem(
+                label=f"View Results - '{escaped}', {category}, {sort}, {sort_order}"
+            ),
             isFolder=True,
         )
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def search_results(self, category, text):
+    def search_results(self, category, text, sort="seeders", order="desc"):
         page = requests.get(
-            f"https://{self.hostname}/?f=0&c={category}&q={text}&s=seeders&o=desc"
+            f"https://{self.hostname}/?f=0&c={category}&q={text}&s={sort}&o={order}"
         )
         soup = BeautifulSoup(page.text, "html.parser")
 

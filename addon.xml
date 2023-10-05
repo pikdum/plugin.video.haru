@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.10.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.11.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,15 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.10.0 (2023-09-16)
+    <news>1.11.0 (2023-10-05)
+
+Features
+
+-   nyaa: add latest + popular links (ce086d1)
+-   nyaa: add search sorting options (cc104b3)
+-   nyaa: allow search results in skin widgets (d2132a8)
+
+1.10.0 (2023-09-16)
 
 Features
 
@@ -64,18 +72,6 @@ Features
 
 -   nyaa: show more torrent details (4c287ea)
 -   nyaa: show torrent description (d294839)
--   subsplease: show anime description (3309587)
-
-1.5.0 (2022-05-09)
-
-Features
-
--   allow toggling reuselanguageinvoker (0adecf0)
-
-1.4.2 (2022-04-29)
-
-Bug Fixes
-
--   file playback in torrent subfolder (b3d...</news>
+-   subsplease: show a...</news>
   </extension>
 </addon>

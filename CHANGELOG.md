@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.0](https://github.com/pikdum/plugin.video.haru/compare/v1.10.0...v1.11.0) (2023-10-05)
+
+
+### Features
+
+* **nyaa:** add latest + popular links ([ce086d1](https://github.com/pikdum/plugin.video.haru/commit/ce086d1b91f0999e20c9507d2f84bae2834b59bb))
+* **nyaa:** add search sorting options ([cc104b3](https://github.com/pikdum/plugin.video.haru/commit/cc104b382d25f16c48ca890e9819b602d6ea8944))
+* **nyaa:** allow search results in skin widgets ([d2132a8](https://github.com/pikdum/plugin.video.haru/commit/d2132a8548b5e75fe8eb34c04c96b0179db66b56))
+
 ## [1.10.0](https://github.com/pikdum/plugin.video.haru/compare/v1.9.0...v1.10.0) (2023-09-16)
 
 

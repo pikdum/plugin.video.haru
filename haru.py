@@ -60,6 +60,36 @@ def main_menu():
         HANDLE, get_url(action="nyaa_search"), list_item, is_folder
     )
 
+    list_item = xbmcgui.ListItem(label="Torrents - Latest")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE,
+        get_url(
+            action="nyaa_search_results",
+            text="",
+            category="1_2",
+            sort="id",
+            order="desc",
+        ),
+        list_item,
+        is_folder,
+    )
+
+    list_item = xbmcgui.ListItem(label="Torrents - Popular")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE,
+        get_url(
+            action="nyaa_search_results",
+            text="",
+            category="1_2",
+            sort="seeders",
+            order="desc",
+        ),
+        list_item,
+        is_folder,
+    )
+
     list_item = xbmcgui.ListItem(label="Torrents - History")
     is_folder = True
     xbmcplugin.addDirectoryItem(

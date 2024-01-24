@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.0](https://github.com/pikdum/plugin.video.haru/compare/v1.11.0...v1.12.0) (2024-01-24)
+
+
+### Features
+
+* **subsplease:** look up unfinished shows ([f6edd6f](https://github.com/pikdum/plugin.video.haru/commit/f6edd6f24e630c581b6feff3a76818762644c0bd))
+
 ## [1.11.0](https://github.com/pikdum/plugin.video.haru/compare/v1.10.0...v1.11.0) (2023-10-05)
 
 

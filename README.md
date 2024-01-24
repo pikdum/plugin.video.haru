@@ -25,6 +25,7 @@ a basic kodi anime addon
 
 - anime list
 - airing anime list
+- unfinished anime list
 - watched indicators
 - batch support
 - watch history
@@ -32,7 +33,3 @@ a basic kodi anime addon
 - sukebei search
 - resolveurl (debrid) support
 - torrest (no debrid) support
-
-## roadmap
-
-- better anime art

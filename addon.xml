@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.11.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.12.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.11.0 (2023-10-05)
+    <news>1.12.0 (2024-01-24)
+
+Features
+
+-   subsplease: look up unfinished shows (f6edd6f)
+
+1.11.0 (2023-10-05)
 
 Features
 
@@ -70,8 +76,6 @@ Features
 
 Features
 
--   nyaa: show more torrent details (4c287ea)
--   nyaa: show torrent description (d294839)
--   subsplease: show a...</news>
+-   nyaa: show more torrent de...</news>
   </extension>
 </addon>

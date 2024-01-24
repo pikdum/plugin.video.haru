@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import concurrent.futures as cf
 import re
 import time
 from datetime import datetime
@@ -326,6 +327,69 @@ class SubsPlease:
 
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
+            url = get_url(
+                action="subsplease_show",
+                url=f"https://subsplease.org/shows/{slugify(show)}/",
+            )
+            list_item = xbmcgui.ListItem(label=label)
+            set_show_art(list_item, show)
+            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
+
+        xbmcplugin.endOfDirectory(HANDLE)
+
+    def is_unfinished(self, show):
+        page = requests.get(f"https://subsplease.org/shows/{slugify(show)}/")
+        soup = BeautifulSoup(page.text, "html.parser")
+        sid = soup.find(id="show-release-table")["sid"]
+
+        episodes = requests.get(
+            f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"
+        ).json()
+        latest_episode = list(episodes["episode"].keys())[0]
+
+        if self.is_episode_watched(latest_episode):
+            return False
+
+        return True
+
+    def unfinished(self):
+        xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - Unfinished")
+
+        shows = []
+        sorted_items = sorted(self.db.database["sp:watch"].items(), key=lambda x: x[0])
+        total_items = len(sorted_items)
+
+        progress_dialog = xbmcgui.DialogProgress()
+        progress_dialog.create(
+            "SubsPlease - Unfinished",
+            "Checking shows...",
+        )
+
+        with cf.ThreadPoolExecutor() as executor:
+            futures = [
+                executor.submit(self.is_unfinished, show) for show, _ in sorted_items
+            ]
+
+            for future in cf.as_completed(futures):
+                is_unfinished = future.result()
+                index = futures.index(future)
+                item = sorted_items[index]
+
+                if is_unfinished:
+                    shows.append(item[0])
+
+                if progress_dialog.iscanceled():
+                    break
+
+                progress_dialog.update(
+                    int((index / total_items) * 100),
+                    f"Checking {item[0]}...",
+                )
+
+        progress_dialog.close()
+
+        for show in sorted(shows):
+            label = show
             url = get_url(
                 action="subsplease_show",
                 url=f"https://subsplease.org/shows/{slugify(show)}/",

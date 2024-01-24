@@ -48,6 +48,12 @@ def main_menu():
         HANDLE, get_url(action="subsplease_airing"), list_item, is_folder
     )
 
+    list_item = xbmcgui.ListItem(label="SubsPlease - Unfinished")
+    is_folder = True
+    xbmcplugin.addDirectoryItem(
+        HANDLE, get_url(action="subsplease_unfinished"), list_item, is_folder
+    )
+
     list_item = xbmcgui.ListItem(label="SubsPlease - History")
     is_folder = True
     xbmcplugin.addDirectoryItem(
@@ -193,6 +199,11 @@ def subsplease_day(day):
 @register
 def subsplease_history():
     return subsplease.history()
+
+
+@register
+def subsplease_unfinished():
+    return subsplease.unfinished()
 
 
 def get_nyaa_magnet(url):

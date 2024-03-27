@@ -163,6 +163,14 @@ def settings():
             list_item,
         )
 
+    if xbmc.getCondVisibility("System.HasAddon(plugin.video.elementum)"):
+        list_item = xbmcgui.ListItem(label="Elementum")
+        xbmcplugin.addDirectoryItem(
+            HANDLE,
+            get_url(action="display_settings", plugin="plugin.video.elementum"),
+            list_item,
+        )
+
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -222,6 +230,10 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
     if engine == "Torrest":
         play_item = xbmcgui.ListItem(
             path=f"plugin://plugin.video.torrest/play_magnet?magnet={quote_plus(magnet)}"
+        )
+    elif engine == "Elementum":
+        play_item = xbmcgui.ListItem(
+            path=f"plugin://plugin.video.elementum/play?uri={quote_plus(magnet)}"
         )
     elif engine == "ResolveURL":
         if not selected_file:

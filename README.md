@@ -19,7 +19,7 @@ a basic kodi anime addon
 
 - kodi 19+
 - ~~debrid account~~
-  - debrid is optional if using [torrest](https://github.com/i96751414/plugin.video.torrest)
+  - debrid is optional if using [torrest](https://github.com/i96751414/plugin.video.torrest) or [elementum](https://github.com/elgatito/plugin.video.elementum)
 
 ## features
 
@@ -33,3 +33,4 @@ a basic kodi anime addon
 - sukebei search
 - resolveurl (debrid) support
 - torrest (no debrid) support
+- elementum (no debrid) support

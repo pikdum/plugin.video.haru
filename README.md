@@ -26,8 +26,12 @@ a basic kodi anime addon
   - configurable in Settings/ResolveURL
 - [Torrest](https://github.com/i96751414/plugin.video.torrest) - streams torrents directly
   - available in the "GitHub Add-on repository"
+  - configurable in Settings/Torrest
 - [Elementum](https://github.com/elgatito/plugin.video.elementum) - streams torrents directly
   - available in the "ElementumOrg repository"
+  - configurable in Settings/Elementum
+
+after installing a supported engine, switch to it in Settings/haru
 
 ## features
 

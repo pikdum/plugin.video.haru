@@ -18,8 +18,16 @@ a basic kodi anime addon
 ## requirements
 
 - kodi 19+
-- ~~debrid account~~
-  - debrid is optional if using [torrest](https://github.com/i96751414/plugin.video.torrest) or [elementum](https://github.com/elgatito/plugin.video.elementum)
+
+## supported engines
+
+- [ResolveURL](https://github.com/Gujal00/ResolveURL) (default) - uses debrid account
+  - installed automatically
+  - configurable in Settings/ResolveURL
+- [Torrest](https://github.com/i96751414/plugin.video.torrest) - streams torrents directly
+  - available in the "GitHub Add-on repository"
+- [Elementum](https://github.com/elgatito/plugin.video.elementum) - streams torrents directly
+  - available in the "ElementumOrg repository"
 
 ## features
 

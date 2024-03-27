@@ -18,8 +18,20 @@ a basic kodi anime addon
 ## requirements
 
 - kodi 19+
-- ~~debrid account~~
-  - debrid is optional if using [torrest](https://github.com/i96751414/plugin.video.torrest)
+
+## supported engines
+
+- [ResolveURL](https://github.com/Gujal00/ResolveURL) (default) - uses debrid account
+  - installed automatically
+  - configurable in Settings/ResolveURL
+- [Torrest](https://github.com/i96751414/plugin.video.torrest) - streams torrents directly
+  - available in the "GitHub Add-on repository"
+  - configurable in Settings/Torrest
+- [Elementum](https://github.com/elgatito/plugin.video.elementum) - streams torrents directly
+  - available in the "ElementumOrg repository"
+  - configurable in Settings/Elementum
+
+after installing a supported engine, switch to it in Settings/haru
 
 ## features
 
@@ -33,3 +45,4 @@ a basic kodi anime addon
 - sukebei search
 - resolveurl (debrid) support
 - torrest (no debrid) support
+- elementum (no debrid) support

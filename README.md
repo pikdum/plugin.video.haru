@@ -24,12 +24,12 @@ a basic kodi anime addon
 - [ResolveURL](https://github.com/Gujal00/ResolveURL) (default) - uses debrid account
   - installed automatically
   - configurable in Settings/ResolveURL
-- [Torrest](https://github.com/i96751414/plugin.video.torrest) - streams torrents directly
-  - available in the "GitHub Add-on repository"
-  - configurable in Settings/Torrest
 - [Elementum](https://github.com/elgatito/plugin.video.elementum) - streams torrents directly
   - available in the "ElementumOrg repository"
   - configurable in Settings/Elementum
+- [Torrest](https://github.com/i96751414/plugin.video.torrest) - streams torrents directly
+  - available in the "GitHub Add-on repository"
+  - configurable in Settings/Torrest
 
 after installing a supported engine, switch to it in Settings/haru
 
@@ -44,5 +44,5 @@ after installing a supported engine, switch to it in Settings/haru
 - nyaa search
 - sukebei search
 - resolveurl (debrid) support
-- torrest (no debrid) support
 - elementum (no debrid) support
+- torrest (no debrid) support

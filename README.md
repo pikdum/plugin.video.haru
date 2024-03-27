@@ -31,7 +31,7 @@ a basic kodi anime addon
   - available in the "GitHub Add-on repository"
   - configurable in Settings/Torrest
 
-after installing a supported engine, switch to it in Settings/haru
+after installing a supported engine, switch haru to it in settings
 
 ## features
 
@@ -43,6 +43,7 @@ after installing a supported engine, switch to it in Settings/haru
 - watch history
 - nyaa search
 - sukebei search
-- resolveurl (debrid) support
-- elementum (no debrid) support
-- torrest (no debrid) support
+- torrent engine support
+  - resolveurl (debrid)
+  - elementum (no debrid)
+  - torrest (no debrid)

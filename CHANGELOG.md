@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/pikdum/plugin.video.haru/compare/v1.12.0...v1.13.0) (2024-03-27)
+
+
+### Features
+
+* add elementum support ([#44](https://github.com/pikdum/plugin.video.haru/issues/44)) ([dda79a1](https://github.com/pikdum/plugin.video.haru/commit/dda79a1ead2e536988da19f8da30747e62f3b974))
+
 ## [1.12.0](https://github.com/pikdum/plugin.video.haru/compare/v1.11.0...v1.12.0) (2024-01-24)
 
 

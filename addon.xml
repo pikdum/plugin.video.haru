@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.12.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.13.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.12.0 (2024-01-24)
+    <news>1.13.0 (2024-03-27)
+
+Features
+
+-   add elementum support (#44) (dda79a1)
+
+1.12.0 (2024-01-24)
 
 Features
 
@@ -70,12 +76,6 @@ Bug Fixes
 
 Features
 
--   add somewhat working AnimeXin support (#29) (11ca456)
-
-1.6.0 (2022-08-13)
-
-Features
-
--   nyaa: show more torrent de...</news>
+-   add somewhat working AnimeXin support (#2...</news>
   </extension>
 </addon>

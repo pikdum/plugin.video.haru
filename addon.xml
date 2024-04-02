@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.13.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.14.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.13.0 (2024-03-27)
+    <news>1.14.0 (2024-04-02)
+
+Features
+
+-   add option to clear thumbnail cache (a8b57e0)
+
+1.13.0 (2024-03-27)
 
 Features
 
@@ -70,12 +76,6 @@ Features
 
 Bug Fixes
 
--   subsplease: broken history links (55d46b3)
-
-1.7.0 (2022-10-06)
-
-Features
-
--   add somewhat working AnimeXin support (#2...</news>
+-   subsplease: broken history links (55d...</news>
   </extension>
 </addon>

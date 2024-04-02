@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import inspect
+import os
+import shutil
 import sys
 from urllib.parse import parse_qsl, quote_plus
 
@@ -8,6 +10,7 @@ import resolveurl
 import xbmc
 import xbmcgui
 import xbmcplugin
+import xbmcvfs
 from bs4 import BeautifulSoup
 
 from resources.lib.animexin import AnimeXin
@@ -407,6 +410,23 @@ def toggle_language_invoker():
 
         dialog.ok("Success!", "Your profile will now be reloaded.")
         xbmc.executebuiltin("LoadProfile(%s)" % xbmc.getInfoLabel("system.profilename"))
+
+
+@register
+def clear_thumbnail_cache():
+    dialog = xbmcgui.Dialog()
+    confirmed = dialog.yesno(
+        "Clear Thumbnail Cache",
+        "Do you want to clear Kodi's thumbnail cache?",
+    )
+    if not confirmed:
+        return
+
+    thumbnail_dir = xbmcvfs.translatePath("special://thumbnails")
+    for d in os.listdir(thumbnail_dir):
+        shutil.rmtree(os.path.join(thumbnail_dir, d))
+
+    dialog.ok("Success!", "You should restart Kodi now.")
 
 
 def router(paramstring):

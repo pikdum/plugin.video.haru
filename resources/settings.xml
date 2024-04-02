@@ -5,6 +5,7 @@
     <setting default="ResolveURL" id="engine" label="Torrent Engine" type="labelenum" values="ResolveURL|Torrest|Elementum"/>
     <setting label="Actions" type="lsep"/>
     <setting action="RunPlugin(plugin://plugin.video.haru/?action=toggle_language_invoker)" label="Toggle Language Invoker" type="action"/>
+    <setting action="RunPlugin(plugin://plugin.video.haru/?action=clear_thumbnail_cache)" label="Clear Thumbnail Cache" type="action"/>
   </category>
   <category label="SubsPlease">
     <setting label="Actions" type="lsep"/>

@@ -402,14 +402,16 @@ def toggle_language_invoker():
         "Toggle Reuse Language Invoker",
         f"This is currently '{current_value}', do you want to change to '{new_value}'?\n\nThis should be set to 'true' for performance, unless you run into issues.",
     )
-    if confirmed:
-        for item in root.iter("reuselanguageinvoker"):
-            item.text = new_value
-            tree.write(addon_xml)
-            break
+    if not confirmed:
+        return
 
-        dialog.ok("Success!", "Your profile will now be reloaded.")
-        xbmc.executebuiltin("LoadProfile(%s)" % xbmc.getInfoLabel("system.profilename"))
+    for item in root.iter("reuselanguageinvoker"):
+        item.text = new_value
+        tree.write(addon_xml)
+        break
+
+    dialog.ok("Success!", "Your profile will now be reloaded.")
+    xbmc.executebuiltin("LoadProfile(%s)" % xbmc.getInfoLabel("system.profilename"))
 
 
 @register

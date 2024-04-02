@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0](https://github.com/pikdum/plugin.video.haru/compare/v1.13.0...v1.14.0) (2024-04-02)
+
+
+### Features
+
+* add option to clear thumbnail cache ([a8b57e0](https://github.com/pikdum/plugin.video.haru/commit/a8b57e079538043415ad6e3efd57077280892fa4))
+
 ## [1.13.0](https://github.com/pikdum/plugin.video.haru/compare/v1.12.0...v1.13.0) (2024-03-27)
 
 

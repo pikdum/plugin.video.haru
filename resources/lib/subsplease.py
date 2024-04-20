@@ -345,6 +345,8 @@ class SubsPlease:
         episodes = requests.get(
             f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"
         ).json()
+        if not episodes["episode"]:
+            return False
         latest_episode = list(episodes["episode"].keys())[0]
 
         if self.is_episode_watched(latest_episode):

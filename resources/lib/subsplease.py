@@ -365,12 +365,14 @@ class SubsPlease:
             "Checking shows...",
         )
 
+        progress = 0
         with cf.ThreadPoolExecutor() as executor:
             futures = [
                 executor.submit(self.is_unfinished, show) for show, _ in sorted_items
             ]
 
             for future in cf.as_completed(futures):
+                progress += 1
                 is_unfinished = future.result()
                 index = futures.index(future)
                 item = sorted_items[index]
@@ -382,7 +384,7 @@ class SubsPlease:
                     break
 
                 progress_dialog.update(
-                    int((index / total_items) * 100),
+                    int((progress / total_items) * 100),
                     f"Checking {item[0]}...",
                 )
 

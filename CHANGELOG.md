@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.15.0](https://github.com/pikdum/plugin.video.haru/compare/v1.14.0...v1.15.0) (2024-04-20)
+
+
+### Features
+
+* **nyaa:** more consistent torrent art ([71e2738](https://github.com/pikdum/plugin.video.haru/commit/71e2738f986a19ef1f428759962bfcd076c96e0e))
+* **sukebei:** use thumbnails from description ([5cab33b](https://github.com/pikdum/plugin.video.haru/commit/5cab33bf1cb4b04c1186e575a5cc345238d9b025))
+
+
+### Bug Fixes
+
+* **subsplease:** unfinished error if no episodes ([af1298b](https://github.com/pikdum/plugin.video.haru/commit/af1298b3cefae0590d1aa34d6be1264d5cec1175))
+* **subsplease:** unfinished progress bar ([6d87f6d](https://github.com/pikdum/plugin.video.haru/commit/6d87f6d50ff045cd6241ca42a4556884de5d48d7))
+
 ## [1.14.0](https://github.com/pikdum/plugin.video.haru/compare/v1.13.0...v1.14.0) (2024-04-02)
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.14.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.15.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,19 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.14.0 (2024-04-02)
+    <news>1.15.0 (2024-04-20)
+
+Features
+
+-   nyaa: more consistent torrent art (71e2738)
+-   sukebei: use thumbnails from description (5cab33b)
+
+Bug Fixes
+
+-   subsplease: unfinished error if no episodes (af1298b)
+-   subsplease: unfinished progress bar (6d87f6d)
+
+1.14.0 (2024-04-02)
 
 Features
 
@@ -61,21 +73,6 @@ Features
 -   move clear history under settings (3f97401)
 -   subsplease: move all airing to bottom (74a1847)
 -   sukebei support (7201047)
--   torrents: allow choosing search category (697fc8f)
--   torrest support + addon settings (#33) (#36) (cff0285)
-
-Bug Fixes
-
--   subsplease: remove tbd (3d58059)
-
-1.8.0 (2023-07-18)
-
-Features
-
--   subsplease: thumbnail art (e6f7e5f)
-
-Bug Fixes
-
--   subsplease: broken history links (55d...</news>
+-   torrents: allow choosing sea...</news>
   </extension>
 </addon>

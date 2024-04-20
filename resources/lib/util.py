@@ -32,13 +32,6 @@ def set_show_art(list_item, title):
     list_item.setArt({"poster": poster, "thumb": poster, "fanart": fanart})
 
 
-def set_torrent_art(list_item, name):
-    pattern = r"\[(.+)?\] (.+?) (S\d* )?- (\d+)"
-    match = re.match(pattern, name)
-    if match and match.group(2):
-        set_show_art(list_item, match.group(2))
-
-
 def select_option(options, message):
     labels = [option[0] for option in options]
 

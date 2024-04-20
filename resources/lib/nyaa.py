@@ -73,6 +73,16 @@ class Nyaa:
     def is_torrent_watched(self, torrent_name):
         return self.db.database[f"{self.db_prefix}:watch"].get(torrent_name, False)
 
+    def set_torrent_art(self, list_item, name=None, url=None):
+        if self.mode == "fun" and name:
+            pattern = r"\[(.+)?\] (.+?) (S\d* )?- (\d+)"
+            match = re.match(pattern, name)
+            if match and match.group(2):
+                set_show_art(list_item, match.group(2))
+        if self.mode == "fap" and url:
+            art = f"{MONA_URL}/torrent-art/?url={quote(url)}"
+            list_item.setArt({"thumb": art})
+
     def search(self):
         keyboard = xbmc.Keyboard("", "Search for torrents:", False)
         keyboard.doModal()
@@ -140,6 +150,7 @@ class Nyaa:
                 )
             )
             torrent_name = link.string
+            url = link["href"]
 
             size = columns[3].text
             date = columns[4].text
@@ -156,12 +167,14 @@ class Nyaa:
             title = f"{title}[CR][I][LIGHT][COLOR lightgray]{formatted_date}, {size}, {seeds} seeds[/COLOR][/LIGHT][/I]"
 
             list_item = xbmcgui.ListItem(label=title)
-            set_torrent_art(list_item, torrent_name)
+            self.set_torrent_art(
+                list_item, name=torrent_name, url=f"https://{self.hostname}{url}"
+            )
 
             is_folder = True
             xbmcplugin.addDirectoryItem(
                 HANDLE,
-                get_url(action=self.page_action, url=link["href"]),
+                get_url(action=self.page_action, url=url),
                 list_item,
                 is_folder,
             )
@@ -202,7 +215,7 @@ class Nyaa:
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
 
             list_item = xbmcgui.ListItem(label=title)
-            set_torrent_art(list_item, file_name)
+            self.set_torrent_art(list_item, name=file_name, url=nyaa_url)
             list_item.setInfo(
                 "video",
                 {"title": title, "mediatype": "video", "plot": description},
@@ -248,7 +261,7 @@ class Nyaa:
                 url=data.get("nyaa_url", False),
             )
             list_item = xbmcgui.ListItem(label=label)
-            set_torrent_art(list_item, title)
+            self.set_torrent_art(list_item, name=title)
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
 
         xbmcplugin.endOfDirectory(HANDLE)

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/pikdum/plugin.video.haru/compare/v1.15.0...v1.16.0) (2024-04-21)
+
+
+### Features
+
+* **sukebei:** add latest and popular ([d631ad6](https://github.com/pikdum/plugin.video.haru/commit/d631ad66d60073a99e10b1e6615168153847d17d))
+
 ## [1.15.0](https://github.com/pikdum/plugin.video.haru/compare/v1.14.0...v1.15.0) (2024-04-20)
 
 

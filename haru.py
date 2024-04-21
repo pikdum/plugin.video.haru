@@ -112,6 +112,36 @@ def main_menu():
             HANDLE, get_url(action="sukebei_search"), list_item, is_folder
         )
 
+        list_item = xbmcgui.ListItem(label="Sukebei - Latest")
+        is_folder = True
+        xbmcplugin.addDirectoryItem(
+            HANDLE,
+            get_url(
+                action="sukebei_search_results",
+                text="",
+                category="1_1",
+                sort="id",
+                order="desc",
+            ),
+            list_item,
+            is_folder,
+        )
+
+        list_item = xbmcgui.ListItem(label="Sukebei - Popular")
+        is_folder = True
+        xbmcplugin.addDirectoryItem(
+            HANDLE,
+            get_url(
+                action="sukebei_search_results",
+                text="",
+                category="1_1",
+                sort="seeders",
+                order="desc",
+            ),
+            list_item,
+            is_folder,
+        )
+
     list_item = xbmcgui.ListItem(label="Experimental")
     is_folder = True
     xbmcplugin.addDirectoryItem(

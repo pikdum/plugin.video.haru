@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import re
 import sys
-from urllib.parse import urlencode, quote
+from urllib.parse import quote, urlencode
 
 import xbmc
 import xbmcaddon

@@ -63,3 +63,14 @@ def slugify(text):
 
 def open_settings(addon_id):
     xbmcaddon.Addon(id=addon_id).openSettings()
+
+
+def set_icon_art(list_item, icon):
+    url = "https://img.icons8.com/wired/{}/FFFFFF/{}.png"
+    list_item.setArt(
+        {
+            "poster": url.format("512", icon),
+            "icon": url.format("64", icon),
+        }
+    )
+    return list_item

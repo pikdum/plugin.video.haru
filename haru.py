@@ -37,39 +37,44 @@ animexin = AnimeXin()
 
 def main_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Main Menu")
-    xbmcplugin.setContent(HANDLE, "videos")
 
     list_item = xbmcgui.ListItem(label="SubsPlease - All")
+    set_icon_art(list_item, "folder-invoices")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="subsplease_all"), list_item, is_folder
     )
 
     list_item = xbmcgui.ListItem(label="SubsPlease - Airing")
+    set_icon_art(list_item, "calendar")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="subsplease_airing"), list_item, is_folder
     )
 
     list_item = xbmcgui.ListItem(label="SubsPlease - Unfinished")
+    set_icon_art(list_item, "opened-folder")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="subsplease_unfinished"), list_item, is_folder
     )
 
     list_item = xbmcgui.ListItem(label="SubsPlease - History")
+    set_icon_art(list_item, "order-history")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="subsplease_history"), list_item, is_folder
     )
 
     list_item = xbmcgui.ListItem(label="Torrents - Search")
+    set_icon_art(list_item, "search")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="nyaa_search"), list_item, is_folder
     )
 
     list_item = xbmcgui.ListItem(label="Torrents - Latest")
+    set_icon_art(list_item, "new")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE,
@@ -85,6 +90,7 @@ def main_menu():
     )
 
     list_item = xbmcgui.ListItem(label="Torrents - Popular")
+    set_icon_art(list_item, "fire-element")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE,
@@ -100,6 +106,7 @@ def main_menu():
     )
 
     list_item = xbmcgui.ListItem(label="Torrents - History")
+    set_icon_art(list_item, "order-history")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="nyaa_history"), list_item, is_folder
@@ -107,12 +114,14 @@ def main_menu():
 
     if get_setting("sukebei_enabled") == "true":
         list_item = xbmcgui.ListItem(label="Sukebei - Search")
+        set_icon_art(list_item, "search")
         is_folder = True
         xbmcplugin.addDirectoryItem(
             HANDLE, get_url(action="sukebei_search"), list_item, is_folder
         )
 
         list_item = xbmcgui.ListItem(label="Sukebei - Latest")
+        set_icon_art(list_item, "new")
         is_folder = True
         xbmcplugin.addDirectoryItem(
             HANDLE,
@@ -128,6 +137,7 @@ def main_menu():
         )
 
         list_item = xbmcgui.ListItem(label="Sukebei - Popular")
+        set_icon_art(list_item, "fire-element")
         is_folder = True
         xbmcplugin.addDirectoryItem(
             HANDLE,
@@ -143,12 +153,14 @@ def main_menu():
         )
 
     list_item = xbmcgui.ListItem(label="Experimental")
+    set_icon_art(list_item, "test-tube")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="experimental"), list_item, is_folder
     )
 
     list_item = xbmcgui.ListItem(label="Settings")
+    set_icon_art(list_item, "settings")
     is_folder = True
     xbmcplugin.addDirectoryItem(
         HANDLE, get_url(action="settings"), list_item, is_folder

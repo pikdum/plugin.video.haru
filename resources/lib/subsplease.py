@@ -232,12 +232,14 @@ class SubsPlease:
             "Sunday",
         ]:
             list_item = xbmcgui.ListItem(label=day)
+            set_icon_art(list_item, day.lower())
             url = get_url(action="subsplease_day", day=day)
             is_folder = True
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
 
         list_item = xbmcgui.ListItem(label="All")
         url = get_url(action="subsplease_all_airing")
+        set_icon_art(list_item, "folder-invoices")
         is_folder = True
         xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
 

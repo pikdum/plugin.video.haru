@@ -125,8 +125,11 @@ class Nyaa:
                 sort=sort,
                 order=sort_order,
             ),
-            xbmcgui.ListItem(
-                label=f"View Results - '{escaped}', {category}, {sort}, {sort_order}"
+            set_icon_art(
+                xbmcgui.ListItem(
+                    label=f"View Results - '{escaped}', {category}, {sort}, {sort_order}"
+                ),
+                "search",
             ),
             isFolder=True,
         )

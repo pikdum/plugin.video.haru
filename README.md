@@ -47,3 +47,7 @@ after installing a supported engine, switch haru to it in settings
   - resolveurl (debrid)
   - elementum (no debrid)
   - torrest (no debrid)
+
+## attribution
+
+required by license to mention that in-app icons are from [icons8.com](https://icons8.com)

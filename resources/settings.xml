@@ -16,5 +16,6 @@
     <setting action="RunPlugin(plugin://plugin.video.haru/?action=clear_history_nyaa)" label="Clear History" type="action"/>
     <setting label="Sukebei (NSFW)" type="lsep"/>
     <setting id="sukebei_enabled" label="Enabled" type="bool"/>
+    <setting action="RunPlugin(plugin://plugin.video.haru/?action=clear_history_sukebei)" label="Clear History" type="action"/>
   </category>
 </settings>

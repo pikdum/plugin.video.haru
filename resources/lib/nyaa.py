@@ -256,14 +256,15 @@ class Nyaa:
         for title, data in reversed(
             self.db.database[f"{self.db_prefix}:history"].items()
         ):
+            nyaa_url = data.get("nyaa_url", False)
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
             url = get_url(
                 action=self.page_action,
-                url=data.get("nyaa_url", False),
+                url=nyaa_url,
             )
             list_item = xbmcgui.ListItem(label=label)
-            self.set_torrent_art(list_item, name=title)
+            self.set_torrent_art(list_item, name=title, url=nyaa_url)
             xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
 
         xbmcplugin.endOfDirectory(HANDLE)

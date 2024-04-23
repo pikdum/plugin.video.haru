@@ -38,134 +38,150 @@ animexin = AnimeXin()
 def main_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Main Menu")
 
-    list_item = xbmcgui.ListItem(label="SubsPlease - All")
-    set_icon_art(list_item, "folder-invoices")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="subsplease_all"), list_item, is_folder
-    )
-
-    list_item = xbmcgui.ListItem(label="SubsPlease - Airing")
-    set_icon_art(list_item, "calendar")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="subsplease_airing"), list_item, is_folder
-    )
-
-    list_item = xbmcgui.ListItem(label="SubsPlease - Unfinished")
-    set_icon_art(list_item, "opened-folder")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="subsplease_unfinished"), list_item, is_folder
-    )
-
-    list_item = xbmcgui.ListItem(label="SubsPlease - History")
-    set_icon_art(list_item, "order-history")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="subsplease_history"), list_item, is_folder
-    )
-
-    list_item = xbmcgui.ListItem(label="Torrents - Search")
-    set_icon_art(list_item, "search")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="nyaa_search"), list_item, is_folder
-    )
-
-    list_item = xbmcgui.ListItem(label="Torrents - Latest")
-    set_icon_art(list_item, "new")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE,
-        get_url(
-            action="nyaa_search_results",
-            text="",
-            category="1_2",
-            sort="id",
-            order="desc",
-        ),
-        list_item,
-        is_folder,
-    )
-
-    list_item = xbmcgui.ListItem(label="Torrents - Popular")
-    set_icon_art(list_item, "fire-element")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE,
-        get_url(
-            action="nyaa_search_results",
-            text="",
-            category="1_2",
-            sort="seeders",
-            order="desc",
-        ),
-        list_item,
-        is_folder,
-    )
-
-    list_item = xbmcgui.ListItem(label="Torrents - History")
-    set_icon_art(list_item, "order-history")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="nyaa_history"), list_item, is_folder
-    )
+    items = [
+        {"action": "subsplease_menu", "label": "SubsPlease", "icon": "video-playlist"},
+        {
+            "action": "nyaa_menu",
+            "label": "Torrents",
+            "icon": "torrent",
+        },
+        {"action": "experimental", "label": "Experimental", "icon": "test-tube"},
+        {"action": "settings", "label": "Settings", "icon": "settings"},
+    ]
 
     if get_setting("sukebei_enabled") == "true":
-        list_item = xbmcgui.ListItem(label="Sukebei - Search")
-        set_icon_art(list_item, "search")
-        is_folder = True
-        xbmcplugin.addDirectoryItem(
-            HANDLE, get_url(action="sukebei_search"), list_item, is_folder
+        items.insert(
+            2, {"action": "sukebei_menu", "label": "Sukebei", "icon": "jackhammer"}
         )
 
-        list_item = xbmcgui.ListItem(label="Sukebei - Latest")
-        set_icon_art(list_item, "new")
-        is_folder = True
-        xbmcplugin.addDirectoryItem(
-            HANDLE,
-            get_url(
-                action="sukebei_search_results",
-                text="",
-                category="1_1",
-                sort="id",
-                order="desc",
-            ),
-            list_item,
-            is_folder,
-        )
-
-        list_item = xbmcgui.ListItem(label="Sukebei - Popular")
-        set_icon_art(list_item, "fire-element")
-        is_folder = True
-        xbmcplugin.addDirectoryItem(
-            HANDLE,
-            get_url(
-                action="sukebei_search_results",
-                text="",
-                category="1_1",
-                sort="seeders",
-                order="desc",
-            ),
-            list_item,
-            is_folder,
-        )
-
-    list_item = xbmcgui.ListItem(label="Experimental")
-    set_icon_art(list_item, "test-tube")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="experimental"), list_item, is_folder
+    xbmcplugin.addDirectoryItems(
+        HANDLE,
+        [
+            (
+                get_url(action=item["action"]),
+                set_icon_art(xbmcgui.ListItem(item["label"]), item["icon"]),
+                True,
+            )
+            for item in items
+        ],
     )
+    xbmcplugin.endOfDirectory(HANDLE)
 
-    list_item = xbmcgui.ListItem(label="Settings")
-    set_icon_art(list_item, "settings")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="settings"), list_item, is_folder
+
+@register
+def subsplease_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "SubsPlease")
+    xbmcplugin.addDirectoryItems(
+        HANDLE,
+        [
+            (
+                get_url(action="subsplease_all"),
+                set_icon_art(xbmcgui.ListItem("All"), "folder-invoices"),
+                True,
+            ),
+            (
+                get_url(action="subsplease_airing"),
+                set_icon_art(xbmcgui.ListItem("Airing"), "calendar"),
+                True,
+            ),
+            (
+                get_url(action="subsplease_unfinished"),
+                set_icon_art(xbmcgui.ListItem("Unfinished"), "opened-folder"),
+                True,
+            ),
+            (
+                get_url(action="subsplease_history"),
+                set_icon_art(xbmcgui.ListItem("History"), "order-history"),
+                True,
+            ),
+        ],
     )
+    xbmcplugin.endOfDirectory(HANDLE)
 
+
+@register
+def nyaa_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "Torrents")
+    xbmcplugin.addDirectoryItems(
+        HANDLE,
+        [
+            (
+                get_url(action="nyaa_search"),
+                set_icon_art(xbmcgui.ListItem("Search"), "search"),
+                True,
+            ),
+            (
+                get_url(
+                    action="nyaa_search_results",
+                    text="",
+                    category="1_2",
+                    sort="id",
+                    order="desc",
+                ),
+                set_icon_art(xbmcgui.ListItem("Latest"), "new"),
+                True,
+            ),
+            (
+                get_url(
+                    action="nyaa_search_results",
+                    text="",
+                    category="1_2",
+                    sort="seeders",
+                    order="desc",
+                ),
+                set_icon_art(xbmcgui.ListItem("Popular"), "fire-element"),
+                True,
+            ),
+            (
+                get_url(action="nyaa_history"),
+                set_icon_art(xbmcgui.ListItem("History"), "order-history"),
+                True,
+            ),
+        ],
+    ),
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+@register
+def sukebei_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "Sukebei")
+    xbmcplugin.addDirectoryItems(
+        HANDLE,
+        [
+            (
+                get_url(action="sukebei_search"),
+                set_icon_art(xbmcgui.ListItem("Search"), "search"),
+                True,
+            ),
+            (
+                get_url(
+                    action="sukebei_search_results",
+                    text="",
+                    category="1_1",
+                    sort="id",
+                    order="desc",
+                ),
+                set_icon_art(xbmcgui.ListItem("Latest"), "new"),
+                True,
+            ),
+            (
+                get_url(
+                    action="sukebei_search_results",
+                    text="",
+                    category="1_1",
+                    sort="seeders",
+                    order="desc",
+                ),
+                set_icon_art(xbmcgui.ListItem("Popular"), "fire-element"),
+                True,
+            ),
+            (
+                get_url(action="sukebei_history"),
+                set_icon_art(xbmcgui.ListItem("History"), "order-history"),
+                True,
+            ),
+        ],
+    ),
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -400,6 +416,11 @@ def sukebei_page(url):
 
 
 @register
+def sukebei_history():
+    sukebei.history()
+
+
+@register
 def toggle_watched_nyaa(torrent_name, file_name, nyaa_url, watched):
     nyaa.set_watched(torrent_name, file_name, nyaa_url, watched)
     xbmc.executebuiltin("Container.Refresh")
@@ -414,6 +435,19 @@ def clear_history_nyaa():
     )
     if confirmed:
         db.database["nt:history"] = {}
+        db.commit()
+        xbmc.executebuiltin("Container.Refresh")
+
+
+@register
+def clear_history_sukebei():
+    dialog = xbmcgui.Dialog()
+    confirmed = dialog.yesno(
+        "Clear History",
+        "Do you want to clear Sukebei history?\n\nWatched statuses will be preserved.",
+    )
+    if confirmed:
+        db.database["sb:history"] = {}
         db.commit()
         xbmc.executebuiltin("Container.Refresh")
 

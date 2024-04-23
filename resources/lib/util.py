@@ -66,7 +66,7 @@ def open_settings(addon_id):
 
 
 def set_icon_art(list_item, icon):
-    url = "https://img.icons8.com/wired/{}/FFFFFF/{}.png"
+    url = "https://img.icons8.com/material-rounded/{}/FFFFFF/{}.png"
     list_item.setArt(
         {
             "poster": url.format("512", icon),

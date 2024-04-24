@@ -73,22 +73,24 @@ def subsplease_menu():
         [
             (
                 get_url(action="subsplease_all"),
-                set_icon_art(xbmcgui.ListItem("All"), "folder-invoices"),
+                set_icon_art(xbmcgui.ListItem("SubsPlease - All"), "folder-invoices"),
                 True,
             ),
             (
                 get_url(action="subsplease_airing"),
-                set_icon_art(xbmcgui.ListItem("Airing"), "calendar"),
+                set_icon_art(xbmcgui.ListItem("SubsPlease - Airing"), "calendar"),
                 True,
             ),
             (
                 get_url(action="subsplease_unfinished"),
-                set_icon_art(xbmcgui.ListItem("Unfinished"), "opened-folder"),
+                set_icon_art(
+                    xbmcgui.ListItem("SubsPlease - Unfinished"), "opened-folder"
+                ),
                 True,
             ),
             (
                 get_url(action="subsplease_history"),
-                set_icon_art(xbmcgui.ListItem("History"), "order-history"),
+                set_icon_art(xbmcgui.ListItem("SubsPlease - History"), "order-history"),
                 True,
             ),
         ],
@@ -104,7 +106,7 @@ def nyaa_menu():
         [
             (
                 get_url(action="nyaa_search"),
-                set_icon_art(xbmcgui.ListItem("Search"), "search"),
+                set_icon_art(xbmcgui.ListItem("Torrents - Search"), "search"),
                 True,
             ),
             (
@@ -115,7 +117,7 @@ def nyaa_menu():
                     sort="id",
                     order="desc",
                 ),
-                set_icon_art(xbmcgui.ListItem("Latest"), "new"),
+                set_icon_art(xbmcgui.ListItem("Torrents - Latest"), "new"),
                 True,
             ),
             (
@@ -126,12 +128,12 @@ def nyaa_menu():
                     sort="seeders",
                     order="desc",
                 ),
-                set_icon_art(xbmcgui.ListItem("Popular"), "fire-element"),
+                set_icon_art(xbmcgui.ListItem("Torrents - Popular"), "fire-element"),
                 True,
             ),
             (
                 get_url(action="nyaa_history"),
-                set_icon_art(xbmcgui.ListItem("History"), "order-history"),
+                set_icon_art(xbmcgui.ListItem("Torrents - History"), "order-history"),
                 True,
             ),
         ],
@@ -147,7 +149,7 @@ def sukebei_menu():
         [
             (
                 get_url(action="sukebei_search"),
-                set_icon_art(xbmcgui.ListItem("Search"), "search"),
+                set_icon_art(xbmcgui.ListItem("Sukebei - Search"), "search"),
                 True,
             ),
             (
@@ -158,7 +160,7 @@ def sukebei_menu():
                     sort="id",
                     order="desc",
                 ),
-                set_icon_art(xbmcgui.ListItem("Latest"), "new"),
+                set_icon_art(xbmcgui.ListItem("Sukebei - Latest"), "new"),
                 True,
             ),
             (
@@ -169,12 +171,12 @@ def sukebei_menu():
                     sort="seeders",
                     order="desc",
                 ),
-                set_icon_art(xbmcgui.ListItem("Popular"), "fire-element"),
+                set_icon_art(xbmcgui.ListItem("Sukebei - Popular"), "fire-element"),
                 True,
             ),
             (
                 get_url(action="sukebei_history"),
-                set_icon_art(xbmcgui.ListItem("History"), "order-history"),
+                set_icon_art(xbmcgui.ListItem("Sukebei - History"), "order-history"),
                 True,
             ),
         ],

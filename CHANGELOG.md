@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.1](https://github.com/pikdum/plugin.video.haru/compare/v1.17.0...v1.17.1) (2024-04-24)
+
+
+### Bug Fixes
+
+* **subsplease:** revert image endpoints ([e44cfe2](https://github.com/pikdum/plugin.video.haru/commit/e44cfe209baf89fdba791d9742dadd787c8a839d))
+
 ## [1.17.0](https://github.com/pikdum/plugin.video.haru/compare/v1.16.0...v1.17.0) (2024-04-24)
 
 

@@ -27,8 +27,8 @@ def get_url(**kwargs):
 
 
 def set_show_art(list_item, title):
-    poster = f"{MONA_URL}/poster/show/{quote(title)}"
-    fanart = f"{MONA_URL}/fanart/show/{quote(title)}"
+    poster = f"{MONA_URL}/poster/?filename={quote(title)}"
+    fanart = f"{MONA_URL}/fanart/?filename={quote(title)}"
     list_item.setArt({"poster": poster, "thumb": poster, "fanart": fanart})
     return list_item
 

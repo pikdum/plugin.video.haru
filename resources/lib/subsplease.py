@@ -246,7 +246,7 @@ class SubsPlease:
             + [
                 (
                     get_url(action="subsplease_all_airing"),
-                    set_icon_art(xbmcgui.ListItem("All"), "folder-invoices"),
+                    set_icon_art(xbmcgui.ListItem("All"), "video-playlist"),
                     True,
                 )
             ],

@@ -37,7 +37,7 @@ def main_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Main Menu")
 
     items = [
-        {"action": "subsplease_menu", "label": "SubsPlease", "icon": "video-playlist"},
+        {"action": "subsplease_menu", "label": "SubsPlease", "icon": "cinema---v2"},
         {
             "action": "nyaa_menu",
             "label": "Torrents",
@@ -73,7 +73,7 @@ def subsplease_menu():
         [
             (
                 get_url(action="subsplease_all"),
-                set_icon_art(xbmcgui.ListItem("SubsPlease - All"), "folder-invoices"),
+                set_icon_art(xbmcgui.ListItem("SubsPlease - All"), "video-playlist"),
                 True,
             ),
             (
@@ -84,7 +84,7 @@ def subsplease_menu():
             (
                 get_url(action="subsplease_unfinished"),
                 set_icon_art(
-                    xbmcgui.ListItem("SubsPlease - Unfinished"), "opened-folder"
+                    xbmcgui.ListItem("SubsPlease - Unfinished"), "in-progress"
                 ),
                 True,
             ),

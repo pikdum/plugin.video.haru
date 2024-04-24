@@ -74,3 +74,9 @@ def set_icon_art(list_item, icon):
         }
     )
     return list_item
+
+
+def set_addon_art(list_item, addon_id):
+    icon = xbmcaddon.Addon(id=addon_id).getAddonInfo("icon")
+    list_item.setArt({"icon": icon})
+    return list_item

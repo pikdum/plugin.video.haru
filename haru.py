@@ -187,36 +187,52 @@ def sukebei_menu():
 @register
 def settings():
     xbmcplugin.setPluginCategory(HANDLE, "Settings")
-    xbmcplugin.setContent(HANDLE, "videos")
 
-    list_item = xbmcgui.ListItem(label="haru")
-    xbmcplugin.addDirectoryItem(
-        HANDLE,
-        get_url(action="display_settings", plugin="plugin.video.haru"),
-        list_item,
-    )
-
-    list_item = xbmcgui.ListItem(label="ResolveURL")
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="resolveurl_settings"), list_item
-    )
+    items = [
+        {
+            "url": get_url(action="display_settings", plugin="plugin.video.haru"),
+            "label": "haru",
+            "plugin": "plugin.video.haru",
+        },
+        {
+            "url": get_url(action="resolveurl_settings"),
+            "label": "ResolveURL",
+            "plugin": "script.module.resolveurl",
+        },
+    ]
 
     if xbmc.getCondVisibility("System.HasAddon(plugin.video.torrest)"):
-        list_item = xbmcgui.ListItem(label="Torrest")
-        xbmcplugin.addDirectoryItem(
-            HANDLE,
-            get_url(action="display_settings", plugin="plugin.video.torrest"),
-            list_item,
+        items.append(
+            {
+                "url": get_url(
+                    action="display_settings", plugin="plugin.video.torrest"
+                ),
+                "label": "Torrest",
+                "plugin": "plugin.video.torrest",
+            }
         )
 
     if xbmc.getCondVisibility("System.HasAddon(plugin.video.elementum)"):
-        list_item = xbmcgui.ListItem(label="Elementum")
-        xbmcplugin.addDirectoryItem(
-            HANDLE,
-            get_url(action="display_settings", plugin="plugin.video.elementum"),
-            list_item,
+        items.append(
+            {
+                "url": get_url(
+                    action="display_settings", plugin="plugin.video.elementum"
+                ),
+                "label": "Elementum",
+                "plugin": "plugin.video.elementum",
+            }
         )
 
+    xbmcplugin.addDirectoryItems(
+        HANDLE,
+        [
+            (
+                item["url"],
+                set_addon_art(xbmcgui.ListItem(item["label"]), item["plugin"]),
+            )
+            for item in items
+        ],
+    )
     xbmcplugin.endOfDirectory(HANDLE)
 
 

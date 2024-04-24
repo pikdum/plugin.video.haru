@@ -13,7 +13,6 @@ import xbmcplugin
 import xbmcvfs
 from bs4 import BeautifulSoup
 
-from resources.lib.animexin import AnimeXin
 from resources.lib.database import Database
 from resources.lib.nyaa import Nyaa
 from resources.lib.subsplease import SubsPlease
@@ -32,7 +31,6 @@ db = Database()
 subsplease = SubsPlease(db)
 nyaa = Nyaa(db, mode="fun")
 sukebei = Nyaa(db, mode="fap")
-animexin = AnimeXin()
 
 
 def main_menu():
@@ -45,7 +43,6 @@ def main_menu():
             "label": "Torrents",
             "icon": "torrent",
         },
-        {"action": "experimental", "label": "Experimental", "icon": "test-tube"},
         {"action": "settings", "label": "Settings", "icon": "settings"},
     ]
 
@@ -186,20 +183,6 @@ def sukebei_menu():
 
 
 @register
-def experimental():
-    xbmcplugin.setPluginCategory(HANDLE, "Experimental")
-    xbmcplugin.setContent(HANDLE, "videos")
-
-    list_item = xbmcgui.ListItem(label="AnimeXin - All")
-    is_folder = True
-    xbmcplugin.addDirectoryItem(
-        HANDLE, get_url(action="animexin_all"), list_item, is_folder
-    )
-
-    xbmcplugin.endOfDirectory(HANDLE)
-
-
-@register
 def settings():
     xbmcplugin.setPluginCategory(HANDLE, "Settings")
     xbmcplugin.setContent(HANDLE, "videos")
@@ -325,30 +308,6 @@ def play_nyaa(name, selected_file, nyaa_url, magnet):
 def play_sukebei(name, selected_file, nyaa_url, magnet):
     sukebei.set_watched(torrent_name=name, file_name=selected_file, nyaa_url=nyaa_url)
     return _play_nyaa(selected_file=selected_file, magnet=magnet)
-
-
-@register
-def animexin_all():
-    return animexin.all()
-
-
-@register
-def animexin_show(url):
-    return animexin.show(**locals())
-
-
-@register
-def play_animexin(url):
-    log(f"AnimeXin: {url=}")
-    video_url = animexin.get_video_url(url)
-    log(f"AnimeXin: {video_url=}")
-    subtitle_urls = animexin.get_subtitle_urls(video_url)
-    log(f"AnimeXin: {subtitle_urls=}")
-    resolved_url = resolveurl.resolve(video_url)
-    log(f"AnimeXin: {resolved_url=}")
-    play_item = xbmcgui.ListItem(path=resolved_url)
-    play_item.setSubtitles(subtitle_urls)
-    xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 
 
 @register

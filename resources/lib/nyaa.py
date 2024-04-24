@@ -125,10 +125,13 @@ class Nyaa:
                 sort=sort,
                 order=sort_order,
             ),
-            xbmcgui.ListItem(
-                label=f"View Results - '{escaped}', {category}, {sort}, {sort_order}"
+            set_icon_art(
+                xbmcgui.ListItem(
+                    label=f"View Results - '{escaped}', {category}, {sort}, {sort_order}"
+                ),
+                "search",
             ),
-            isFolder=True,
+            True,
         )
         xbmcplugin.endOfDirectory(HANDLE)
 
@@ -140,6 +143,7 @@ class Nyaa:
 
         rows = soup.find_all("tr")[1:]
 
+        items = []
         for row in rows:
             columns = row.find_all("td")
             link = next(
@@ -170,15 +174,10 @@ class Nyaa:
                 list_item, name=torrent_name, url=f"https://{self.hostname}{url}"
             )
 
-            is_folder = True
-            xbmcplugin.addDirectoryItem(
-                HANDLE,
-                get_url(action=self.page_action, url=url),
-                list_item,
-                is_folder,
-            )
+            items.append((get_url(action=self.page_action, url=url), list_item, True))
 
         xbmcplugin.setPluginCategory(HANDLE, f"Torrents - {text}")
+        xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def page(self, url):
@@ -206,6 +205,7 @@ class Nyaa:
             ),
         )
 
+        items = []
         for file_name in file_list:
             title = file_name
 
@@ -235,7 +235,6 @@ class Nyaa:
                     )
                 ]
             )
-            is_folder = False
             url = get_url(
                 action=self.play_action,
                 magnet=magnet,
@@ -243,24 +242,28 @@ class Nyaa:
                 name=torrent_name,
                 nyaa_url=nyaa_url,
             )
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+            items.append((url, list_item, False))
 
+        xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def history(self):
         xbmcplugin.setPluginCategory(HANDLE, f"Torrents - History")
 
+        items = []
         for title, data in reversed(
             self.db.database[f"{self.db_prefix}:history"].items()
         ):
+            nyaa_url = data.get("nyaa_url", False)
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
             url = get_url(
                 action=self.page_action,
-                url=data.get("nyaa_url", False),
+                url=nyaa_url,
             )
             list_item = xbmcgui.ListItem(label=label)
-            self.set_torrent_art(list_item, name=title)
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
+            self.set_torrent_art(list_item, name=title, url=nyaa_url)
+            items.append((url, list_item, True))
 
+        xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)

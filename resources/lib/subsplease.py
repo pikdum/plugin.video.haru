@@ -62,6 +62,7 @@ class SubsPlease:
         soup = BeautifulSoup(page.text, "html.parser")
         links = filter(lambda x: x["href"].startswith("/shows/"), soup.find_all("a"))
 
+        items = []
         for link in links:
             title = link["title"]
             label = title
@@ -73,12 +74,12 @@ class SubsPlease:
             list_item = xbmcgui.ListItem(label=label)
             set_show_art(list_item, title)
 
-            is_folder = True
             url = get_url(
                 action="subsplease_show", url="https://subsplease.org" + link["href"]
             )
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+            items.append((url, list_item, True))
 
+        xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def show(self, url):
@@ -95,18 +96,18 @@ class SubsPlease:
             f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"
         ).json()
 
+        items = []
         if episodes["batch"]:
             for batch, batch_info in episodes["batch"].items():
                 list_item = xbmcgui.ListItem(label=f"[B][Batch][/B] {batch}")
                 hq_download = batch_info["downloads"][-1]
-                is_folder = True
                 url = get_url(
                     action="subsplease_batch",
                     batch=batch,
                     batch_torrent=hq_download["torrent"],
                 )
                 set_show_art(list_item, show_title)
-                xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+                items.append((url, list_item, True))
 
         if episodes["episode"]:
             for episode, episode_info in reversed(episodes["episode"].items()):
@@ -149,8 +150,9 @@ class SubsPlease:
                     url=hq_download["torrent"],
                     name=display_name,
                 )
-                xbmcplugin.addDirectoryItem(HANDLE, url, list_item)
+                items.append((url, list_item, False))
 
+        xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def batch(self, batch, batch_torrent):
@@ -175,6 +177,7 @@ class SubsPlease:
             ),
         )
 
+        items = []
         for file_name in file_list:
             display_name = file_name.replace("[SubsPlease] ", "")
             display_name = re.sub(r"(v\d)? \(.*p\) \[.*\]\..*", "", display_name)
@@ -214,33 +217,40 @@ class SubsPlease:
                 selected_file=file_name,
                 name=display_name,
             )
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item)
+            items.append((url, list_item, False))
 
+        xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def airing(self):
         xbmcplugin.setPluginCategory(HANDLE, "SubsPlease - Airing")
-
-        for day in [
-            "Today",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday",
-        ]:
-            list_item = xbmcgui.ListItem(label=day)
-            url = get_url(action="subsplease_day", day=day)
-            is_folder = True
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
-
-        list_item = xbmcgui.ListItem(label="All")
-        url = get_url(action="subsplease_all_airing")
-        is_folder = True
-        xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
-
+        xbmcplugin.addDirectoryItems(
+            HANDLE,
+            [
+                (
+                    get_url(action="subsplease_day", day=day),
+                    set_icon_art(xbmcgui.ListItem(day), day.lower()),
+                    True,
+                )
+                for day in [
+                    "Today",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday",
+                ]
+            ]
+            + [
+                (
+                    get_url(action="subsplease_all_airing"),
+                    set_icon_art(xbmcgui.ListItem("All"), "video-playlist"),
+                    True,
+                )
+            ],
+        )
         xbmcplugin.endOfDirectory(HANDLE)
 
     def all_airing(self):
@@ -259,6 +269,7 @@ class SubsPlease:
 
         flattened_schedule = sorted(flattened_schedule, key=lambda x: x["title"])
 
+        items = []
         for show in flattened_schedule:
             # workaround: https://forum.kodi.tv/showthread.php?pid=1214507#pid1214507
             formatted_time = datetime(
@@ -277,9 +288,9 @@ class SubsPlease:
                 action="subsplease_show",
                 url="https://subsplease.org/shows/" + show["page"],
             )
-            is_folder = True
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+            items.append((url, list_item, True))
 
+        xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def day(self, day):
@@ -294,6 +305,7 @@ class SubsPlease:
                 f"https://subsplease.org/api/?f=schedule&tz={self.timezone}"
             ).json()["schedule"][day]
 
+        items = []
         for show in schedule:
             # workaround: https://forum.kodi.tv/showthread.php?pid=1214507#pid1214507
             formatted_time = datetime(
@@ -313,14 +325,15 @@ class SubsPlease:
                 action="subsplease_show",
                 url="https://subsplease.org/shows/" + show["page"],
             )
-            is_folder = True
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, is_folder)
+            items.append((url, list_item, True))
 
+        xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def history(self):
         xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - History")
 
+        items = []
         for title, data in reversed(self.db.database["sp:history"].items()):
             split = title.split(" - ")
             show = " - ".join(split[:-1])
@@ -333,8 +346,9 @@ class SubsPlease:
             )
             list_item = xbmcgui.ListItem(label=label)
             set_show_art(list_item, show)
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
+            items.append((url, list_item, True))
 
+        xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def is_unfinished(self, show):
@@ -392,14 +406,18 @@ class SubsPlease:
 
         progress_dialog.close()
 
-        for show in sorted(shows):
-            label = show
-            url = get_url(
-                action="subsplease_show",
-                url=f"https://subsplease.org/shows/{slugify(show)}/",
-            )
-            list_item = xbmcgui.ListItem(label=label)
-            set_show_art(list_item, show)
-            xbmcplugin.addDirectoryItem(HANDLE, url, list_item, True)
-
+        xbmcplugin.addDirectoryItems(
+            HANDLE,
+            [
+                (
+                    get_url(
+                        action="subsplease_show",
+                        url=f"https://subsplease.org/shows/{slugify(show)}/",
+                    ),
+                    set_show_art(xbmcgui.ListItem(show), show),
+                    True,
+                )
+                for show in sorted(shows)
+            ],
+        )
         xbmcplugin.endOfDirectory(HANDLE)

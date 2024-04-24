@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import re
 import sys
-from urllib.parse import urlencode, quote
+from urllib.parse import quote, urlencode
 
 import xbmc
 import xbmcaddon
@@ -27,9 +27,10 @@ def get_url(**kwargs):
 
 
 def set_show_art(list_item, title):
-    poster = f"{MONA_URL}/poster/show/{quote(title)}"
-    fanart = f"{MONA_URL}/fanart/show/{quote(title)}"
+    poster = f"{MONA_URL}/poster/?filename={quote(title)}"
+    fanart = f"{MONA_URL}/fanart/?filename={quote(title)}"
     list_item.setArt({"poster": poster, "thumb": poster, "fanart": fanart})
+    return list_item
 
 
 def select_option(options, message):
@@ -63,3 +64,20 @@ def slugify(text):
 
 def open_settings(addon_id):
     xbmcaddon.Addon(id=addon_id).openSettings()
+
+
+def set_icon_art(list_item, icon):
+    url = "https://img.icons8.com/ios-glyphs/{}/FFFFFF/{}.png"
+    list_item.setArt(
+        {
+            "poster": url.format("512", icon),
+            "icon": url.format("64", icon),
+        }
+    )
+    return list_item
+
+
+def set_addon_art(list_item, addon_id):
+    icon = xbmcaddon.Addon(id=addon_id).getAddonInfo("icon")
+    list_item.setArt({"icon": icon})
+    return list_item

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.16.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.17.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.16.0 (2024-04-21)
+    <news>1.17.0 (2024-04-24)
+
+Features
+
+-   new icons &amp; more (#49) (ef97264)
+
+1.16.0 (2024-04-21)
 
 Features
 
@@ -76,7 +82,6 @@ Features
 Features
 
 -   allow configuring torrent search category (71cb07e)
--   move clear history under settings (3f97401)
--   subsplease: move all airing to b...</news>
+-   move clear ...</news>
   </extension>
 </addon>

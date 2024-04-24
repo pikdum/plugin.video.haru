@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.0](https://github.com/pikdum/plugin.video.haru/compare/v1.16.0...v1.17.0) (2024-04-24)
+
+
+### Features
+
+* new icons & more ([#49](https://github.com/pikdum/plugin.video.haru/issues/49)) ([ef97264](https://github.com/pikdum/plugin.video.haru/commit/ef97264400479408855e5093dcdcd2f0278ad4db))
+
 ## [1.16.0](https://github.com/pikdum/plugin.video.haru/compare/v1.15.0...v1.16.0) (2024-04-21)
 
 

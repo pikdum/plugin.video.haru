@@ -499,4 +499,9 @@ def router(paramstring):
 
 
 if __name__ == "__main__":
-    router(sys.argv[2][1:])
+    try:
+        router(sys.argv[2][1:])
+    except Exception as e:
+        dialog = xbmcgui.Dialog()
+        dialog.ok("Error", str(e))
+        raise

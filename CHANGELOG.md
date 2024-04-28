@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.18.0](https://github.com/pikdum/plugin.video.haru/compare/v1.17.1...v1.18.0) (2024-04-28)
+
+
+### Features
+
+* **subsplease:** airing unfinished ([d73d0f7](https://github.com/pikdum/plugin.video.haru/commit/d73d0f72d889da0343570eb9a4b142a9926511e6))
+
+
+### Bug Fixes
+
+* don't show disabled addon settings ([b229ea9](https://github.com/pikdum/plugin.video.haru/commit/b229ea95a2cc656a7427a54df6fe44ba5f488730))
+* **subsplease:** color unfinished titles ([1b18401](https://github.com/pikdum/plugin.video.haru/commit/1b18401d2a37cc0ba8359aee0a044995b80a42f7))
+
 ## [1.17.1](https://github.com/pikdum/plugin.video.haru/compare/v1.17.0...v1.17.1) (2024-04-24)
 
 

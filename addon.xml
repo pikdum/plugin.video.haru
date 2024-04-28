@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.17.1" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.18.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,18 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.17.1 (2024-04-24)
+    <news>1.18.0 (2024-04-28)
+
+Features
+
+-   subsplease: airing unfinished (d73d0f7)
+
+Bug Fixes
+
+-   don’t show disabled addon settings (b229ea9)
+-   subsplease: color unfinished titles (1b18401)
+
+1.17.1 (2024-04-24)
 
 Bug Fixes
 
@@ -74,16 +85,6 @@ Features
 Features
 
 -   nyaa: add latest + popular links (ce086d1)
--   nyaa: add search sorting options (cc104b3)
--   nyaa: allow search results in skin widgets (d2132a8)
-
-1.10.0 (2023-09-16)
-
-Features
-
--   better poster + fanart (#37) (6177371)
-
-1.9.0 (2023-09-13)
-...</news>
+-   nyaa: ...</news>
   </extension>
 </addon>

@@ -248,14 +248,17 @@ class SubsPlease:
                     get_url(action="subsplease_all_airing"),
                     set_icon_art(xbmcgui.ListItem("All"), "video-playlist"),
                     True,
-                )
+                ),
+                (
+                    get_url(action="subsplease_unfinished", airing_only=True),
+                    set_icon_art(xbmcgui.ListItem("Unfinished"), "in-progress"),
+                    True,
+                ),
             ],
         )
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def all_airing(self):
-        xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - All Airing")
-
+    def get_schedule(self):
         schedule = requests.get(
             f"https://subsplease.org/api/?f=schedule&tz={self.timezone}"
         ).json()["schedule"]
@@ -268,9 +271,14 @@ class SubsPlease:
                 flattened_schedule.append(show)
 
         flattened_schedule = sorted(flattened_schedule, key=lambda x: x["title"])
+        return flattened_schedule
+
+    def all_airing(self):
+        xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - All Airing")
+        schedule = self.get_schedule()
 
         items = []
-        for show in flattened_schedule:
+        for show in schedule:
             # workaround: https://forum.kodi.tv/showthread.php?pid=1214507#pid1214507
             formatted_time = datetime(
                 *(time.strptime(show["time"], "%H:%M")[0:6])
@@ -368,16 +376,31 @@ class SubsPlease:
 
         return True
 
-    def unfinished(self):
-        xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - Unfinished")
+    def unfinished(self, airing_only=False):
+        category = (
+            "SubsPlease - Unfinished"
+            if not airing_only
+            else "SubsPlease - Unfinished Airing"
+        )
+        xbmcplugin.setPluginCategory(HANDLE, category)
 
         shows = []
         sorted_items = sorted(self.db.database["sp:watch"].items(), key=lambda x: x[0])
+
+        # if airing_only, filter out shows that are not in current schedule
+        if airing_only:
+            schedule = self.get_schedule()
+            sorted_items = list(
+                filter(
+                    lambda x: x[0] in [show["title"] for show in schedule], sorted_items
+                )
+            )
+
         total_items = len(sorted_items)
 
         progress_dialog = xbmcgui.DialogProgress()
         progress_dialog.create(
-            "SubsPlease - Unfinished",
+            category,
             "Checking shows...",
         )
 

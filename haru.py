@@ -272,8 +272,8 @@ def subsplease_history():
 
 
 @register
-def subsplease_unfinished():
-    return subsplease.unfinished()
+def subsplease_unfinished(airing_only=False):
+    return subsplease.unfinished(**locals())
 
 
 def get_nyaa_magnet(url):

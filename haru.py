@@ -201,7 +201,7 @@ def settings():
         },
     ]
 
-    if xbmc.getCondVisibility("System.HasAddon(plugin.video.torrest)"):
+    if xbmc.getCondVisibility("System.AddonIsEnabled(plugin.video.torrest)"):
         items.append(
             {
                 "url": get_url(
@@ -212,7 +212,7 @@ def settings():
             }
         )
 
-    if xbmc.getCondVisibility("System.HasAddon(plugin.video.elementum)"):
+    if xbmc.getCondVisibility("System.AddonIsEnabled(plugin.video.elementum)"):
         items.append(
             {
                 "url": get_url(

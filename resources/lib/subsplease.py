@@ -437,7 +437,9 @@ class SubsPlease:
                         action="subsplease_show",
                         url=f"https://subsplease.org/shows/{slugify(show)}/",
                     ),
-                    set_show_art(xbmcgui.ListItem(show), show),
+                    set_show_art(
+                        xbmcgui.ListItem(f"[COLOR palevioletred]{show}[/COLOR]"), show
+                    ),
                     True,
                 )
                 for show in sorted(shows)

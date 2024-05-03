@@ -22,7 +22,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.18.0 (2024-04-28)
+    <news>1.19.0 (2024-05-03)
+
+Features
+
+-   add requests cache (29400ae)
+
+1.18.0 (2024-04-28)
 
 Features
 
@@ -83,9 +89,6 @@ Features
 
 1.11.0 (2023-10-05)
 
-Features
-
--   nyaa: add latest + popular links (ce086d1)
--   nyaa: ...</news>
+Fe...</news>
   </extension>
 </addon>

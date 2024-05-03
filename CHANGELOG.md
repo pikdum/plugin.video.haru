@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0](https://github.com/pikdum/plugin.video.haru/compare/v1.18.0...v1.19.0) (2024-05-03)
+
+
+### Features
+
+* add requests cache ([29400ae](https://github.com/pikdum/plugin.video.haru/commit/29400ae11d4282d926cc027d68d9ae3e3d44f49f))
+
 ## [1.18.0](https://github.com/pikdum/plugin.video.haru/compare/v1.17.1...v1.18.0) (2024-04-28)
 
 

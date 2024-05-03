@@ -6,6 +6,7 @@ import sys
 from urllib.parse import parse_qsl, quote_plus
 
 import requests
+import requests_cache
 import resolveurl
 import xbmc
 import xbmcgui
@@ -17,6 +18,8 @@ from resources.lib.database import Database
 from resources.lib.nyaa import Nyaa
 from resources.lib.subsplease import SubsPlease
 from resources.lib.util import *
+
+requests_cache.install_cache("haru_cache", expire_after=300)
 
 routes = {}
 

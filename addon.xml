@@ -21,7 +21,14 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.20.0 (2024-05-04)
+    <news>1.20.1 (2024-05-04)
+
+Bug Fixes
+
+-   addon news generation (3481557)
+-   revert “feat: add requests cache” (1fd6022)
+
+1.20.0 (2024-05-04)
 
 Features
 
@@ -78,18 +85,6 @@ Bug Fixes
 
 Features
 
--   add option to clear thumbnail cache (a8b57e0)
-
-1.13.0 (2024-03-27)
-
-Features
-
--   add elementum support (#44) (dda79a1)
-
-1.12.0 (2024-01-24)
-
-Features
-
--...</news>
+-   add option to clear thumbnail ca...</news>
   </extension>
 </addon>

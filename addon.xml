@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.19.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.20.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -22,7 +22,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.19.0 (2024-05-03)
+    <news>1.20.0 (2024-05-04)
+
+Features
+
+-   switch to new art endpoints (3977257)
+
+1.19.0 (2024-05-03)
 
 Features
 
@@ -85,10 +91,6 @@ Features
 
 Features
 
--   subsplease: look up unfinished shows (f6edd6f)
-
-1.11.0 (2023-10-05)
-
-Fe...</news>
+-...</news>
   </extension>
 </addon>

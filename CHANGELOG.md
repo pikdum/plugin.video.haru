@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.20.1](https://github.com/pikdum/plugin.video.haru/compare/v1.20.0...v1.20.1) (2024-05-04)
+
+
+### Bug Fixes
+
+* addon news generation ([3481557](https://github.com/pikdum/plugin.video.haru/commit/3481557a07d321204ba239fa843789738befd8cc))
+* revert "feat: add requests cache" ([1fd6022](https://github.com/pikdum/plugin.video.haru/commit/1fd6022d76adf63248dd639f90992fffc00b83ea))
+
 ## [1.20.0](https://github.com/pikdum/plugin.video.haru/compare/v1.19.0...v1.20.0) (2024-05-04)
 
 

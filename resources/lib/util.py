@@ -12,6 +12,7 @@ _URL = sys.argv[0]
 HANDLE = int(sys.argv[1])
 VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
 MONA_URL = "https://wild-fire-3987.fly.dev"
+# MONA_URL = "http://localhost:8000"
 
 
 def get_setting(setting, default=None):
@@ -27,8 +28,8 @@ def get_url(**kwargs):
 
 
 def set_show_art(list_item, title):
-    poster = f"{MONA_URL}/poster/show/{quote(title)}"
-    fanart = f"{MONA_URL}/fanart/show/{quote(title)}"
+    poster = f"{MONA_URL}/poster?query={quote(title)}"
+    fanart = f"{MONA_URL}/fanart?query={quote(title)}"
     list_item.setArt({"poster": poster, "thumb": poster, "fanart": fanart})
     return list_item
 

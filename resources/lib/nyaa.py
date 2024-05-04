@@ -75,11 +75,9 @@ class Nyaa:
 
     def set_torrent_art(self, list_item, name=None, url=None):
         if self.mode == "fun" and name:
-            poster = f"{MONA_URL}/poster/?filename={quote(name)}"
-            fanart = f"{MONA_URL}/fanart/?filename={quote(name)}"
-            list_item.setArt({"poster": poster, "thumb": poster, "fanart": fanart})
+            set_show_art(list_item, name)
         if self.mode == "fap" and url:
-            art = f"{MONA_URL}/torrent-art/?url={quote(url)}"
+            art = f"{MONA_URL}/torrent-art?url={quote(url)}"
             list_item.setArt({"thumb": art})
 
     def search(self):

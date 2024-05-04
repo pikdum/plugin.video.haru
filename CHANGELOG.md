@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.0](https://github.com/pikdum/plugin.video.haru/compare/v1.19.0...v1.20.0) (2024-05-04)
+
+
+### Features
+
+* switch to new art endpoints ([3977257](https://github.com/pikdum/plugin.video.haru/commit/3977257e9f3e86b9fae6bd0d8279c9f648efc37b))
+
 ## [1.19.0](https://github.com/pikdum/plugin.video.haru/compare/v1.18.0...v1.19.0) (2024-05-03)
 
 

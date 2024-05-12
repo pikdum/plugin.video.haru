@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.20.1 (2024-05-04)
+    <news>1.21.0 (2024-05-12)
+
+Features
+
+-   subsplease: add search (75dda36)
+
+1.20.1 (2024-05-04)
 
 Bug Fixes
 
@@ -79,12 +85,6 @@ Features
 Bug Fixes
 
 -   subsplease: unfinished error if no episodes (af1298b)
--   subsplease: unfinished progress bar (6d87f6d)
-
-1.14.0 (2024-04-02)
-
-Features
-
--   add option to clear thumbnail ca...</news>
+-   subsplease: unfinished progress bar (6d87f6d)...</news>
   </extension>
 </addon>

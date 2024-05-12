@@ -77,6 +77,11 @@ def subsplease_menu():
                 True,
             ),
             (
+                get_url(action="subsplease_all", search=True),
+                set_icon_art(xbmcgui.ListItem("SubsPlease - Search"), "search"),
+                True,
+            ),
+            (
                 get_url(action="subsplease_airing"),
                 set_icon_art(xbmcgui.ListItem("SubsPlease - Airing"), "calendar"),
                 True,
@@ -237,8 +242,8 @@ def settings():
 
 
 @register
-def subsplease_all():
-    return subsplease.all()
+def subsplease_all(search=False):
+    return subsplease.all(**locals())
 
 
 @register

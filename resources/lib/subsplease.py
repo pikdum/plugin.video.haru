@@ -55,12 +55,20 @@ class SubsPlease:
             return True
         return False
 
-    def all(self):
-        xbmcplugin.setPluginCategory(HANDLE, "SubsPlease - All")
+    def all(self, search=False):
+        category = "Search" if search else "All"
+        xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - {category}")
 
         page = requests.get("https://subsplease.org/shows/")
         soup = BeautifulSoup(page.text, "html.parser")
         links = filter(lambda x: x["href"].startswith("/shows/"), soup.find_all("a"))
+
+        if search:
+            search_term = xbmcgui.Dialog().input("Search for show:")
+            if search_term:
+                links = filter(
+                    lambda x: search_term.lower() in x["title"].lower(), links
+                )
 
         items = []
         for link in links:

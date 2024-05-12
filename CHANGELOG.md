@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.0](https://github.com/pikdum/plugin.video.haru/compare/v1.20.1...v1.21.0) (2024-05-12)
+
+
+### Features
+
+* **subsplease:** add search ([75dda36](https://github.com/pikdum/plugin.video.haru/commit/75dda362a5f7e2f1ea924177ce3ce3b03bfcfdee))
+
 ## [1.20.1](https://github.com/pikdum/plugin.video.haru/compare/v1.20.0...v1.20.1) (2024-05-04)
 
 

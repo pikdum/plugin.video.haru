@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.21.1](https://github.com/pikdum/plugin.video.haru/compare/v1.21.0...v1.21.1) (2024-05-26)
+
+
+### Bug Fixes
+
+* add debug logging ([3528c50](https://github.com/pikdum/plugin.video.haru/commit/3528c50e87804eb3350afe06c542893ec931720d))
+* log the engine too ([3b447eb](https://github.com/pikdum/plugin.video.haru/commit/3b447eb119396b5172c480aef3b80cf919aec824))
+
 ## [1.21.0](https://github.com/pikdum/plugin.video.haru/compare/v1.20.1...v1.21.0) (2024-05-12)
 
 

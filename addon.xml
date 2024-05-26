@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.21.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.21.1" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,14 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.21.0 (2024-05-12)
+    <news>1.21.1 (2024-05-26)
+
+Bug Fixes
+
+-   add debug logging (3528c50)
+-   log the engine too (3b447eb)
+
+1.21.0 (2024-05-12)
 
 Features
 
@@ -84,7 +91,6 @@ Features
 
 Bug Fixes
 
--   subsplease: unfinished error if no episodes (af1298b)
--   subsplease: unfinished progress bar (6d87f6d)...</news>
+-   subsp...</news>
   </extension>
 </addon>

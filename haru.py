@@ -295,6 +295,7 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
 
     log(f"{selected_file=} {url=} {magnet=}")
     engine = get_setting("engine")
+    log(f"{engine=}")
     if engine == "Torrest":
         play_item = xbmcgui.ListItem(
             path=f"plugin://plugin.video.torrest/play_magnet?magnet={quote_plus(magnet)}"

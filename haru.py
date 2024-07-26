@@ -293,9 +293,7 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
     if url:
         magnet = get_nyaa_magnet(url)
 
-    log(f"{selected_file=} {url=} {magnet=}")
     engine = get_setting("engine")
-    log(f"{engine=}")
     if engine == "Torrest":
         play_item = xbmcgui.ListItem(
             path=f"plugin://plugin.video.torrest/play_magnet?magnet={quote_plus(magnet)}"
@@ -307,16 +305,17 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
     elif engine == "ResolveURL":
         if not selected_file:
             resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
-            log(f"{resolved_url=}")
         else:
             all_urls = resolveurl.resolve(magnet, return_all=True)
-            log(f"{all_urls=}")
-            selected_url = next(filter(lambda x: selected_file in x["name"], all_urls))[
-                "link"
-            ]
-            log(f"{selected_url=}")
-            resolved_url = resolveurl.resolve(selected_url)
-            log(f"{resolved_url=}")
+            if isinstance(all_urls, str):
+                # sometimes we get it already resolved as a single string?
+                # this should fix: string indices must be integers, not 'str'
+                resolved_url = all_urls
+            else:
+                selected_url = next(
+                    filter(lambda x: selected_file in x["name"], all_urls)
+                )["link"]
+                resolved_url = resolveurl.resolve(selected_url)
         play_item = xbmcgui.ListItem(path=resolved_url)
     xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 

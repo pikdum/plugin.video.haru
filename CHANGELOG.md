@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.2](https://github.com/pikdum/plugin.video.haru/compare/v1.21.1...v1.21.2) (2024-07-26)
+
+
+### Bug Fixes
+
+* handle occasional string indices error ([d83e660](https://github.com/pikdum/plugin.video.haru/commit/d83e660cfb3ccb5b256c20ebbffa285c1cf25fec))
+
 ## [1.21.1](https://github.com/pikdum/plugin.video.haru/compare/v1.21.0...v1.21.1) (2024-05-26)
 
 

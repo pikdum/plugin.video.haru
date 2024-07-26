@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.21.1" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.21.2" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.21.1 (2024-05-26)
+    <news>1.21.2 (2024-07-26)
+
+Bug Fixes
+
+-   handle occasional string indices error (d83e660)
+
+1.21.1 (2024-05-26)
 
 Bug Fixes
 
@@ -86,11 +92,6 @@ Features
 
 Features
 
--   nyaa: more consistent torrent art (71e2738)
--   sukebei: use thumbnails from description (5cab33b)
-
-Bug Fixes
-
--   subsp...</news>
+-   nyaa: more consistent torrent art ...</news>
   </extension>
 </addon>

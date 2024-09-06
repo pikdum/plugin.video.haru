@@ -11,7 +11,7 @@ from resolveurl.lib import kodi
 _URL = sys.argv[0]
 HANDLE = int(sys.argv[1])
 VIDEO_FORMATS = list(filter(None, kodi.supported_video_extensions()))
-MONA_URL = "https://wild-fire-3987.fly.dev"
+MONA_URL = "https://mona.fly.dev"
 # MONA_URL = "http://localhost:8000"
 
 

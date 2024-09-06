@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.0](https://github.com/pikdum/plugin.video.haru/compare/v1.21.2...v1.22.0) (2024-09-06)
+
+
+### Features
+
+* update mona url ([1fcaf5f](https://github.com/pikdum/plugin.video.haru/commit/1fcaf5fd845242491679d2d11678936c594dbf80))
+
 ## [1.21.2](https://github.com/pikdum/plugin.video.haru/compare/v1.21.1...v1.21.2) (2024-07-26)
 
 

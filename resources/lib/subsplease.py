@@ -147,7 +147,7 @@ class SubsPlease:
                 )
                 list_item.addContextMenuItems(
                     [
-                        ('Play', f'RunPlugin({url})'),
+                        ('Play', f'PlayMedia({url})'),
                         (
                             "Toggle Watched",
                             "RunPlugin(%s)"
@@ -215,7 +215,7 @@ class SubsPlease:
             )
             list_item.addContextMenuItems(
                 [
-                    ('Play', f'RunPlugin({url})'),
+                    ('Play', f'PlayMedia({url})'),
                     (
                         "Toggle Watched",
                         "RunPlugin(%s)"

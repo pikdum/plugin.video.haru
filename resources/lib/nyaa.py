@@ -227,7 +227,7 @@ class Nyaa:
             )
             list_item.addContextMenuItems(
                 [
-                    ('Play', f'RunPlugin({url})'),
+                    ('Play', f'PlayMedia({url})'),
                     (
                         "Toggle Watched",
                         "RunPlugin(%s)"

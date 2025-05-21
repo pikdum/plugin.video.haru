@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.22.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.23.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.22.0 (2024-09-06)
+    <news>1.23.0 (2025-05-21)
+
+Features
+
+-   add ‘Play’ option to context menus (#61) (1b69cb7)
+
+1.22.0 (2024-09-06)
 
 Features
 
@@ -86,14 +92,6 @@ Bug Fixes
 
 Features
 
--   new icons &amp; more (#49) (ef97264)
-
-1.16.0 (2024-04-21)
-
-Features
-
--   sukebei: add latest and popular (d631ad6)
-
-1.15.0 ...</news>
+-   new icons &amp; more (#49) (ef97...</news>
   </extension>
 </addon>

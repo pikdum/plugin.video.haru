@@ -147,9 +147,9 @@ class SubsPlease:
                 )
                 list_item.addContextMenuItems(
                     [
-                        ('Play', f'PlayMedia({url})'),
+                        ('[B]Play[/B]', f'PlayMedia({url})'),
                         (
-                            "Toggle Watched",
+                            "[B]Toggle Watched[/B]",
                             "RunPlugin(%s)"
                             % get_url(
                                 action="toggle_watched_subsplease",
@@ -215,9 +215,9 @@ class SubsPlease:
             )
             list_item.addContextMenuItems(
                 [
-                    ('Play', f'PlayMedia({url})'),
+                    ('[B]Play[/B]', f'PlayMedia({url})'),
                     (
-                        "Toggle Watched",
+                        "[B]Toggle Watched[/B]",
                         "RunPlugin(%s)"
                         % get_url(
                             action="toggle_watched_subsplease",

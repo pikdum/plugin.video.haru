@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.0](https://github.com/pikdum/plugin.video.haru/compare/v1.22.0...v1.23.0) (2025-05-21)
+
+
+### Features
+
+* add 'Play' option to context menus ([#61](https://github.com/pikdum/plugin.video.haru/issues/61)) ([1b69cb7](https://github.com/pikdum/plugin.video.haru/commit/1b69cb793e936684589e0985bd1c66af713d3cef))
+
 ## [1.22.0](https://github.com/pikdum/plugin.video.haru/compare/v1.21.2...v1.22.0) (2024-09-06)
 
 

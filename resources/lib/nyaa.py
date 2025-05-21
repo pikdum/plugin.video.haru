@@ -218,8 +218,16 @@ class Nyaa:
                 {"title": title, "mediatype": "video", "plot": description},
             )
             list_item.setProperty("IsPlayable", "true")
+            url = get_url(
+                action=self.play_action,
+                magnet=magnet,
+                selected_file=file_name,
+                name=torrent_name,
+                nyaa_url=nyaa_url,
+            )
             list_item.addContextMenuItems(
                 [
+                    ('Play', f'RunPlugin({url})'),
                     (
                         "Toggle Watched",
                         "RunPlugin(%s)"
@@ -232,13 +240,6 @@ class Nyaa:
                         ),
                     )
                 ]
-            )
-            url = get_url(
-                action=self.play_action,
-                magnet=magnet,
-                selected_file=file_name,
-                name=torrent_name,
-                nyaa_url=nyaa_url,
             )
             items.append((url, list_item, False))
 

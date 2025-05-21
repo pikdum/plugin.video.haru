@@ -139,8 +139,15 @@ class SubsPlease:
                 )
                 list_item.setProperty("IsPlayable", "true")
                 set_show_art(list_item, show_title)
+                hq_download = episode_info["downloads"][-1]
+                url = get_url(
+                    action="play_subsplease",
+                    url=hq_download["torrent"],
+                    name=display_name,
+                )
                 list_item.addContextMenuItems(
                     [
+                        ('Play', f'RunPlugin({url})'),
                         (
                             "Toggle Watched",
                             "RunPlugin(%s)"
@@ -151,12 +158,6 @@ class SubsPlease:
                             ),
                         )
                     ]
-                )
-                hq_download = episode_info["downloads"][-1]
-                url = get_url(
-                    action="play_subsplease",
-                    url=hq_download["torrent"],
-                    name=display_name,
                 )
                 items.append((url, list_item, False))
 
@@ -206,8 +207,15 @@ class SubsPlease:
             )
             list_item.setProperty("IsPlayable", "true")
             set_show_art(list_item, show)
+            url = get_url(
+                action="play_subsplease",
+                magnet=magnet,
+                selected_file=file_name,
+                name=display_name,
+            )
             list_item.addContextMenuItems(
                 [
+                    ('Play', f'RunPlugin({url})'),
                     (
                         "Toggle Watched",
                         "RunPlugin(%s)"
@@ -218,12 +226,6 @@ class SubsPlease:
                         ),
                     )
                 ]
-            )
-            url = get_url(
-                action="play_subsplease",
-                magnet=magnet,
-                selected_file=file_name,
-                name=display_name,
             )
             items.append((url, list_item, False))
 

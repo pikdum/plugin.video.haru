@@ -15,6 +15,6 @@ jobs:
           fetch-depth: 0
       - run: git config --global --add safe.directory /__w/plugin.video.haru/plugin.video.haru
       - run: ./update-news.sh
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "chore: update addon news"

@@ -370,9 +370,14 @@ class SubsPlease:
         xbmcplugin.endOfDirectory(HANDLE)
 
     def is_unfinished(self, show):
-        page = requests.get(f"https://subsplease.org/shows/{slugify(show)}/")
+        url = f"https://subsplease.org/shows/{slugify(show)}/"
+        page = requests.get(url)
         soup = BeautifulSoup(page.text, "html.parser")
-        sid = soup.find(id="show-release-table")["sid"]
+        release_table = soup.find(id="show-release-table")
+        if not release_table:
+            log(f"could not find release table for show={show} at url={url}")
+            return False
+        sid = release_table["sid"]
 
         episodes = requests.get(
             f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"

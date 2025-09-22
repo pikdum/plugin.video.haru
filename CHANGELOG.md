@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.1](https://github.com/pikdum/plugin.video.haru/compare/v1.23.0...v1.23.1) (2025-09-22)
+
+
+### Bug Fixes
+
+* **subsplease:** error when checking unfinished ([c9de528](https://github.com/pikdum/plugin.video.haru/commit/c9de528c56149109311bddea55e62d0daf0c5dfd))
+
 ## [1.23.0](https://github.com/pikdum/plugin.video.haru/compare/v1.22.0...v1.23.0) (2025-05-21)
 
 

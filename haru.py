@@ -3,6 +3,7 @@ import inspect
 import os
 import shutil
 import sys
+import unicodedata
 from urllib.parse import parse_qsl, quote_plus
 
 import requests
@@ -142,7 +143,7 @@ def nyaa_menu():
                 True,
             ),
         ],
-    ),
+    )
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -185,7 +186,7 @@ def sukebei_menu():
                 True,
             ),
         ],
-    ),
+    )
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -307,15 +308,99 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
             resolved_url = resolveurl.HostedMediaFile(url=magnet).resolve()
         else:
             all_urls = resolveurl.resolve(magnet, return_all=True)
+            log(
+                "resolveurl return_all for selected_file={} -> type={} value={}".format(
+                    selected_file, type(all_urls).__name__, all_urls
+                )
+            )
             if isinstance(all_urls, str):
                 # sometimes we get it already resolved as a single string?
                 # this should fix: string indices must be integers, not 'str'
                 resolved_url = all_urls
+            elif not all_urls:
+                log("resolveurl return_all empty; falling back to magnet resolve")
+                resolved_url = resolveurl.resolve(magnet)
             else:
-                selected_url = next(
-                    filter(lambda x: selected_file in x["name"], all_urls)
-                )["link"]
-                resolved_url = resolveurl.resolve(selected_url)
+
+                def normalize_match_text(value, ascii_only=False):
+                    if not value:
+                        return ""
+                    normalized = unicodedata.normalize("NFKC", value)
+                    if ascii_only:
+                        normalized = normalized.encode("ascii", "ignore").decode(
+                            "ascii"
+                        )
+                    return " ".join(normalized.split()).casefold()
+
+                selected_normalized = normalize_match_text(selected_file)
+                selected_ascii = normalize_match_text(selected_file, ascii_only=True)
+
+                entries = []
+                for item in all_urls:
+                    name = item.get("name", "") if isinstance(item, dict) else str(item)
+                    entries.append(
+                        {
+                            "item": item,
+                            "normalized": normalize_match_text(name),
+                            "ascii": normalize_match_text(name, ascii_only=True),
+                        }
+                    )
+
+                def is_exact_match(entry):
+                    return (
+                        entry["normalized"]
+                        and selected_normalized
+                        and entry["normalized"] == selected_normalized
+                    ) or (
+                        entry["ascii"]
+                        and selected_ascii
+                        and entry["ascii"] == selected_ascii
+                    )
+
+                def is_partial_match(entry):
+                    return (
+                        entry["normalized"]
+                        and selected_normalized
+                        and (
+                            selected_normalized in entry["normalized"]
+                            or entry["normalized"] in selected_normalized
+                        )
+                    ) or (
+                        entry["ascii"]
+                        and selected_ascii
+                        and (
+                            selected_ascii in entry["ascii"]
+                            or entry["ascii"] in selected_ascii
+                        )
+                    )
+
+                matched_entry = next(
+                    (entry["item"] for entry in entries if is_exact_match(entry)),
+                    None,
+                )
+                if not matched_entry:
+                    matched_entry = next(
+                        (entry["item"] for entry in entries if is_partial_match(entry)),
+                        None,
+                    )
+                if not matched_entry:
+                    log(
+                        "resolveurl could not match selected_file={}; normalized={} ascii={}; using first entry".format(
+                            selected_file, selected_normalized, selected_ascii
+                        )
+                    )
+                    matched_entry = all_urls[0]
+                if isinstance(matched_entry, dict):
+                    selected_url = matched_entry.get("link")
+                else:
+                    selected_url = matched_entry
+                if not selected_url:
+                    log(
+                        "resolveurl selected_url missing; falling back to magnet resolve"
+                    )
+                    resolved_url = resolveurl.resolve(magnet)
+                else:
+                    resolved_url = resolveurl.resolve(selected_url)
         play_item = xbmcgui.ListItem(path=resolved_url)
     xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 

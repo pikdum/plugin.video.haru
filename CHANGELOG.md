@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.2](https://github.com/pikdum/plugin.video.haru/compare/v1.23.1...v1.23.2) (2026-01-16)
+
+
+### Bug Fixes
+
+* handle special characters in filenames ([2b8b8f1](https://github.com/pikdum/plugin.video.haru/commit/2b8b8f19bf49801839ada84e3150f415da8ead7b))
+
 ## [1.23.1](https://github.com/pikdum/plugin.video.haru/compare/v1.23.0...v1.23.1) (2025-09-22)
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.23.1" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.23.2" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.23.1 (2025-09-22)
+    <news>1.23.2 (2026-01-16)
+
+Bug Fixes
+
+-   handle special characters in filenames (2b8b8f1)
+
+1.23.1 (2025-09-22)
 
 Bug Fixes
 
@@ -86,12 +92,6 @@ Features
 Bug Fixes
 
 -   don’t show disabled addon settings (b229ea9)
--   subsplease: color unfinished titles (1b18401)
-
-1.17.1 (2024-04-24)
-
-Bug Fixes
-
--   subsplease: revert ...</news>
+-   subsplease: colo...</news>
   </extension>
 </addon>

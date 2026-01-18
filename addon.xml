@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.23.2" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.24.0" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,17 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.23.2 (2026-01-16)
+    <news>1.24.0 (2026-01-18)
+
+Features
+
+-   add cache busting to artwork (16ee46c)
+
+Bug Fixes
+
+-   subsplease: ignore v2 in unfinished checks (fae1201)
+
+1.23.2 (2026-01-16)
 
 Bug Fixes
 
@@ -83,15 +93,6 @@ Features
 
 -   add requests cache (29400ae)
 
-1.18.0 (2024-04-28)
-
-Features
-
--   subsplease: airing unfinished (d73d0f7)
-
-Bug Fixes
-
--   don’t show disabled addon settings (b229ea9)
--   subsplease: colo...</news>
+1.18.0 (2024-0...</news>
   </extension>
 </addon>

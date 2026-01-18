@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import re
 import sys
+from datetime import date
 from urllib.parse import quote, urlencode
 
 import xbmc
@@ -28,8 +29,9 @@ def get_url(**kwargs):
 
 
 def set_show_art(list_item, title):
-    poster = f"{MONA_URL}/poster?query={quote(title)}"
-    fanart = f"{MONA_URL}/fanart?query={quote(title)}"
+    cache_buster = date.today().strftime("%Y%m%d")
+    poster = f"{MONA_URL}/poster?query={quote(title)}&v={cache_buster}"
+    fanart = f"{MONA_URL}/fanart?query={quote(title)}&v={cache_buster}"
     list_item.setArt({"poster": poster, "thumb": poster, "fanart": fanart})
     return list_item
 

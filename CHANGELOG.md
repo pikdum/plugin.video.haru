@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.24.0](https://github.com/pikdum/plugin.video.haru/compare/v1.23.2...v1.24.0) (2026-01-18)
+
+
+### Features
+
+* add cache busting to artwork ([16ee46c](https://github.com/pikdum/plugin.video.haru/commit/16ee46c5813e7245df68e0af2a5f773f6e7b00fb))
+
+
+### Bug Fixes
+
+* **subsplease:** ignore v2 in unfinished checks ([fae1201](https://github.com/pikdum/plugin.video.haru/commit/fae1201f4de75dfcc6d7b397b20ef8d21a5a489e))
+
 ## [1.23.2](https://github.com/pikdum/plugin.video.haru/compare/v1.23.1...v1.23.2) (2026-01-16)
 
 

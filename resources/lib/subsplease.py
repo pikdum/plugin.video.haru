@@ -385,8 +385,9 @@ class SubsPlease:
         if not episodes["episode"]:
             return False
         latest_episode = list(episodes["episode"].keys())[0]
+        display_name = re.sub(r"v\d$", "", latest_episode)
 
-        if self.is_episode_watched(latest_episode):
+        if self.is_episode_watched(display_name):
             return False
 
         return True

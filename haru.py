@@ -415,20 +415,20 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
 
 @register
 def play_subsplease(name, selected_file=None, url=None, magnet=None):
+    _play_nyaa(selected_file, url, magnet)
     subsplease.set_watched(name)
-    return _play_nyaa(selected_file, url, magnet)
 
 
 @register
 def play_nyaa(name, selected_file, nyaa_url, magnet):
+    _play_nyaa(selected_file=selected_file, magnet=magnet)
     nyaa.set_watched(torrent_name=name, file_name=selected_file, nyaa_url=nyaa_url)
-    return _play_nyaa(selected_file=selected_file, magnet=magnet)
 
 
 @register
 def play_sukebei(name, selected_file, nyaa_url, magnet):
+    _play_nyaa(selected_file=selected_file, magnet=magnet)
     sukebei.set_watched(torrent_name=name, file_name=selected_file, nyaa_url=nyaa_url)
-    return _play_nyaa(selected_file=selected_file, magnet=magnet)
 
 
 @register

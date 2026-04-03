@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.1](https://github.com/pikdum/plugin.video.haru/compare/v1.24.0...v1.24.1) (2026-04-03)
+
+
+### Bug Fixes
+
+* more specific resolve errors ([9de797f](https://github.com/pikdum/plugin.video.haru/commit/9de797f192f6cd384ef4ff266e8406a6af89af7f))
+
 ## [1.24.0](https://github.com/pikdum/plugin.video.haru/compare/v1.23.2...v1.24.0) (2026-01-18)
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- x-release-please-start-version -->
-<addon id="plugin.video.haru" name="haru" version="1.24.0" provider-name="pikdum">
+<addon id="plugin.video.haru" name="haru" version="1.24.1" provider-name="pikdum">
   <!-- x-release-please-end -->
   <requires>
     <import addon="xbmc.python" version="3.00.0"/>
@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.24.0 (2026-01-18)
+    <news>1.24.1 (2026-04-03)
+
+Bug Fixes
+
+-   more specific resolve errors (9de797f)
+
+1.24.0 (2026-01-18)
 
 Features
 
@@ -87,12 +93,6 @@ Features
 
 -   switch to new art endpoints (3977257)
 
-1.19.0 (2024-05-03)
-
-Features
-
--   add requests cache (29400ae)
-
-1.18.0 (2024-0...</news>
+1.1...</news>
   </extension>
 </addon>

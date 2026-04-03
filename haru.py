@@ -401,6 +401,14 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
                     resolved_url = resolveurl.resolve(magnet)
                 else:
                     resolved_url = resolveurl.resolve(selected_url)
+        if not resolved_url:
+            raise RuntimeError("Provider returned an invalid stream URL")
+        if not isinstance(resolved_url, str):
+            raise TypeError(
+                "Provider returned a non-string stream URL: {} {!r}".format(
+                    type(resolved_url).__name__, resolved_url
+                )
+            )
         play_item = xbmcgui.ListItem(path=resolved_url)
     xbmcplugin.setResolvedUrl(HANDLE, True, listitem=play_item)
 

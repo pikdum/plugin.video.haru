@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.2](https://github.com/pikdum/plugin.video.haru/compare/v1.24.1...v1.24.2) (2026-04-03)
+
+
+### Bug Fixes
+
+* do not set watched on errors ([e681f57](https://github.com/pikdum/plugin.video.haru/commit/e681f5787c8f49126294f2df729675af35f62f84))
+
 ## [1.24.1](https://github.com/pikdum/plugin.video.haru/compare/v1.24.0...v1.24.1) (2026-04-03)
 
 

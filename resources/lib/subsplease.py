@@ -93,12 +93,18 @@ class SubsPlease:
     def show(self, url):
         page = requests.get(url)
         soup = BeautifulSoup(page.text, "html.parser")
-        sid = soup.find(id="show-release-table")["sid"]
+        release_table = soup.find(id="show-release-table")
         show_title = soup.find("h1", class_="entry-title").text
-        description = soup.find("div", class_="series-syn").find("p").text.strip()
-        # TODO: fix multi-line descriptions
 
         xbmcplugin.setPluginCategory(HANDLE, show_title)
+
+        if not release_table:
+            xbmcplugin.endOfDirectory(HANDLE)
+            return
+
+        sid = release_table["sid"]
+        description = soup.find("div", class_="series-syn").find("p").text.strip()
+        # TODO: fix multi-line descriptions
 
         episodes = requests.get(
             f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"

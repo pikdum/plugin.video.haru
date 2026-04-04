@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.3](https://github.com/pikdum/plugin.video.haru/compare/v1.24.2...v1.24.3) (2026-04-04)
+
+
+### Bug Fixes
+
+* **subsplease:** don't error on empty shows ([ff52762](https://github.com/pikdum/plugin.video.haru/commit/ff52762850797b626452b24dc853b7b1cc775464))
+
 ## [1.24.2](https://github.com/pikdum/plugin.video.haru/compare/v1.24.1...v1.24.2) (2026-04-03)
 
 

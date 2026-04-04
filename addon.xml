@@ -21,7 +21,13 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.24.2 (2026-04-03)
+    <news>1.24.3 (2026-04-04)
+
+Bug Fixes
+
+-   subsplease: don’t error on empty shows (ff52762)
+
+1.24.2 (2026-04-03)
 
 Bug Fixes
 
@@ -90,9 +96,6 @@ Features
 
 Bug Fixes
 
--   addon news generation (3481557)
--   revert “feat: add requests cache” (1fd6022)
-
-1...</news>
+- ...</news>
   </extension>
 </addon>

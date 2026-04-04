@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.4](https://github.com/pikdum/plugin.video.haru/compare/v1.24.3...v1.24.4) (2026-04-04)
+
+
+### Bug Fixes
+
+* **subsplease:** gray out not yet available shows ([38e7ea4](https://github.com/pikdum/plugin.video.haru/commit/38e7ea4807f8098165be5f656737811d052d1505))
+
 ## [1.24.3](https://github.com/pikdum/plugin.video.haru/compare/v1.24.2...v1.24.3) (2026-04-04)
 
 

@@ -93,18 +93,12 @@ class SubsPlease:
     def show(self, url):
         page = requests.get(url)
         soup = BeautifulSoup(page.text, "html.parser")
-        release_table = soup.find(id="show-release-table")
+        sid = soup.find(id="show-release-table")["sid"]
         show_title = soup.find("h1", class_="entry-title").text
-
-        xbmcplugin.setPluginCategory(HANDLE, show_title)
-
-        if not release_table:
-            xbmcplugin.endOfDirectory(HANDLE)
-            return
-
-        sid = release_table["sid"]
         description = soup.find("div", class_="series-syn").find("p").text.strip()
         # TODO: fix multi-line descriptions
+
+        xbmcplugin.setPluginCategory(HANDLE, show_title)
 
         episodes = requests.get(
             f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"
@@ -289,6 +283,38 @@ class SubsPlease:
         flattened_schedule = sorted(flattened_schedule, key=lambda x: x["title"])
         return flattened_schedule
 
+    def _build_schedule_item(self, show, label):
+        is_available = bool(show.get("page"))
+        watched = self.is_show_watched(show["title"])
+
+        if watched:
+            label = f"[COLOR palevioletred]{label}[/COLOR]"
+        elif not is_available:
+            label = f"[COLOR gray]{label}[/COLOR]"
+
+        list_item = xbmcgui.ListItem(label=label)
+        set_show_art(list_item, show["title"])
+
+        if is_available:
+            return (
+                get_url(
+                    action="subsplease_show",
+                    url="https://subsplease.org/shows/" + show["page"],
+                ),
+                list_item,
+                True,
+            )
+
+        return (
+            get_url(
+                action="notify",
+                title="haru",
+                message="Show not available yet.",
+            ),
+            list_item,
+            False,
+        )
+
     def all_airing(self):
         xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - All Airing")
         schedule = self.get_schedule()
@@ -301,18 +327,7 @@ class SubsPlease:
             ).strftime("%I:%M %p")
 
             title = f"""{show["title"]} [I][LIGHT]— {show["day"]} @ {formatted_time}[/LIGHT][/I]"""
-
-            watched = self.is_show_watched(show["title"])
-            if watched:
-                title = f"[COLOR palevioletred]{title}[/COLOR]"
-
-            list_item = xbmcgui.ListItem(label=title)
-            set_show_art(list_item, show["title"])
-            url = get_url(
-                action="subsplease_show",
-                url="https://subsplease.org/shows/" + show["page"],
-            )
-            items.append((url, list_item, True))
+            items.append(self._build_schedule_item(show, title))
 
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
@@ -338,18 +353,7 @@ class SubsPlease:
             title = show["title"]
 
             label = f"""[B]{formatted_time}[/B] - {title}"""
-
-            watched = self.is_show_watched(title)
-            if watched:
-                label = f"[COLOR palevioletred]{label}[/COLOR]"
-
-            list_item = xbmcgui.ListItem(label=label)
-            set_show_art(list_item, title)
-            url = get_url(
-                action="subsplease_show",
-                url="https://subsplease.org/shows/" + show["page"],
-            )
-            items.append((url, list_item, True))
+            items.append(self._build_schedule_item(show, label))
 
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)

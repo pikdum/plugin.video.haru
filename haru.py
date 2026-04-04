@@ -442,6 +442,11 @@ def display_settings(plugin):
 
 
 @register
+def notify(message, title="haru"):
+    xbmcgui.Dialog().notification(title, message)
+
+
+@register
 def toggle_watched_subsplease(name, watched):
     subsplease.set_watched(name, watched)
     xbmc.executebuiltin("Container.Refresh")

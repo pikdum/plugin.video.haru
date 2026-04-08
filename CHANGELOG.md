@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.25.0](https://github.com/pikdum/plugin.video.haru/compare/v1.24.4...v1.25.0) (2026-04-08)
+
+
+### Features
+
+* history overhaul ([30b37cf](https://github.com/pikdum/plugin.video.haru/commit/30b37cf4faa9bab20994374ab8e20ddfa5dfa1eb))
+* **settings:** add clear cache action ([661fadd](https://github.com/pikdum/plugin.video.haru/commit/661fadd9ee5a10ca5f66bfe832998e804874d0d5))
+
+
+### Performance Improvements
+
+* **subsplease:** cache latest episode for unfinished checks ([a327202](https://github.com/pikdum/plugin.video.haru/commit/a327202cd02145bfa1a4b489f8fd879d6b1f21de))
+* **subsplease:** cache show ids for unfinished checks ([a585b37](https://github.com/pikdum/plugin.video.haru/commit/a585b37e002f173e0a51cb9d137f70484ba3e50e))
+
 ## [1.24.4](https://github.com/pikdum/plugin.video.haru/compare/v1.24.3...v1.24.4) (2026-04-04)
 
 

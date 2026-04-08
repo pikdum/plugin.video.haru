@@ -17,7 +17,15 @@ from bs4 import BeautifulSoup
 from resources.lib.database import Database
 from resources.lib.nyaa import Nyaa
 from resources.lib.subsplease import SubsPlease
-from resources.lib.util import *
+from resources.lib.util import (
+    HANDLE,
+    get_setting,
+    get_url,
+    log,
+    open_settings,
+    set_addon_art,
+    set_icon_art,
+)
 
 routes = {}
 

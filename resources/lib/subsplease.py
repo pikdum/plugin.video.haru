@@ -9,7 +9,15 @@ import xbmcgui
 import xbmcplugin
 from bs4 import BeautifulSoup
 from resources.lib.history import HistoryArchive, build_history_directory
-from resources.lib.util import *
+from resources.lib.util import (
+    HANDLE,
+    VIDEO_FORMATS,
+    get_url,
+    log,
+    set_icon_art,
+    set_show_art,
+    slugify,
+)
 
 
 class SubsPlease:
@@ -148,7 +156,7 @@ class SubsPlease:
                 )
                 list_item.addContextMenuItems(
                     [
-                        ('[B]Play[/B]', f'PlayMedia({url})'),
+                        ("[B]Play[/B]", f"PlayMedia({url})"),
                         (
                             "[B]Toggle Watched[/B]",
                             "RunPlugin(%s)"
@@ -157,7 +165,7 @@ class SubsPlease:
                                 name=display_name,
                                 watched=not watched,
                             ),
-                        )
+                        ),
                     ]
                 )
                 items.append((url, list_item, False))
@@ -216,7 +224,7 @@ class SubsPlease:
             )
             list_item.addContextMenuItems(
                 [
-                    ('[B]Play[/B]', f'PlayMedia({url})'),
+                    ("[B]Play[/B]", f"PlayMedia({url})"),
                     (
                         "[B]Toggle Watched[/B]",
                         "RunPlugin(%s)"
@@ -225,7 +233,7 @@ class SubsPlease:
                             name=display_name,
                             watched=not watched,
                         ),
-                    )
+                    ),
                 ]
             )
             items.append((url, list_item, False))
@@ -317,7 +325,7 @@ class SubsPlease:
         )
 
     def all_airing(self):
-        xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - All Airing")
+        xbmcplugin.setPluginCategory(HANDLE, "SubsPlease - All Airing")
         schedule = self.get_schedule()
 
         items = []

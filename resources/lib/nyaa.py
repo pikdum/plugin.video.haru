@@ -9,7 +9,15 @@ import xbmcgui
 import xbmcplugin
 from bs4 import BeautifulSoup
 from resources.lib.history import HistoryArchive, build_history_directory
-from resources.lib.util import *
+from resources.lib.util import (
+    HANDLE,
+    MONA_URL,
+    VIDEO_FORMATS,
+    get_url,
+    select_option,
+    set_icon_art,
+    set_show_art,
+)
 
 
 class Nyaa:
@@ -228,7 +236,7 @@ class Nyaa:
             )
             list_item.addContextMenuItems(
                 [
-                    ('[B]Play[/B]', f'PlayMedia({url})'),
+                    ("[B]Play[/B]", f"PlayMedia({url})"),
                     (
                         "[B]Toggle Watched[/B]",
                         "RunPlugin(%s)"
@@ -239,7 +247,7 @@ class Nyaa:
                             nyaa_url=nyaa_url,
                             watched=not watched,
                         ),
-                    )
+                    ),
                 ]
             )
             items.append((url, list_item, False))

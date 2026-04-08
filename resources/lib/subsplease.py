@@ -25,18 +25,28 @@ class SubsPlease:
         self.db = db
         self.timezone = time.localtime().tm_gmtoff / 60 / 60
 
-    def get_cached_sid(self, show):
-        return self.db.database["cache"]["sp"]["show"].get(show, {}).get("sid")
+    def get_show_cache(self, show):
+        return self.db.database["cache"]["sp"]["show"].get(show, {})
 
-    def cache_sid(self, show, sid):
+    def cache_show_data(self, show, sid=None, latest_episode=None):
         show_cache = self.db.database["cache"]["sp"]["show"]
-        cached_sid = show_cache.get(show, {}).get("sid")
+        cached_data = show_cache.get(show, {})
+        updated_data = dict(cached_data)
 
-        if cached_sid == sid:
+        if sid is not None:
+            updated_data["sid"] = sid
+
+        if latest_episode is not None:
+            updated_data["latest_episode"] = latest_episode
+
+        if updated_data == cached_data:
             return False
 
-        show_cache[show] = {"sid": sid}
+        show_cache[show] = updated_data
         return True
+
+    def normalize_episode_name(self, episode):
+        return re.sub(r"v\d$", "", episode)
 
     def set_watched(self, name, watched=True):
         split = name.split(" - ")
@@ -120,14 +130,20 @@ class SubsPlease:
         description = soup.find("div", class_="series-syn").find("p").text.strip()
         # TODO: fix multi-line descriptions
 
-        if self.cache_sid(show_title, sid):
-            self.db.commit()
-
         xbmcplugin.setPluginCategory(HANDLE, show_title)
 
         episodes = requests.get(
             f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"
         ).json()
+
+        latest_episode = None
+        if episodes["episode"]:
+            latest_episode = self.normalize_episode_name(
+                list(episodes["episode"].keys())[0]
+            )
+
+        if self.cache_show_data(show_title, sid=sid, latest_episode=latest_episode):
+            self.db.commit()
 
         items = []
         if episodes["batch"]:
@@ -146,7 +162,7 @@ class SubsPlease:
             for episode, episode_info in reversed(episodes["episode"].items()):
                 release_date = re.sub(r" \d{2}:.*$", "", episode_info["release_date"])
 
-                display_name = re.sub(r"v\d$", "", episode)
+                display_name = self.normalize_episode_name(episode)
                 title = f"{display_name} [I][LIGHT]— {release_date}[/LIGHT][/I]"
 
                 watched = self.is_episode_watched(display_name)
@@ -417,7 +433,13 @@ class SubsPlease:
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def is_unfinished(self, show, sid=None):
+    def is_unfinished(self, show, cached_data=None):
+        cached_data = cached_data or {}
+        latest_episode = cached_data.get("latest_episode")
+        if latest_episode and not self.is_episode_watched(latest_episode):
+            return show, True, None
+
+        sid = cached_data.get("sid")
         if not sid:
             url = f"https://subsplease.org/shows/{slugify(show)}/"
             page = requests.get(url)
@@ -432,14 +454,14 @@ class SubsPlease:
             f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"
         ).json()
         if not episodes["episode"]:
-            return show, False, sid
+            return show, False, {"sid": sid}
         latest_episode = list(episodes["episode"].keys())[0]
-        display_name = re.sub(r"v\d$", "", latest_episode)
+        display_name = self.normalize_episode_name(latest_episode)
 
         if self.is_episode_watched(display_name):
-            return show, False, sid
+            return show, False, {"sid": sid, "latest_episode": display_name}
 
-        return show, True, sid
+        return show, True, {"sid": sid, "latest_episode": display_name}
 
     def unfinished(self, airing_only=False):
         category = (
@@ -474,21 +496,22 @@ class SubsPlease:
         show_cache = dict(self.db.database["cache"]["sp"]["show"])
         with cf.ThreadPoolExecutor() as executor:
             future_to_show = {
-                executor.submit(
-                    self.is_unfinished, show, show_cache.get(show, {}).get("sid")
-                ): show
+                executor.submit(self.is_unfinished, show, show_cache.get(show)): show
                 for show, _ in sorted_items
             }
 
             for future in cf.as_completed(future_to_show):
                 progress += 1
-                show, is_unfinished, sid = future.result()
+                show, is_unfinished, updated_cache_data = future.result()
 
                 if is_unfinished:
                     shows.append(show)
 
-                if sid and show_cache.get(show, {}).get("sid") != sid:
-                    show_cache[show] = {"sid": sid}
+                if (
+                    updated_cache_data
+                    and show_cache.get(show, {}) != updated_cache_data
+                ):
+                    show_cache[show] = updated_cache_data
                     cache_changed = True
 
                 if progress_dialog.iscanceled():

@@ -25,6 +25,19 @@ class SubsPlease:
         self.db = db
         self.timezone = time.localtime().tm_gmtoff / 60 / 60
 
+    def get_cached_sid(self, show):
+        return self.db.database["cache"]["sp"]["show"].get(show, {}).get("sid")
+
+    def cache_sid(self, show, sid):
+        show_cache = self.db.database["cache"]["sp"]["show"]
+        cached_sid = show_cache.get(show, {}).get("sid")
+
+        if cached_sid == sid:
+            return False
+
+        show_cache[show] = {"sid": sid}
+        return True
+
     def set_watched(self, name, watched=True):
         split = name.split(" - ")
         episode = split[-1]
@@ -106,6 +119,9 @@ class SubsPlease:
         show_title = soup.find("h1", class_="entry-title").text
         description = soup.find("div", class_="series-syn").find("p").text.strip()
         # TODO: fix multi-line descriptions
+
+        if self.cache_sid(show_title, sid):
+            self.db.commit()
 
         xbmcplugin.setPluginCategory(HANDLE, show_title)
 
@@ -401,28 +417,29 @@ class SubsPlease:
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def is_unfinished(self, show):
-        url = f"https://subsplease.org/shows/{slugify(show)}/"
-        page = requests.get(url)
-        soup = BeautifulSoup(page.text, "html.parser")
-        release_table = soup.find(id="show-release-table")
-        if not release_table:
-            log(f"could not find release table for show={show} at url={url}")
-            return False
-        sid = release_table["sid"]
+    def is_unfinished(self, show, sid=None):
+        if not sid:
+            url = f"https://subsplease.org/shows/{slugify(show)}/"
+            page = requests.get(url)
+            soup = BeautifulSoup(page.text, "html.parser")
+            release_table = soup.find(id="show-release-table")
+            if not release_table:
+                log(f"could not find release table for show={show} at url={url}")
+                return show, False, None
+            sid = release_table["sid"]
 
         episodes = requests.get(
             f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"
         ).json()
         if not episodes["episode"]:
-            return False
+            return show, False, sid
         latest_episode = list(episodes["episode"].keys())[0]
         display_name = re.sub(r"v\d$", "", latest_episode)
 
         if self.is_episode_watched(display_name):
-            return False
+            return show, False, sid
 
-        return True
+        return show, True, sid
 
     def unfinished(self, airing_only=False):
         category = (
@@ -453,29 +470,40 @@ class SubsPlease:
         )
 
         progress = 0
+        cache_changed = False
+        show_cache = dict(self.db.database["cache"]["sp"]["show"])
         with cf.ThreadPoolExecutor() as executor:
-            futures = [
-                executor.submit(self.is_unfinished, show) for show, _ in sorted_items
-            ]
+            future_to_show = {
+                executor.submit(
+                    self.is_unfinished, show, show_cache.get(show, {}).get("sid")
+                ): show
+                for show, _ in sorted_items
+            }
 
-            for future in cf.as_completed(futures):
+            for future in cf.as_completed(future_to_show):
                 progress += 1
-                is_unfinished = future.result()
-                index = futures.index(future)
-                item = sorted_items[index]
+                show, is_unfinished, sid = future.result()
 
                 if is_unfinished:
-                    shows.append(item[0])
+                    shows.append(show)
+
+                if sid and show_cache.get(show, {}).get("sid") != sid:
+                    show_cache[show] = {"sid": sid}
+                    cache_changed = True
 
                 if progress_dialog.iscanceled():
                     break
 
                 progress_dialog.update(
                     int((progress / total_items) * 100),
-                    f"Checking {item[0]}...",
+                    f"Checking {show}...",
                 )
 
         progress_dialog.close()
+
+        if cache_changed:
+            self.db.database["cache"]["sp"]["show"] = show_cache
+            self.db.commit()
 
         xbmcplugin.addDirectoryItems(
             HANDLE,

@@ -11,11 +11,15 @@ class Database:
         BASE_DATABASE = {
             "sp:watch": {},
             "sp:history": {},
-            "sp:art_cache": {},
             "nt:watch": {},
             "nt:history": {},
             "sb:watch": {},
             "sb:history": {},
+            "cache": {
+                "sp": {
+                    "show": {},
+                }
+            },
         }
 
         addon = xbmcaddon.Addon()
@@ -32,6 +36,7 @@ class Database:
             database = {}
 
         database = {**BASE_DATABASE, **database}
+        database, changed = self.normalize_database(database)
 
         self.database = database
         self.database_path = database_path
@@ -40,6 +45,36 @@ class Database:
                 "special://home/addons/", addon.getAddonInfo("id"), "addon.xml"
             )
         )
+
+        if changed:
+            self.commit()
+
+    def normalize_database(self, database):
+        changed = False
+
+        cache = database.get("cache")
+        if not isinstance(cache, dict):
+            cache = {}
+            database["cache"] = cache
+            changed = True
+
+        sp_cache = cache.get("sp")
+        if not isinstance(sp_cache, dict):
+            sp_cache = {}
+            cache["sp"] = sp_cache
+            changed = True
+
+        show_cache = sp_cache.get("show")
+        if not isinstance(show_cache, dict):
+            show_cache = {}
+            sp_cache["show"] = show_cache
+            changed = True
+
+        if "sp:art_cache" in database:
+            del database["sp:art_cache"]
+            changed = True
+
+        return database, changed
 
     def commit(self):
         with open(self.database_path, "wb") as f:

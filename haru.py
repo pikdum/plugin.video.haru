@@ -273,8 +273,8 @@ def subsplease_day(day):
 
 
 @register
-def subsplease_history():
-    return subsplease.history()
+def subsplease_history(year=None, month=None, full=False):
+    return subsplease.history(year=year, month=month, full=full)
 
 
 @register
@@ -481,8 +481,8 @@ def nyaa_page(url):
 
 
 @register
-def nyaa_history():
-    nyaa.history()
+def nyaa_history(year=None, month=None, full=False):
+    nyaa.history(year=year, month=month, full=full)
 
 
 @register
@@ -501,8 +501,8 @@ def sukebei_page(url):
 
 
 @register
-def sukebei_history():
-    sukebei.history()
+def sukebei_history(year=None, month=None, full=False):
+    sukebei.history(year=year, month=month, full=full)
 
 
 @register

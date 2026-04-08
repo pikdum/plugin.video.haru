@@ -8,6 +8,7 @@ import requests
 import xbmcgui
 import xbmcplugin
 from bs4 import BeautifulSoup
+from resources.lib.history import HistoryArchive, build_history_directory
 from resources.lib.util import *
 
 
@@ -358,11 +359,9 @@ class SubsPlease:
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def history(self):
-        xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - History")
-
+    def _history_items(self, entries):
         items = []
-        for title, data in reversed(self.db.database["sp:history"].items()):
+        for title, data in entries:
             split = title.split(" - ")
             show = " - ".join(split[:-1])
 
@@ -376,6 +375,21 @@ class SubsPlease:
             set_show_art(list_item, show)
             items.append((url, list_item, True))
 
+        return items
+
+    def history(self, year=None, month=None, full=False):
+        archive = HistoryArchive(self.db.database["sp:history"])
+        category, items = build_history_directory(
+            archive=archive,
+            action="subsplease_history",
+            category="SubsPlease - History",
+            render_entries=self._history_items,
+            year=year,
+            month=month,
+            full=full,
+        )
+
+        xbmcplugin.setPluginCategory(HANDLE, category)
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 

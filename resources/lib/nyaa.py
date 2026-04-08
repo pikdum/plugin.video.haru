@@ -8,6 +8,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 from bs4 import BeautifulSoup
+from resources.lib.history import HistoryArchive, build_history_directory
 from resources.lib.util import *
 
 
@@ -246,13 +247,9 @@ class Nyaa:
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def history(self):
-        xbmcplugin.setPluginCategory(HANDLE, f"Torrents - History")
-
+    def _history_items(self, entries):
         items = []
-        for title, data in reversed(
-            self.db.database[f"{self.db_prefix}:history"].items()
-        ):
+        for title, data in entries:
             nyaa_url = data.get("nyaa_url", False)
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
@@ -264,5 +261,22 @@ class Nyaa:
             self.set_torrent_art(list_item, name=title, url=nyaa_url)
             items.append((url, list_item, True))
 
+        return items
+
+    def history(self, year=None, month=None, full=False):
+        archive = HistoryArchive(self.db.database[f"{self.db_prefix}:history"])
+        category, items = build_history_directory(
+            archive=archive,
+            action="nyaa_history" if self.mode == "fun" else "sukebei_history",
+            category="Torrents - History"
+            if self.mode == "fun"
+            else "Sukebei - History",
+            render_entries=self._history_items,
+            year=year,
+            month=month,
+            full=full,
+        )
+
+        xbmcplugin.setPluginCategory(HANDLE, category)
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)

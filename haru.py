@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import inspect
-import os
-import shutil
 import sys
 import unicodedata
 from urllib.parse import parse_qsl, quote_plus
@@ -11,7 +9,6 @@ import resolveurl
 import xbmc
 import xbmcgui
 import xbmcplugin
-import xbmcvfs
 from bs4 import BeautifulSoup
 
 from resources.lib.database import Database
@@ -584,20 +581,19 @@ def toggle_language_invoker():
 
 
 @register
-def clear_thumbnail_cache():
+def clear_cache():
     dialog = xbmcgui.Dialog()
     confirmed = dialog.yesno(
-        "Clear Thumbnail Cache",
-        "Do you want to clear Kodi's thumbnail cache?",
+        "Clear Cache",
+        "Do you want to clear haru's cache?\n\nHistory and watched statuses will be preserved.",
     )
     if not confirmed:
         return
 
-    thumbnail_dir = xbmcvfs.translatePath("special://thumbnails")
-    for d in os.listdir(thumbnail_dir):
-        shutil.rmtree(os.path.join(thumbnail_dir, d))
-
-    dialog.ok("Success!", "You should restart Kodi now.")
+    db.database["cache"] = {}
+    db.database, _ = db.normalize_database(db.database)
+    db.commit()
+    xbmc.executebuiltin("Container.Refresh")
 
 
 def router(paramstring):

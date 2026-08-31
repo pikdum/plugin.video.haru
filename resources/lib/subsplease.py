@@ -1,40 +1,35 @@
 #!/usr/bin/env python3
-import concurrent.futures as cf
 import re
-import time
-from datetime import datetime
+from datetime import datetime, time, timedelta, timezone
 
-import requests
 import xbmcgui
 import xbmcplugin
-from bs4 import BeautifulSoup
+from resources.lib.histoire import Histoire
 from resources.lib.history import HistoryArchive, build_history_directory
 from resources.lib.util import (
     HANDLE,
     VIDEO_FORMATS,
     get_url,
-    log,
     set_icon_art,
     set_show_art,
-    slugify,
 )
 
 
 class SubsPlease:
-    def __init__(self, db):
+    def __init__(self, db, client=None):
         self.db = db
-        self.timezone = time.localtime().tm_gmtoff / 60 / 60
+        self.client = client or Histoire()
 
     def get_show_cache(self, show):
         return self.db.database["cache"]["sp"]["show"].get(show, {})
 
-    def cache_show_data(self, show, sid=None, latest_episode=None):
+    def cache_show_data(self, show, show_id=None, latest_episode=None):
         show_cache = self.db.database["cache"]["sp"]["show"]
         cached_data = show_cache.get(show, {})
         updated_data = dict(cached_data)
 
-        if sid is not None:
-            updated_data["sid"] = sid
+        if show_id is not None:
+            updated_data["show_id"] = show_id
 
         if latest_episode is not None:
             updated_data["latest_episode"] = latest_episode
@@ -69,7 +64,6 @@ class SubsPlease:
             self.db.database["sp:watch"][show] = {}
 
         self.db.database["sp:history"][name] = {"timestamp": datetime.now()}
-
         self.db.database["sp:watch"][show][episode] = True
         self.db.commit()
 
@@ -80,177 +74,133 @@ class SubsPlease:
         split = name.split(" - ")
         episode = split[-1]
         show = " - ".join(split[:-1])
-
-        if show not in self.db.database["sp:watch"]:
-            return False
-        if episode in self.db.database["sp:watch"][show]:
-            return True
-        return False
+        return bool(self.db.database["sp:watch"].get(show, {}).get(episode))
 
     def all(self, search=False):
         category = "Search" if search else "All"
         xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - {category}")
 
-        page = requests.get("https://subsplease.org/shows/")
-        soup = BeautifulSoup(page.text, "html.parser")
-        links = filter(lambda x: x["href"].startswith("/shows/"), soup.find_all("a"))
+        query = xbmcgui.Dialog().input("Search for show:") if search else None
+        shows = self.client.shows(query) if not search or query else []
 
-        if search:
-            search_term = xbmcgui.Dialog().input("Search for show:")
-            if search_term:
-                links = filter(
-                    lambda x: search_term.lower() in x["title"].lower(), links
-                )
-
-        items = []
-        for link in links:
-            title = link["title"]
-            label = title
-
-            watched = self.is_show_watched(title)
-            if watched:
-                label = f"[COLOR palevioletred]{title}[/COLOR]"
-
-            list_item = xbmcgui.ListItem(label=label)
-            set_show_art(list_item, title)
-
-            url = get_url(
-                action="subsplease_show", url="https://subsplease.org" + link["href"]
-            )
-            items.append((url, list_item, True))
-
-        xbmcplugin.addDirectoryItems(HANDLE, items)
+        xbmcplugin.addDirectoryItems(
+            HANDLE, [self._show_directory_item(show) for show in shows]
+        )
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def show(self, url):
-        page = requests.get(url)
-        soup = BeautifulSoup(page.text, "html.parser")
-        sid = soup.find(id="show-release-table")["sid"]
-        show_title = soup.find("h1", class_="entry-title").text
-        description = soup.find("div", class_="series-syn").find("p").text.strip()
-        # TODO: fix multi-line descriptions
-
+    def show(self, show_id):
+        show = self.client.show(show_id)
+        show_title = show["title"]
+        description = show.get("synopsis") or ""
         xbmcplugin.setPluginCategory(HANDLE, show_title)
 
-        episodes = requests.get(
-            f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"
-        ).json()
-
-        latest_episode = None
-        if episodes["episode"]:
-            latest_episode = self.normalize_episode_name(
-                list(episodes["episode"].keys())[0]
-            )
-
-        if self.cache_show_data(show_title, sid=sid, latest_episode=latest_episode):
+        if self.cache_show_data(
+            show_title,
+            show_id=show["id"],
+            latest_episode=show.get("latest_episode"),
+        ):
             self.db.commit()
 
-        items = []
-        if episodes["batch"]:
-            for batch, batch_info in episodes["batch"].items():
-                list_item = xbmcgui.ListItem(label=f"[B][Batch][/B] {batch}")
-                hq_download = batch_info["downloads"][-1]
-                url = get_url(
-                    action="subsplease_batch",
-                    batch=batch,
-                    batch_torrent=hq_download["torrent"],
-                )
-                set_show_art(list_item, show_title)
-                items.append((url, list_item, True))
+        batches = [
+            release for release in show["releases"] if release["kind"] == "batch"
+        ]
+        episodes = [
+            release for release in show["releases"] if release["kind"] == "episode"
+        ]
 
-        if episodes["episode"]:
-            for episode, episode_info in reversed(episodes["episode"].items()):
-                release_date = re.sub(r" \d{2}:.*$", "", episode_info["release_date"])
-
-                display_name = self.normalize_episode_name(episode)
-                title = f"{display_name} [I][LIGHT]— {release_date}[/LIGHT][/I]"
-
-                watched = self.is_episode_watched(display_name)
-                if watched:
-                    title = f"[COLOR palevioletred]{title}[/COLOR]"
-
-                list_item = xbmcgui.ListItem(label=title)
-                list_item.setInfo(
-                    "video",
-                    {
-                        "title": title,
-                        "mediatype": "video",
-                        "plot": description,
-                    },
-                )
-                list_item.setProperty("IsPlayable", "true")
-                set_show_art(list_item, show_title)
-                hq_download = episode_info["downloads"][-1]
-                url = get_url(
-                    action="play_subsplease",
-                    url=hq_download["torrent"],
-                    name=display_name,
-                )
-                list_item.addContextMenuItems(
-                    [
-                        ("[B]Play[/B]", f"PlayMedia({url})"),
-                        (
-                            "[B]Toggle Watched[/B]",
-                            "RunPlugin(%s)"
-                            % get_url(
-                                action="toggle_watched_subsplease",
-                                name=display_name,
-                                watched=not watched,
-                            ),
-                        ),
-                    ]
-                )
-                items.append((url, list_item, False))
+        items = [self._batch_item(show, release) for release in batches]
+        items.extend(
+            self._episode_item(show, release, description)
+            for release in reversed(episodes)
+        )
 
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def batch(self, batch, batch_torrent):
-        xbmcplugin.setPluginCategory(HANDLE, batch)
+    def _batch_item(self, show, release):
+        download = self._highest_resolution(release["downloads"])
+        list_item = xbmcgui.ListItem(label=f"[B][Batch][/B] {release['name']}")
+        self._set_art(list_item, show)
 
-        page = requests.get(batch_torrent.replace("/torrent", ""))
-        soup = BeautifulSoup(page.text, "html.parser")
-        magnet = soup.find("a", class_="card-footer-item").get("href")
-
-        split = batch.split(" - ")
-        show = " - ".join(split[:-1])
-
-        while soup.i:
-            soup.i.decompose()
-        while soup.span:
-            soup.span.decompose()
-        file_list = filter(
-            lambda x: any(x.lower().endswith(ext) for ext in VIDEO_FORMATS),
-            map(
-                lambda x: x.strip(),
-                soup.find("div", class_="torrent-file-list").text.split("\n"),
+        return (
+            get_url(
+                action="subsplease_batch",
+                batch=release["name"],
+                download_id=download["id"],
+                show_id=show["id"],
             ),
+            list_item,
+            True,
         )
 
+    def _episode_item(self, show, release, description):
+        display_name = self.normalize_episode_name(release["name"])
+        release_date = release.get("release_date") or ""
+        title = display_name
+        if release_date:
+            title = f"{title} [I][LIGHT]— {release_date}[/LIGHT][/I]"
+
+        watched = self.is_episode_watched(display_name)
+        if watched:
+            title = f"[COLOR palevioletred]{title}[/COLOR]"
+
+        list_item = xbmcgui.ListItem(label=title)
+        list_item.setInfo(
+            "video",
+            {"title": title, "mediatype": "video", "plot": description},
+        )
+        list_item.setProperty("IsPlayable", "true")
+        self._set_art(list_item, show)
+
+        download = self._highest_resolution(release["downloads"])
+        url = get_url(
+            action="play_subsplease",
+            magnet=download["magnet_uri"],
+            name=display_name,
+        )
+        list_item.addContextMenuItems(
+            [
+                ("[B]Play[/B]", f"PlayMedia({url})"),
+                (
+                    "[B]Toggle Watched[/B]",
+                    "RunPlugin(%s)"
+                    % get_url(
+                        action="toggle_watched_subsplease",
+                        name=display_name,
+                        watched=not watched,
+                    ),
+                ),
+            ]
+        )
+        return url, list_item, False
+
+    def batch(self, batch, download_id, show_id):
+        xbmcplugin.setPluginCategory(HANDLE, batch)
+        show = self.client.show(show_id)
+        torrent = self.client.download_files(download_id)
+
         items = []
-        for file_name in file_list:
-            display_name = file_name.replace("[SubsPlease] ", "")
+        for file in torrent["files"]:
+            file_name = file["path"]
+            if not any(file_name.lower().endswith(ext) for ext in VIDEO_FORMATS):
+                continue
+
+            display_name = file_name.rsplit("/", 1)[-1].replace("[SubsPlease] ", "")
             display_name = re.sub(r"(v\d)? \(.*p\) \[.*\]\..*", "", display_name)
             title = display_name
-
-            watched = self.is_episode_watched(title)
+            watched = self.is_episode_watched(display_name)
             if watched:
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
 
             list_item = xbmcgui.ListItem(label=title)
             list_item.setInfo(
-                "video",
-                {
-                    "title": title,
-                    "genre": "Anime",
-                    "mediatype": "video",
-                },
+                "video", {"title": title, "genre": "Anime", "mediatype": "video"}
             )
             list_item.setProperty("IsPlayable", "true")
-            set_show_art(list_item, show)
+            self._set_art(list_item, show)
             url = get_url(
                 action="play_subsplease",
-                magnet=magnet,
+                magnet=torrent["magnet_uri"],
                 selected_file=file_name,
                 name=display_name,
             )
@@ -310,110 +260,127 @@ class SubsPlease:
         xbmcplugin.endOfDirectory(HANDLE)
 
     def get_schedule(self):
-        schedule = requests.get(
-            f"https://subsplease.org/api/?f=schedule&tz={self.timezone}"
-        ).json()["schedule"]
+        return sorted(
+            (self._localize_schedule(show) for show in self.client.schedule()),
+            key=lambda show: show["title"],
+        )
 
-        flattened_schedule = []
+    def _localize_schedule(self, show):
+        weekdays = [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+        ]
+        now = datetime.now(timezone.utc)
+        monday = (now - timedelta(days=now.weekday())).date()
+        hour, minute, *_rest = map(int, show["scheduled_time"].split(":"))
+        scheduled_at = datetime.combine(
+            monday + timedelta(days=weekdays.index(show["weekday"])),
+            time(hour, minute),
+            tzinfo=timezone.utc,
+        ).astimezone()
 
-        for day, shows in schedule.items():
-            for show in shows:
-                show["day"] = day
-                flattened_schedule.append(show)
-
-        flattened_schedule = sorted(flattened_schedule, key=lambda x: x["title"])
-        return flattened_schedule
+        localized = dict(show)
+        localized["day"] = weekdays[scheduled_at.weekday()]
+        localized["time"] = scheduled_at.strftime("%H:%M")
+        return localized
 
     def _build_schedule_item(self, show, label):
-        is_available = bool(show.get("page"))
+        catalog_show = show.get("show")
         watched = self.is_show_watched(show["title"])
 
         if watched:
             label = f"[COLOR palevioletred]{label}[/COLOR]"
-        elif not is_available:
+        elif not catalog_show:
             label = f"[COLOR gray]{label}[/COLOR]"
 
         list_item = xbmcgui.ListItem(label=label)
-        set_show_art(list_item, show["title"])
+        set_show_art(
+            list_item,
+            show["title"],
+            show.get("poster_url"),
+            show.get("fanart_url"),
+        )
 
-        if is_available:
+        if catalog_show:
             return (
-                get_url(
-                    action="subsplease_show",
-                    url="https://subsplease.org/shows/" + show["page"],
-                ),
+                get_url(action="subsplease_show", show_id=catalog_show["id"]),
                 list_item,
                 True,
             )
 
         return (
-            get_url(
-                action="notify",
-                title="haru",
-                message="Show not available yet.",
-            ),
+            get_url(action="notify", title="haru", message="Show not available yet."),
             list_item,
             False,
         )
 
     def all_airing(self):
         xbmcplugin.setPluginCategory(HANDLE, "SubsPlease - All Airing")
-        schedule = self.get_schedule()
-
         items = []
-        for show in schedule:
-            # workaround: https://forum.kodi.tv/showthread.php?pid=1214507#pid1214507
-            formatted_time = datetime(
-                *(time.strptime(show["time"], "%H:%M")[0:6])
-            ).strftime("%I:%M %p")
-
-            title = f"""{show["title"]} [I][LIGHT]— {show["day"]} @ {formatted_time}[/LIGHT][/I]"""
-            items.append(self._build_schedule_item(show, title))
+        for show in self.get_schedule():
+            formatted_time = datetime.strptime(show["time"], "%H:%M").strftime(
+                "%I:%M %p"
+            )
+            label = f"{show['title']} [I][LIGHT]— {show['day']} @ {formatted_time}[/LIGHT][/I]"
+            items.append(self._build_schedule_item(show, label))
 
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def day(self, day):
         xbmcplugin.setPluginCategory(HANDLE, f"SubsPlease - {day}")
-
-        if day == "Today":
-            schedule = requests.get(
-                f"https://subsplease.org/api/?f=schedule&h=true&tz={self.timezone}"
-            ).json()["schedule"]
-        else:
-            schedule = requests.get(
-                f"https://subsplease.org/api/?f=schedule&tz={self.timezone}"
-            ).json()["schedule"][day]
+        schedule = self.get_schedule()
+        selected_day = datetime.now().strftime("%A") if day == "Today" else day
 
         items = []
-        for show in schedule:
-            # workaround: https://forum.kodi.tv/showthread.php?pid=1214507#pid1214507
-            formatted_time = datetime(
-                *(time.strptime(show["time"], "%H:%M")[0:6])
-            ).strftime("%I:%M %p")
-            title = show["title"]
-
-            label = f"""[B]{formatted_time}[/B] - {title}"""
-            items.append(self._build_schedule_item(show, label))
+        for show in (show for show in schedule if show["day"] == selected_day):
+            formatted_time = datetime.strptime(show["time"], "%H:%M").strftime(
+                "%I:%M %p"
+            )
+            items.append(
+                self._build_schedule_item(
+                    show, f"[B]{formatted_time}[/B] - {show['title']}"
+                )
+            )
 
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
     def _history_items(self, entries):
+        catalog = self._catalog_by_title()
         items = []
-        for title, data in entries:
-            split = title.split(" - ")
-            show = " - ".join(split[:-1])
+        cache_changed = False
 
+        for title, data in entries:
+            show_title = " - ".join(title.split(" - ")[:-1])
+            show = catalog.get(show_title)
+            if not show:
+                continue
+
+            cache_changed |= self.cache_show_data(
+                show_title,
+                show_id=show["id"],
+                latest_episode=show.get("latest_episode"),
+            )
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
-            url = get_url(
-                action="subsplease_show",
-                url=f"https://subsplease.org/shows/{slugify(show)}/",
-            )
             list_item = xbmcgui.ListItem(label=label)
-            set_show_art(list_item, show)
-            items.append((url, list_item, True))
+            self._set_art(list_item, show)
+            items.append(
+                (
+                    get_url(action="subsplease_show", show_id=show["id"]),
+                    list_item,
+                    True,
+                )
+            )
+
+        if cache_changed:
+            self.db.commit()
 
         return items
 
@@ -433,36 +400,6 @@ class SubsPlease:
         xbmcplugin.addDirectoryItems(HANDLE, items)
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def is_unfinished(self, show, cached_data=None):
-        cached_data = cached_data or {}
-        latest_episode = cached_data.get("latest_episode")
-        if latest_episode and not self.is_episode_watched(latest_episode):
-            return show, True, None
-
-        sid = cached_data.get("sid")
-        if not sid:
-            url = f"https://subsplease.org/shows/{slugify(show)}/"
-            page = requests.get(url)
-            soup = BeautifulSoup(page.text, "html.parser")
-            release_table = soup.find(id="show-release-table")
-            if not release_table:
-                log(f"could not find release table for show={show} at url={url}")
-                return show, False, None
-            sid = release_table["sid"]
-
-        episodes = requests.get(
-            f"https://subsplease.org/api/?f=show&tz={self.timezone}&sid={sid}"
-        ).json()
-        if not episodes["episode"]:
-            return show, False, {"sid": sid}
-        latest_episode = list(episodes["episode"].keys())[0]
-        display_name = self.normalize_episode_name(latest_episode)
-
-        if self.is_episode_watched(display_name):
-            return show, False, {"sid": sid, "latest_episode": display_name}
-
-        return show, True, {"sid": sid, "latest_episode": display_name}
-
     def unfinished(self, airing_only=False):
         category = (
             "SubsPlease - Unfinished"
@@ -471,77 +408,64 @@ class SubsPlease:
         )
         xbmcplugin.setPluginCategory(HANDLE, category)
 
-        shows = []
-        sorted_items = sorted(self.db.database["sp:watch"].items(), key=lambda x: x[0])
-
-        # if airing_only, filter out shows that are not in current schedule
-        if airing_only:
-            schedule = self.get_schedule()
-            sorted_items = list(
-                filter(
-                    lambda x: x[0] in [show["title"] for show in schedule], sorted_items
-                )
-            )
-
-        total_items = len(sorted_items)
-
-        progress_dialog = xbmcgui.DialogProgress()
-        progress_dialog.create(
-            category,
-            "Checking shows...",
+        catalog = self._catalog_by_title()
+        scheduled_titles = (
+            {show["title"] for show in self.get_schedule()} if airing_only else None
         )
-
-        progress = 0
+        shows = []
         cache_changed = False
-        show_cache = dict(self.db.database["cache"]["sp"]["show"])
-        with cf.ThreadPoolExecutor() as executor:
-            future_to_show = {
-                executor.submit(self.is_unfinished, show, show_cache.get(show)): show
-                for show, _ in sorted_items
-            }
 
-            for future in cf.as_completed(future_to_show):
-                progress += 1
-                show, is_unfinished, updated_cache_data = future.result()
+        for show_title in sorted(self.db.database["sp:watch"]):
+            if scheduled_titles is not None and show_title not in scheduled_titles:
+                continue
 
-                if is_unfinished:
-                    shows.append(show)
+            show = catalog.get(show_title)
+            if not show:
+                continue
 
-                if (
-                    updated_cache_data
-                    and show_cache.get(show, {}) != updated_cache_data
-                ):
-                    show_cache[show] = updated_cache_data
-                    cache_changed = True
-
-                if progress_dialog.iscanceled():
-                    break
-
-                progress_dialog.update(
-                    int((progress / total_items) * 100),
-                    f"Checking {show}...",
-                )
-
-        progress_dialog.close()
+            latest_episode = show.get("latest_episode")
+            cache_changed |= self.cache_show_data(
+                show_title, show_id=show["id"], latest_episode=latest_episode
+            )
+            if latest_episode and not self.is_episode_watched(latest_episode):
+                shows.append(show)
 
         if cache_changed:
-            self.db.database["cache"]["sp"]["show"] = show_cache
             self.db.commit()
 
         xbmcplugin.addDirectoryItems(
             HANDLE,
-            [
-                (
-                    get_url(
-                        action="subsplease_show",
-                        url=f"https://subsplease.org/shows/{slugify(show)}/",
-                    ),
-                    set_show_art(
-                        xbmcgui.ListItem(f"[COLOR palevioletred]{show}[/COLOR]"), show
-                    ),
-                    True,
-                )
-                for show in sorted(shows)
-            ],
+            [self._show_directory_item(show, watched_color=True) for show in shows],
         )
         xbmcplugin.endOfDirectory(HANDLE)
+
+    def _catalog_by_title(self):
+        return {show["title"]: show for show in self.client.shows()}
+
+    def _show_directory_item(self, show, watched_color=False):
+        title = show["title"]
+        label = title
+        if watched_color or self.is_show_watched(title):
+            label = f"[COLOR palevioletred]{title}[/COLOR]"
+
+        list_item = xbmcgui.ListItem(label=label)
+        self._set_art(list_item, show)
+        return (
+            get_url(action="subsplease_show", show_id=show["id"]),
+            list_item,
+            True,
+        )
+
+    def _set_art(self, list_item, show):
+        return set_show_art(
+            list_item,
+            show["title"],
+            show.get("poster_url"),
+            show.get("fanart_url"),
+        )
+
+    def _highest_resolution(self, downloads):
+        return max(
+            downloads,
+            key=lambda download: int(re.sub(r"\D", "", download["resolution"]) or 0),
+        )

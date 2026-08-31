@@ -28,10 +28,15 @@ def get_url(**kwargs):
     return "{}?{}".format(_URL, urlencode(kwargs))
 
 
-def set_show_art(list_item, title):
-    cache_buster = date.today().strftime("%Y%m%d")
-    poster = f"{MONA_URL}/poster?query={quote(title)}&v={cache_buster}"
-    fanart = f"{MONA_URL}/fanart?query={quote(title)}&v={cache_buster}"
+def set_show_art(list_item, title, poster=None, fanart=None):
+    if not poster and not fanart:
+        cache_buster = date.today().strftime("%Y%m%d")
+        poster = f"{MONA_URL}/poster?query={quote(title)}&v={cache_buster}"
+        fanart = f"{MONA_URL}/fanart?query={quote(title)}&v={cache_buster}"
+    else:
+        poster = poster or fanart
+        fanart = fanart or poster
+
     list_item.setArt({"poster": poster, "thumb": poster, "fanart": fanart})
     return list_item
 

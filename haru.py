@@ -253,12 +253,12 @@ def subsplease_all(search=False):
 
 
 @register
-def subsplease_show(url):
+def subsplease_show(show_id):
     return subsplease.show(**locals())
 
 
 @register
-def subsplease_batch(batch, batch_torrent):
+def subsplease_batch(batch, download_id, show_id):
     return subsplease.batch(**locals())
 
 

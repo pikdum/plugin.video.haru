@@ -21,7 +21,17 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.25.0 (2026-04-08)
+    <news>1.26.0 (2026-08-31)
+
+Features
+
+-   subsplease: consume Histoire catalog (e92a32c)
+
+Bug Fixes
+
+-   subsplease: preserve links and show synopses (313e444)
+
+1.25.0 (2026-04-08)
 
 Features
 
@@ -73,16 +83,6 @@ Bug Fixes
 
 -   handle special characters in filenames (2b8b8f1)
 
-1.23.1 (2025-09-22)
-
-Bug Fixes
-
--   subsplease: error when checking unfinished (c9de528)
-
-1.23.0 (2025-05-21)
-
-Features
-
--   add ‘Play’ option to context menus (#61)...</news>
+1.23.1 (2025-09...</news>
   </extension>
 </addon>

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import re
 from datetime import datetime, time, timedelta, timezone
+from urllib.parse import urlparse
 
 import xbmcgui
 import xbmcplugin
@@ -88,7 +89,8 @@ class SubsPlease:
         )
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def show(self, show_id):
+    def show(self, show_id=None, url=None):
+        show_id = show_id or self._show_id_from_legacy_url(url)
         show = self.client.show(show_id)
         show_title = show["title"]
         description = show.get("synopsis") or ""
@@ -120,6 +122,7 @@ class SubsPlease:
     def _batch_item(self, show, release):
         download = self._highest_resolution(release["downloads"])
         list_item = xbmcgui.ListItem(label=f"[B][Batch][/B] {release['name']}")
+        self._set_show_info(list_item, show, release["name"])
         self._set_art(list_item, show)
 
         return (
@@ -194,7 +197,13 @@ class SubsPlease:
 
             list_item = xbmcgui.ListItem(label=title)
             list_item.setInfo(
-                "video", {"title": title, "genre": "Anime", "mediatype": "video"}
+                "video",
+                {
+                    "title": title,
+                    "genre": "Anime",
+                    "mediatype": "video",
+                    "plot": show.get("synopsis") or "",
+                },
             )
             list_item.setProperty("IsPlayable", "true")
             self._set_art(list_item, show)
@@ -299,6 +308,8 @@ class SubsPlease:
             label = f"[COLOR gray]{label}[/COLOR]"
 
         list_item = xbmcgui.ListItem(label=label)
+        if catalog_show:
+            self._set_show_info(list_item, catalog_show, show["title"])
         set_show_art(
             list_item,
             show["title"],
@@ -370,6 +381,7 @@ class SubsPlease:
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
             label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
             list_item = xbmcgui.ListItem(label=label)
+            self._set_show_info(list_item, show)
             self._set_art(list_item, show)
             items.append(
                 (
@@ -449,6 +461,7 @@ class SubsPlease:
             label = f"[COLOR palevioletred]{title}[/COLOR]"
 
         list_item = xbmcgui.ListItem(label=label)
+        self._set_show_info(list_item, show)
         self._set_art(list_item, show)
         return (
             get_url(action="subsplease_show", show_id=show["id"]),
@@ -463,6 +476,31 @@ class SubsPlease:
             show.get("poster_url"),
             show.get("fanart_url"),
         )
+
+    def _set_show_info(self, list_item, show, title=None):
+        list_item.setInfo(
+            "video",
+            {
+                "title": title or show["title"],
+                "mediatype": "tvshow",
+                "plot": show.get("synopsis") or "",
+            },
+        )
+
+    def _show_id_from_legacy_url(self, url):
+        if not url:
+            raise ValueError("Missing SubsPlease show ID")
+
+        slug = urlparse(url).path.rstrip("/").rsplit("/", 1)[-1]
+        show = next(
+            (show for show in self.client.shows() if show.get("slug") == slug),
+            None,
+        )
+
+        if not show:
+            raise ValueError(f"SubsPlease show not found: {slug}")
+
+        return show["id"]
 
     def _highest_resolution(self, downloads):
         return max(

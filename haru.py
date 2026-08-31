@@ -253,7 +253,7 @@ def subsplease_all(search=False):
 
 
 @register
-def subsplease_show(show_id):
+def subsplease_show(show_id=None, url=None):
     return subsplease.show(**locals())
 
 

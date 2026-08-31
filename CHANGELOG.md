@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.26.0](https://github.com/pikdum/plugin.video.haru/compare/v1.25.0...v1.26.0) (2026-08-31)
+
+
+### Features
+
+* **subsplease:** consume Histoire catalog ([e92a32c](https://github.com/pikdum/plugin.video.haru/commit/e92a32c23cb16b17fd277da959b1a5482c392500))
+
+
+### Bug Fixes
+
+* **subsplease:** preserve links and show synopses ([313e444](https://github.com/pikdum/plugin.video.haru/commit/313e444c1f2ebc96dedcf8a319146859c0b35c75))
+
 ## [1.25.0](https://github.com/pikdum/plugin.video.haru/compare/v1.24.4...v1.25.0) (2026-04-08)
 
 

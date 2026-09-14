@@ -21,7 +21,23 @@
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>
     </assets>
-    <news>1.25.0 (2026-04-08)
+    <news>1.26.0 (2026-09-14)
+
+Features
+
+-   subsplease: consume Histoire catalog (e92a32c)
+-   subsplease: key watch data by Histoire show id (fe2b71a)
+
+Bug Fixes
+
+-   subsplease: preserve links and show synopses (313e444)
+
+Performance Improvements
+
+-   subsplease: fetch only tracked shows for unfinished and history
+    (ae92b46)
+
+1.25.0 (2026-04-08)
 
 Features
 
@@ -63,26 +79,6 @@ Features
 
 -   add cache busting to artwork (16ee46c)
 
-Bug Fixes
-
--   subsplease: ignore v2 in unfinished checks (fae1201)
-
-1.23.2 (2026-01-16)
-
-Bug Fixes
-
--   handle special characters in filenames (2b8b8f1)
-
-1.23.1 (2025-09-22)
-
-Bug Fixes
-
--   subsplease: error when checking unfinished (c9de528)
-
-1.23.0 (2025-05-21)
-
-Features
-
--   add ‘Play’ option to context menus (#61)...</news>
+...</news>
   </extension>
 </addon>

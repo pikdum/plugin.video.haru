@@ -13,6 +13,15 @@ class Histoire:
         params = {"q": query} if query else None
         return self._get("/api/v1/shows", params=params)
 
+    def shows_by_id(self, ids, chunk_size=500):
+        """Summaries for just these shows, in chunks that keep the URL short."""
+        ids = sorted({int(show_id) for show_id in ids})
+        shows = []
+        for start in range(0, len(ids), chunk_size):
+            chunk = ",".join(map(str, ids[start : start + chunk_size]))
+            shows.extend(self._get("/api/v1/shows", params={"ids": chunk}))
+        return shows
+
     def show(self, show_id):
         return self._get(f"/api/v1/shows/{show_id}")
 

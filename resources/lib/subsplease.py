@@ -355,7 +355,7 @@ class SubsPlease:
         xbmcplugin.endOfDirectory(HANDLE)
 
     def _history_items(self, entries):
-        catalog = self._catalog_by_id()
+        catalog = self._catalog_by_id(data["show_id"] for _name, data in entries)
         items = []
 
         for name, data in entries:
@@ -404,7 +404,7 @@ class SubsPlease:
         )
         xbmcplugin.setPluginCategory(HANDLE, category)
 
-        catalog = self._catalog_by_id()
+        catalog = self._catalog_by_id(self.watch)
         airing_ids = None
         if airing_only:
             airing_ids = {
@@ -433,8 +433,11 @@ class SubsPlease:
         )
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def _catalog_by_id(self):
-        return {show["id"]: show for show in self.client.shows()}
+    def _catalog_by_id(self, ids):
+        ids = list(ids)
+        if not ids:
+            return {}
+        return {show["id"]: show for show in self.client.shows_by_id(ids)}
 
     def _show_directory_item(self, show, watched_color=False):
         title = show["title"]

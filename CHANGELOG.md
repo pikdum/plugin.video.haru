@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.26.0](https://github.com/pikdum/plugin.video.haru/compare/v1.25.0...v1.26.0) (2026-09-14)
+
+
+### Features
+
+* **subsplease:** consume Histoire catalog ([e92a32c](https://github.com/pikdum/plugin.video.haru/commit/e92a32c23cb16b17fd277da959b1a5482c392500))
+* **subsplease:** key watch data by Histoire show id ([fe2b71a](https://github.com/pikdum/plugin.video.haru/commit/fe2b71a5deeb106cdf1003ead9a10fc933e69c8c))
+
+
+### Bug Fixes
+
+* **subsplease:** preserve links and show synopses ([313e444](https://github.com/pikdum/plugin.video.haru/commit/313e444c1f2ebc96dedcf8a319146859c0b35c75))
+
+
+### Performance Improvements
+
+* **subsplease:** fetch only tracked shows for unfinished and history ([ae92b46](https://github.com/pikdum/plugin.video.haru/commit/ae92b467d8b70fb211323d5aa4d334f31c5a6a24))
+
 ## [1.25.0](https://github.com/pikdum/plugin.video.haru/compare/v1.24.4...v1.25.0) (2026-04-08)
 
 

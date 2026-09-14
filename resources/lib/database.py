@@ -9,17 +9,13 @@ import xbmcvfs
 class Database:
     def __init__(self):
         BASE_DATABASE = {
-            "sp:watch": {},
-            "sp:history": {},
+            "sp:watch_v2": {},
+            "sp:history_v2": {},
             "nt:watch": {},
             "nt:history": {},
             "sb:watch": {},
             "sb:history": {},
-            "cache": {
-                "sp": {
-                    "show": {},
-                }
-            },
+            "cache": {},
         }
 
         addon = xbmcaddon.Addon()
@@ -52,22 +48,8 @@ class Database:
     def normalize_database(self, database):
         changed = False
 
-        cache = database.get("cache")
-        if not isinstance(cache, dict):
-            cache = {}
-            database["cache"] = cache
-            changed = True
-
-        sp_cache = cache.get("sp")
-        if not isinstance(sp_cache, dict):
-            sp_cache = {}
-            cache["sp"] = sp_cache
-            changed = True
-
-        show_cache = sp_cache.get("show")
-        if not isinstance(show_cache, dict):
-            show_cache = {}
-            sp_cache["show"] = show_cache
+        if not isinstance(database.get("cache"), dict):
+            database["cache"] = {}
             changed = True
 
         if "sp:art_cache" in database:

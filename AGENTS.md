@@ -19,7 +19,7 @@ Use 4-space indentation and keep Python code simple and direct. Follow existing 
 
 ## Testing Guidelines
 
-This repository currently relies on formatting and linting rather than a dedicated unit test suite. Treat `devenv test` as the required post-change verification step. When changing routing, history views, or playback helpers, sanity-check the affected Kodi navigation flow as part of review. If you add tests later, place them in a dedicated `tests/` directory and keep filenames aligned with the module under test.
+`devenv test` runs the lint and format hooks and then the unit tests in `tests/` (plain `unittest`, no Kodi required; modules under test must stay free of `xbmc*` imports, as `resources/lib/subsplease_migration.py` does). Treat it as the required post-change verification step. When changing routing, history views, or playback helpers, sanity-check the affected Kodi navigation flow as part of review. Place new tests in `tests/` and keep filenames aligned with the module under test.
 
 ## Commit & Pull Request Guidelines
 

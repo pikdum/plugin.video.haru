@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 import re
 from datetime import datetime, time, timedelta, timezone
-from urllib.parse import urlparse
 
 import xbmcgui
 import xbmcplugin
+from resources.lib import subsplease_migration as migration
 from resources.lib.histoire import Histoire
 from resources.lib.history import HistoryArchive, build_history_directory
 from resources.lib.util import (
     HANDLE,
     VIDEO_FORMATS,
     get_url,
+    log,
     set_icon_art,
     set_show_art,
 )
@@ -20,62 +21,64 @@ class SubsPlease:
     def __init__(self, db, client=None):
         self.db = db
         self.client = client or Histoire()
+        self._migrate_legacy()
 
-    def get_show_cache(self, show):
-        return self.db.database["cache"]["sp"]["show"].get(show, {})
+    # Watch data is keyed by Histoire show id, then by full release name; see
+    # subsplease_migration for the shape and the one-time cutover.
+    def _migrate_legacy(self):
+        if not migration.needs_migration(self.db.database):
+            return
 
-    def cache_show_data(self, show, show_id=None, latest_episode=None):
-        show_cache = self.db.database["cache"]["sp"]["show"]
-        cached_data = show_cache.get(show, {})
-        updated_data = dict(cached_data)
+        try:
+            report = migration.migrate(
+                self.db.database, self.client.shows(), self.client.show
+            )
+        except Exception as error:
+            log(f"SubsPlease watch migration failed, will retry: {error!r}")
+            xbmcgui.Dialog().notification(
+                "haru", "SubsPlease watch data migration failed; will retry."
+            )
+            return
 
-        if show_id is not None:
-            updated_data["show_id"] = show_id
+        self.db.commit()
+        log(f"SubsPlease watch migration: {report}")
 
-        if latest_episode is not None:
-            updated_data["latest_episode"] = latest_episode
+    @property
+    def watch(self):
+        return self.db.database.setdefault(migration.WATCH, {})
 
-        if updated_data == cached_data:
-            return False
-
-        show_cache[show] = updated_data
-        return True
+    @property
+    def history_entries(self):
+        return self.db.database.setdefault(migration.HISTORY, {})
 
     def normalize_episode_name(self, episode):
-        return re.sub(r"v\d$", "", episode)
+        return migration.normalize_release_name(episode)
 
-    def set_watched(self, name, watched=True):
-        split = name.split(" - ")
-        episode = split[-1]
-        show = " - ".join(split[:-1])
+    def set_watched(self, name, show_id, watched=True):
+        show_id = int(show_id)
+        name = self.normalize_episode_name(name)
 
         if watched == "False":
-            del self.db.database["sp:watch"][show][episode]
-            if self.db.database["sp:history"].get(name, None):
-                del self.db.database["sp:history"][name]
-            if not self.db.database["sp:watch"][show]:
-                del self.db.database["sp:watch"][show]
+            entry = self.watch.get(show_id)
+            if entry:
+                entry["episodes"].pop(name, None)
+                if not entry["episodes"]:
+                    del self.watch[show_id]
+            self.history_entries.pop(name, None)
             self.db.commit()
             return
 
-        if "sp:watch" not in self.db.database:
-            self.db.database["sp:watch"] = {}
-
-        if show not in self.db.database["sp:watch"]:
-            self.db.database["sp:watch"][show] = {}
-
-        self.db.database["sp:history"][name] = {"timestamp": datetime.now()}
-        self.db.database["sp:watch"][show][episode] = True
+        entry = self.watch.setdefault(show_id, {"slug": None, "episodes": {}})
+        entry["episodes"][name] = True
+        self.history_entries[name] = {"timestamp": datetime.now(), "show_id": show_id}
         self.db.commit()
 
-    def is_show_watched(self, name):
-        return name in self.db.database["sp:watch"]
+    def is_show_watched(self, show_id):
+        return show_id is not None and int(show_id) in self.watch
 
-    def is_episode_watched(self, name):
-        split = name.split(" - ")
-        episode = split[-1]
-        show = " - ".join(split[:-1])
-        return bool(self.db.database["sp:watch"].get(show, {}).get(episode))
+    def is_episode_watched(self, show_id, name):
+        episodes = self.watch.get(int(show_id), {}).get("episodes", {})
+        return bool(episodes.get(self.normalize_episode_name(name)))
 
     def all(self, search=False):
         category = "Search" if search else "All"
@@ -89,18 +92,14 @@ class SubsPlease:
         )
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def show(self, show_id=None, url=None):
-        show_id = show_id or self._show_id_from_legacy_url(url)
+    def show(self, show_id):
         show = self.client.show(show_id)
-        show_title = show["title"]
         description = show.get("synopsis") or ""
-        xbmcplugin.setPluginCategory(HANDLE, show_title)
+        xbmcplugin.setPluginCategory(HANDLE, show["title"])
 
-        if self.cache_show_data(
-            show_title,
-            show_id=show["id"],
-            latest_episode=show.get("latest_episode"),
-        ):
+        entry = self.watch.get(show["id"])
+        if entry and entry.get("slug") != show.get("slug"):
+            entry["slug"] = show.get("slug")
             self.db.commit()
 
         batches = [
@@ -143,7 +142,7 @@ class SubsPlease:
         if release_date:
             title = f"{title} [I][LIGHT]— {release_date}[/LIGHT][/I]"
 
-        watched = self.is_episode_watched(display_name)
+        watched = self.is_episode_watched(show["id"], display_name)
         if watched:
             title = f"[COLOR palevioletred]{title}[/COLOR]"
 
@@ -160,22 +159,26 @@ class SubsPlease:
             action="play_subsplease",
             magnet=download["magnet_uri"],
             name=display_name,
+            show_id=show["id"],
         )
-        list_item.addContextMenuItems(
-            [
-                ("[B]Play[/B]", f"PlayMedia({url})"),
-                (
-                    "[B]Toggle Watched[/B]",
-                    "RunPlugin(%s)"
-                    % get_url(
-                        action="toggle_watched_subsplease",
-                        name=display_name,
-                        watched=not watched,
-                    ),
-                ),
-            ]
-        )
+        list_item.addContextMenuItems(self._episode_context(url, show, display_name))
         return url, list_item, False
+
+    def _episode_context(self, play_url, show, display_name):
+        watched = self.is_episode_watched(show["id"], display_name)
+        return [
+            ("[B]Play[/B]", f"PlayMedia({play_url})"),
+            (
+                "[B]Toggle Watched[/B]",
+                "RunPlugin(%s)"
+                % get_url(
+                    action="toggle_watched_subsplease",
+                    name=display_name,
+                    show_id=show["id"],
+                    watched=not watched,
+                ),
+            ),
+        ]
 
     def batch(self, batch, download_id, show_id):
         xbmcplugin.setPluginCategory(HANDLE, batch)
@@ -191,8 +194,7 @@ class SubsPlease:
             display_name = file_name.rsplit("/", 1)[-1].replace("[SubsPlease] ", "")
             display_name = re.sub(r"(v\d)? \(.*p\) \[.*\]\..*", "", display_name)
             title = display_name
-            watched = self.is_episode_watched(display_name)
-            if watched:
+            if self.is_episode_watched(show["id"], display_name):
                 title = f"[COLOR palevioletred]{title}[/COLOR]"
 
             list_item = xbmcgui.ListItem(label=title)
@@ -212,20 +214,10 @@ class SubsPlease:
                 magnet=torrent["magnet_uri"],
                 selected_file=file_name,
                 name=display_name,
+                show_id=show["id"],
             )
             list_item.addContextMenuItems(
-                [
-                    ("[B]Play[/B]", f"PlayMedia({url})"),
-                    (
-                        "[B]Toggle Watched[/B]",
-                        "RunPlugin(%s)"
-                        % get_url(
-                            action="toggle_watched_subsplease",
-                            name=display_name,
-                            watched=not watched,
-                        ),
-                    ),
-                ]
+                self._episode_context(url, show, display_name)
             )
             items.append((url, list_item, False))
 
@@ -300,7 +292,7 @@ class SubsPlease:
 
     def _build_schedule_item(self, show, label):
         catalog_show = show.get("show")
-        watched = self.is_show_watched(show["title"])
+        watched = catalog_show and self.is_show_watched(catalog_show["id"])
 
         if watched:
             label = f"[COLOR palevioletred]{label}[/COLOR]"
@@ -363,41 +355,33 @@ class SubsPlease:
         xbmcplugin.endOfDirectory(HANDLE)
 
     def _history_items(self, entries):
-        catalog = self._catalog_by_title()
+        catalog = self._catalog_by_id()
         items = []
-        cache_changed = False
 
-        for title, data in entries:
-            show_title = " - ".join(title.split(" - ")[:-1])
-            show = catalog.get(show_title)
-            if not show:
-                continue
-
-            cache_changed |= self.cache_show_data(
-                show_title,
-                show_id=show["id"],
-                latest_episode=show.get("latest_episode"),
-            )
+        for name, data in entries:
+            show = catalog.get(data["show_id"])
             formatted_time = data["timestamp"].strftime("%a, %d %b %Y %I:%M %p")
-            label = f"[COLOR palevioletred]{title} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
+            label = f"[COLOR palevioletred]{name} [I][LIGHT]— {formatted_time}[/LIGHT][/I][/COLOR]"
             list_item = xbmcgui.ListItem(label=label)
-            self._set_show_info(list_item, show)
-            self._set_art(list_item, show)
+
+            if show:
+                self._set_show_info(list_item, show)
+                self._set_art(list_item, show)
+            else:
+                set_show_art(list_item, " - ".join(name.split(" - ")[:-1]))
+
             items.append(
                 (
-                    get_url(action="subsplease_show", show_id=show["id"]),
+                    get_url(action="subsplease_show", show_id=data["show_id"]),
                     list_item,
                     True,
                 )
             )
 
-        if cache_changed:
-            self.db.commit()
-
         return items
 
     def history(self, year=None, month=None, full=False):
-        archive = HistoryArchive(self.db.database["sp:history"])
+        archive = HistoryArchive(self.history_entries)
         category, items = build_history_directory(
             archive=archive,
             action="subsplease_history",
@@ -420,44 +404,42 @@ class SubsPlease:
         )
         xbmcplugin.setPluginCategory(HANDLE, category)
 
-        catalog = self._catalog_by_title()
-        scheduled_titles = (
-            {show["title"] for show in self.get_schedule()} if airing_only else None
-        )
-        shows = []
-        cache_changed = False
+        catalog = self._catalog_by_id()
+        airing_ids = None
+        if airing_only:
+            airing_ids = {
+                entry["show"]["id"]
+                for entry in self.client.schedule()
+                if entry.get("show")
+            }
 
-        for show_title in sorted(self.db.database["sp:watch"]):
-            if scheduled_titles is not None and show_title not in scheduled_titles:
+        shows = []
+        for show_id in self.watch:
+            if airing_ids is not None and show_id not in airing_ids:
                 continue
 
-            show = catalog.get(show_title)
+            show = catalog.get(show_id)
             if not show:
                 continue
 
             latest_episode = show.get("latest_episode")
-            cache_changed |= self.cache_show_data(
-                show_title, show_id=show["id"], latest_episode=latest_episode
-            )
-            if latest_episode and not self.is_episode_watched(latest_episode):
+            if latest_episode and not self.is_episode_watched(show_id, latest_episode):
                 shows.append(show)
 
-        if cache_changed:
-            self.db.commit()
-
+        shows.sort(key=lambda show: show["title"])
         xbmcplugin.addDirectoryItems(
             HANDLE,
             [self._show_directory_item(show, watched_color=True) for show in shows],
         )
         xbmcplugin.endOfDirectory(HANDLE)
 
-    def _catalog_by_title(self):
-        return {show["title"]: show for show in self.client.shows()}
+    def _catalog_by_id(self):
+        return {show["id"]: show for show in self.client.shows()}
 
     def _show_directory_item(self, show, watched_color=False):
         title = show["title"]
         label = title
-        if watched_color or self.is_show_watched(title):
+        if watched_color or self.is_show_watched(show["id"]):
             label = f"[COLOR palevioletred]{title}[/COLOR]"
 
         list_item = xbmcgui.ListItem(label=label)
@@ -486,21 +468,6 @@ class SubsPlease:
                 "plot": show.get("synopsis") or "",
             },
         )
-
-    def _show_id_from_legacy_url(self, url):
-        if not url:
-            raise ValueError("Missing SubsPlease show ID")
-
-        slug = urlparse(url).path.rstrip("/").rsplit("/", 1)[-1]
-        show = next(
-            (show for show in self.client.shows() if show.get("slug") == slug),
-            None,
-        )
-
-        if not show:
-            raise ValueError(f"SubsPlease show not found: {slug}")
-
-        return show["id"]
 
     def _highest_resolution(self, downloads):
         return max(

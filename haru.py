@@ -4,15 +4,14 @@ import sys
 import unicodedata
 from urllib.parse import parse_qsl, quote_plus
 
-import requests
 import resolveurl
 import xbmc
 import xbmcgui
 import xbmcplugin
-from bs4 import BeautifulSoup
 
 from resources.lib.database import Database
 from resources.lib.nyaa import Nyaa
+from resources.lib import subsplease_migration as migration
 from resources.lib.subsplease import SubsPlease
 from resources.lib.util import (
     HANDLE,
@@ -253,7 +252,7 @@ def subsplease_all(search=False):
 
 
 @register
-def subsplease_show(show_id=None, url=None):
+def subsplease_show(show_id):
     return subsplease.show(**locals())
 
 
@@ -287,18 +286,7 @@ def subsplease_unfinished(airing_only=False):
     return subsplease.unfinished(**locals())
 
 
-def get_nyaa_magnet(url):
-    page = requests.get(url.replace("/torrent", ""))
-    soup = BeautifulSoup(page.text, "html.parser")
-    magnet = soup.find("a", class_="card-footer-item").get("href")
-    return magnet
-
-
-def _play_nyaa(selected_file=None, url=None, magnet=None):
-    # allow passing magnet instead of url if already handy
-    if url:
-        magnet = get_nyaa_magnet(url)
-
+def _play_nyaa(selected_file=None, magnet=None):
     engine = get_setting("engine")
     if engine == "Torrest":
         play_item = xbmcgui.ListItem(
@@ -419,9 +407,9 @@ def _play_nyaa(selected_file=None, url=None, magnet=None):
 
 
 @register
-def play_subsplease(name, selected_file=None, url=None, magnet=None):
-    _play_nyaa(selected_file, url, magnet)
-    subsplease.set_watched(name)
+def play_subsplease(name, show_id, selected_file=None, magnet=None):
+    _play_nyaa(selected_file=selected_file, magnet=magnet)
+    subsplease.set_watched(name, show_id)
 
 
 @register
@@ -452,8 +440,8 @@ def notify(message, title="haru"):
 
 
 @register
-def toggle_watched_subsplease(name, watched):
-    subsplease.set_watched(name, watched)
+def toggle_watched_subsplease(name, show_id, watched):
+    subsplease.set_watched(name, show_id, watched)
     xbmc.executebuiltin("Container.Refresh")
 
 
@@ -465,7 +453,7 @@ def clear_history_subsplease():
         "Do you want to clear SubsPlease history?\n\nWatched statuses will be preserved.",
     )
     if confirmed:
-        db.database["sp:history"] = {}
+        db.database[migration.HISTORY] = {}
         db.commit()
         xbmc.executebuiltin("Container.Refresh")
 

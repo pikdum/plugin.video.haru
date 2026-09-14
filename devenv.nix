@@ -10,6 +10,8 @@
 
   packages = [ pkgs.ruff ];
 
+  enterTest = "python -m unittest discover -s tests";
+
   git-hooks.hooks = {
     ruff.enable = true;
     ruff-format.enable = true;
